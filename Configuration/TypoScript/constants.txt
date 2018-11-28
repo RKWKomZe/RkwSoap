@@ -1,0 +1,34 @@
+plugin.tx_rkwsoap {
+	view {
+		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template root (FE)
+		templateRootPath = EXT:rkw_soap/Resources/Private/Templates/
+		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template partials (FE)
+		partialRootPath = EXT:rkw_soap/Resources/Private/Partials/
+		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template layouts (FE)
+		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/
+	}
+	persistence {
+		# cat=plugin.tx_rkwsoap//a; type=string; label=Default storage PID
+		storagePid =
+	}
+
+	settings {
+
+
+        soapServer {
+
+            # cat=plugin.tx_rkwsoap//a; type=string; label=Username for SOAP Server Login
+            username =
+
+            # cat=plugin.tx_rkwsoap//a; type=string; label=Password for SOAP Server Login
+            password =
+
+            # cat=plugin.tx_rkwsoap//a; type=string; label=URL for SOAP Server
+            url =
+
+            # cat=plugin.tx_rkwsoap//a; type=string; label=List of allowed IPs for SOAP Server (comma-separated)
+            allowedRemoteIpList =
+        }
+
+	}
+}

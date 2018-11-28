@@ -1,0 +1,139 @@
+// #########################################################
+// Extbase Configuration
+// #########################################################
+config.tx_extbase{
+	persistence {
+		classes {
+
+
+			RKW\RkwSoap\Domain\Model\FrontendUser {
+				mapping {
+					tableName = fe_users
+
+					# if we set an value, we filter by it
+					# if do not set anything, all pages are found
+					recordType =
+
+					# mapping to properties of class
+					columns {
+						tstamp.mapOnProperty = tstamp
+						crdate.mapOnProperty = crdate
+						disable.mapOnProperty = disable
+						deleted.mapOnProperty = deleted
+					}
+				}
+			}
+
+
+			RKW\RkwSoap\Domain\Model\FrontendUserGroup {
+				mapping {
+					tableName = fe_groups
+
+					# if we set an value, we filter by it
+					# if do not set anything, all pages are found
+					recordType =
+
+					# mapping to properties of class
+					columns {
+						tstamp.mapOnProperty = tstamp
+						crdate.mapOnProperty = crdate
+						disable.mapOnProperty = disable
+						deleted.mapOnProperty = deleted
+					}
+
+				}
+			}
+
+		}
+	}
+}
+
+// #########################################################
+// Plugin Configuration
+// #########################################################
+
+plugin.tx_rkwsoap  {
+    persistence {
+    	storagePid = {$plugin.tx_rkwsoap.persistence.storagePid}
+    }
+
+	view {
+		templateRootPath = {$plugin.tx_rkwsoap.view.templateRootPath}
+		partialRootPath = {$plugin.tx_rkwsoap.view.partialRootPath}
+		layoutRootPath = {$plugin.tx_rkwsoap.view.layoutRootPath}
+	}
+
+	features {
+		# uncomment the following line to enable the new Property Mapper.
+		# rewrittenPropertyMapper = 1
+	}
+
+	settings {
+
+		soapServer {
+
+			# Credentials for client-authentification
+			username = {$plugin.tx_rkwsoap.settings.soapServer.username}
+			password = {$plugin.tx_rkwsoap.settings.soapServer.password}
+
+			# URL of soap server
+			url = {$plugin.tx_rkwsoap.settings.soapServer.url}
+
+			# List of allowed remote IPs
+			allowedRemoteIpList = {$plugin.tx_rkwsoap.settings.soapServer.allowedRemoteIpList}
+		}
+	}
+}
+
+// #########################################################
+// AJAX Configuration
+// #########################################################
+TxRkwSoapSoapPage = PAGE
+TxRkwSoapSoapPage {
+
+
+	typeNum = 1445105145
+
+	config {
+
+    	disableAllHeaderCode = 1
+    	xhtml_cleaning = 0
+    	admPanel = 0
+    	no_cache = 0
+    	debug = 0
+
+    	additionalHeaders.10.header = Content-type:text/xml;charset=utf-8|Expires: 0|Cache-Control: no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0, FALSE|Pragma: no-cache
+    	metaCharset = utf-8
+
+		index_enable = 0
+		index_metatags = 0
+		index_externals = 0
+  	}
+
+
+  	10 = USER_INT
+  	10 {
+		userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+		extensionName = RkwSoap
+		pluginName = Rkwsoap
+		vendorName = RKW
+		controller = Soap
+		switchableControllerActions {
+
+			# Again: Controller-Name and Action
+			Soap {
+				1 = soap
+			}
+		}
+
+		view =< plugin.tx_rkwsoap.view
+		persistence =< plugin.tx_rkwsoap.persistence
+		settings =< plugin.tx_rkwsoap.settings
+  	}
+}
+
+// #########################################################
+// Various
+// #########################################################
+module.tx_rkwsoap < plugin.tx_rkwsoap
+

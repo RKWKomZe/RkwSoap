@@ -1,0 +1,106 @@
+<f:section name="Types">
+
+    <xsd:complexType name="FeUserList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="FeUser" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="FeUser[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="FeUser">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="disable" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="username" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="usergroup" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="company" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tx_rkwregistration_gender" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="first_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="middle_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="last_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="address" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="zip" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="city" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="telephone" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="fax" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="email" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="www" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tx_rkwregistration_facebook_url" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tx_rkwregistration_twitter_url" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tx_rkwregistration_xing_url" type="xsd:string" />
+        </xsd:all>
+    </xsd:complexType>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <!-- DEPRECATED -->
+    <message name="findFeUserByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findFeUserByTimestampResponse">
+        <part name="return" type="FeUserList"/>
+    </message>
+
+    <message name="findFeUsersByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findFeUsersByTimestampResponse">
+        <part name="return" type="FeUserList"/>
+    </message>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <!-- DEPRECATED -->
+    <operation name="findFeUserByTimestamp">
+        <input message="tns:findFeUserByTimestampRequest"/>
+        <output message="tns:findFeUserByTimestampResponse"/>
+    </operation>
+
+    <operation name="findFeUsersByTimestamp">
+        <input message="tns:findFeUsersByTimestampRequest"/>
+        <output message="tns:findFeUsersByTimestampResponse"/>
+    </operation>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <!-- DEPRECATED -->
+    <operation name="findFeUserByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findFeUserByTimestamp"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+
+    <operation name="findFeUsersByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findFeUsersByTimestamp"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+</f:section>

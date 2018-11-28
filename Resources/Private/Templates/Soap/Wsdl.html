@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Server"
+			 targetNamespace="{url}/rkw/rkwsoap/soap/server"
+			 xmlns:tns="{url}/rkw/rkwsoap/soap/server"
+			 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+			 xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+			 xmlns="http://schemas.xmlsoap.org/wsdl/"
+			 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+			 xmlns:ns="{url}/rkw/rkwsoap/soap/server/types">
+
+	<!-- ################################################################################### -->
+	<!-- describes all the data types used between the client and the server -->
+	<types>
+        <f:render partial="FeUser" section="Types" arguments="{_all}" />
+        <f:render partial="FeUserGroup" section="Types" arguments="{_all}" />
+        <f:render partial="Order" section="Types" arguments="{_all}" />
+        <f:render partial="Publication" section="Types" arguments="{_all}" />
+        <f:render partial="Series" section="Types" arguments="{_all}" />
+        <f:render partial="Event" section="Types" arguments="{_all}" />
+        <f:render partial="EventPlace" section="Types" arguments="{_all}" />
+        <f:render partial="EventReservation" section="Types" arguments="{_all}" />
+        <f:render partial="EventReservationAddPerson" section="Types" arguments="{_all}" />
+    </types>
+
+	<!-- ################################################################################### -->
+    <!-- defines the values of input and output messages -->
+    <f:render partial="FeUser" section="Messages" arguments="{_all}" />
+    <f:render partial="FeUserGroup" section="Messages" arguments="{_all}" />
+    <f:render partial="Order" section="Messages" arguments="{_all}" />
+    <f:render partial="Publication" section="Messages" arguments="{_all}" />
+    <f:render partial="Series" section="Messages" arguments="{_all}" />
+    <f:render partial="Event" section="Messages" arguments="{_all}" />
+    <f:render partial="EventPlace" section="Messages" arguments="{_all}" />
+    <f:render partial="EventReservation" section="Messages" arguments="{_all}" />
+    <f:render partial="EventReservationAddPerson" section="Messages" arguments="{_all}" />
+
+    <!-- ################################################################################### -->
+	<!-- defines operations with their input and output messages-->
+	<portType name="ServerPortType">
+        <f:render partial="FeUser" section="PortTypes" arguments="{_all}" />
+        <f:render partial="FeUserGroup" section="PortTypes" arguments="{_all}" />
+        <f:render partial="Order" section="PortTypes" arguments="{_all}" />
+        <f:render partial="Publication" section="PortTypes" arguments="{_all}" />
+        <f:render partial="Series" section="PortTypes" arguments="{_all}" />
+        <f:render partial="Event" section="PortTypes" arguments="{_all}" />
+        <f:render partial="EventPlace" section="PortTypes" arguments="{_all}" />
+        <f:render partial="EventReservation" section="PortTypes" arguments="{_all}" />
+        <f:render partial="EventReservationAddPerson" section="PortTypes" arguments="{_all}" />
+    </portType>
+
+	<!-- ################################################################################### -->
+	<!-- defines how to transmit the communication over wire -->
+	<binding name="ServerBinding" type="tns:ServerPortType">
+		<!-- setting soap as envelope -->
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<!-- set encoding for operation -->
+        <f:render partial="FeUser" section="Bindings" arguments="{_all}" />
+        <f:render partial="FeUserGroup" section="Bindings" arguments="{_all}" />
+        <f:render partial="Order" section="Bindings" arguments="{_all}" />
+        <f:render partial="Publication" section="Bindings" arguments="{_all}" />
+        <f:render partial="Series" section="Bindings" arguments="{_all}" />
+        <f:render partial="Event" section="Bindings" arguments="{_all}" />
+        <f:render partial="EventPlace" section="Bindings" arguments="{_all}" />
+        <f:render partial="EventReservation" section="Bindings" arguments="{_all}" />
+        <f:render partial="EventReservationAddPerson" section="Bindings" arguments="{_all}" />
+    </binding>
+
+	<!-- finally defines the service and the port -->
+	<service name="ServerService">
+		<port name="ServerPort" binding="tns:ServerBinding">
+			<soap:address location="{url}/index.php?type=1445105145"/>
+		</port>
+	</service>
+
+</definitions>

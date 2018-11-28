@@ -1,0 +1,77 @@
+<f:section name="Types">
+    <xsd:complexType name="EventReservationList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="EventReservation" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="EventReservation[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="EventReservation">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="fe_user" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="salutation" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="first_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="last_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="company" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="address" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="zip" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="city" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="phone" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="fax" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="email" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="remark" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="add_person" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="event" type="xsd:int" />
+        </xsd:all>
+    </xsd:complexType>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <message name="findEventReservationsByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findEventReservationsByTimestampResponse">
+        <part name="return" type="EventReservationList"/>
+    </message>
+
+</f:section>
+
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <operation name="findEventReservationsByTimestamp">
+        <input message="tns:findEventReservationsByTimestampRequest"/>
+        <output message="tns:findEventReservationsByTimestampResponse"/>
+    </operation>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <operation name="findEventReservationsByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findEventReservationsByTimestamp"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>

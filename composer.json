@@ -1,0 +1,32 @@
+{
+    "name": "rkw/rkw-soap",
+    "type": "typo3-cms-extension",
+    "description": "Extension for a connecting to TYPO3 via SOAP",
+    "homepage": "https://www.rkw-kompetenzzentrum.de",
+    "license": ["GPL-2.0+"],
+    "keywords": ["TYPO3 CMS", "RKW", "SOAP"],
+    "support": {
+        "email": "developer@steffenkroggel.de"
+    },
+    "authors": [
+        {
+            "name": "Steffen Kroggel",
+            "email": "developer@steffenkroggel.de",
+            "homepage": "http://www.steffenkroggel.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": "^7.6.0 || ^8.7.0",
+    },
+    "autoload": {
+        "psr-4": {
+            "RKW\\Soap\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "rkw_soap"
+        }
+    }
+}

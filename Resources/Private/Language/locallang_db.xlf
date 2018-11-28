@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-10-17T19:43:17Z" product-name="rkw_soap">
+		<header/>
+		<body>
+			<trans-unit id="tx_rkwsoap_domain_model_frontenduser">
+				<source>Frontend User</source>
+			</trans-unit>
+			<trans-unit id="fe_users.tx_extbase_type.Tx_RkwSoap_FrontendUser">
+				<source>RKW SOAP FrontendUser</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
