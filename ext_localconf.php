@@ -3,10 +3,6 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-// load WSDL Library
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('rkw_soap') . 'Classes/Libs/wsdl-creator-master/vendor/autoload.php');
-
-
 // FE-Plugin
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'RKW.' . $_EXTKEY,
