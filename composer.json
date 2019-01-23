@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "RKW\\Soap\\": "Classes/"
+            "RKW\\RkwSoap\\": "Classes/"
         }
     },
     "extra": {
