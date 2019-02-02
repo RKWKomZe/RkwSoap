@@ -1,5 +1,4 @@
 <?php
-
 namespace RKW\RkwSoap\Domain\Model;
 
 /*
@@ -19,10 +18,11 @@ namespace RKW\RkwSoap\Domain\Model;
  * Class FrontendUserGroup
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright Steffen Kroggel, RKW Kompetenzzentrum
  * @package RKW_RkwSoap
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @licence http://www.gnu.org/copyleft/gpl.htm GNU General Public License, version 2 or later
  */
+
 class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
 {
 

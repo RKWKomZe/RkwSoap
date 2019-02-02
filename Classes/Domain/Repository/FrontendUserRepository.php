@@ -1,7 +1,5 @@
 <?php
-
 namespace RKW\RkwSoap\Domain\Repository;
-
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /*
@@ -56,6 +54,7 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * @param integer $timestamp
      * @param bool $excludeEmptyName
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findByTimestamp($timestamp, $excludeEmptyName = true)
     {
@@ -82,8 +81,7 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             )
         );
 
-        $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
-
+        $query->setOrderings(array ('tstamp' => QueryInterface::ORDER_ASCENDING));
         return $query->execute();
         //===
     }
