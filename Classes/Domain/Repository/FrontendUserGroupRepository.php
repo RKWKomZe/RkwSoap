@@ -56,6 +56,7 @@ class FrontendUserGroupRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
      * @param integer $timestamp
      * @param integer $serviceOnly
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findByTimestamp($timestamp, $serviceOnly)
     {

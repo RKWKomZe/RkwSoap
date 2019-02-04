@@ -60,6 +60,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      * action boxes
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      */
     public function soapAction()
     {

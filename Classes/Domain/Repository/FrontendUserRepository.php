@@ -54,8 +54,9 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * Find all users that have been updated recently
      *
      * @param integer $timestamp
-     * @param bool $excludeEmptyName
+     * @param bool    $excludeEmptyName
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findByTimestamp($timestamp, $excludeEmptyName = true)
     {

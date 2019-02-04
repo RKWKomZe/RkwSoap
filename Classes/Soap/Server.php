@@ -45,11 +45,25 @@ class Server
 
 
     /**
+     * frontendUserRepository
+     *
+     * @var \RKW\RkwRegistration\Domain\Repository\TitleRepository
+     */
+    protected $titleRepository;
+
+    /**
      * orderRepository
      *
      * @var \RKW\RkwOrder\Domain\Repository\OrderRepository
      */
     protected $orderRepository;
+
+    /**
+     * orderRepository
+     *
+     * @var \RKW\RkwOrder\Domain\Repository\PublicationRepository
+     */
+    protected $publicationRepository;
 
 
     /**
@@ -172,6 +186,7 @@ class Server
                     'usergroup',
                     'company',
                     'tx_rkwregistration_gender',
+                    'tx_rkwregistration_title',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -311,12 +326,10 @@ class Server
                     'hidden',
                     'deleted',
                     'status',
-                    'page_title',
-                    'page_subtitle',
-                    'series_title',
                     'send_series',
                     'subscribe',
                     'gender',
+                    'title',
                     'first_name',
                     'last_name',
                     'company',
@@ -327,6 +340,7 @@ class Server
                     'amount',
                     'frontend_user',
                     'pages',
+                    'publication',
 
                 );
 
@@ -371,11 +385,14 @@ class Server
                     'deleted',
                     'title',
                     'subtitle',
-                    'tx_rkwbasics_series',
+                    'stock',
+                    'allowSeries',
+                    'allowSubscription',
+                    'series',
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->pagesRepository->findAllImportedParentPages();
+                $results = $this->publicationRepository->findAll();
 
                 if ($results) {
                     return $this->toArray($results, $keys);
@@ -605,7 +622,7 @@ class Server
      * Returns all existing eventReservationAddPersons by timestamp
      *
      * @param integer $timestamp
-     * @return array
+     * @return  array
      */
     public function findEventReservationAddPersonsByTimestamp($timestamp)
     {
@@ -645,6 +662,49 @@ class Server
         //===
     }
 
+
+    /**
+     * Returns all imported publication pages
+     *
+     * @return array
+     */
+    public function findAllTitles()
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+
+            try {
+
+                $keys = array(
+                    'uid',
+                    'crdate',
+                    'tstamp',
+                    'hidden',
+                    'deleted',
+                    'name',
+                    'name_long',
+                    'is_title_after',
+                );
+
+                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
+                $results = $this->titleRepository->findAll();
+
+                if ($results) {
+                    return $this->toArray($results, $keys);
+                }
+                //===
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+        }
+
+        return array();
+        //===
+    }
 
     /**
      * Set the status of an order
@@ -749,7 +809,7 @@ class Server
      * Builds a multidimensional array from the QueryResultInterface
      *
      * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results The query results
-     * @param array $keys The field names
+     * @param array                                               $keys The field names
      * @return array
      */
     protected function toArray($results, $keys)
@@ -838,6 +898,8 @@ class Server
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
             $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
             $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
+            $this->titleRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\TitleRepository');
+
         } else {
             $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
             $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
@@ -846,6 +908,7 @@ class Server
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             $this->orderRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\OrderRepository');
             $this->pagesRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\PagesRepository');
+            $this->publicationRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\PublicationRepository');
         }
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
