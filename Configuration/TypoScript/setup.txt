@@ -72,6 +72,8 @@ plugin.tx_rkwsoap  {
 
 		soapServer {
 
+			disableSecurityChecks = {$plugin.tx_rkwsoap.settings.soapServer.disableSecurityChecks}
+
 			# Credentials for client-authentification
 			username = {$plugin.tx_rkwsoap.settings.soapServer.username}
 			password = {$plugin.tx_rkwsoap.settings.soapServer.password}
