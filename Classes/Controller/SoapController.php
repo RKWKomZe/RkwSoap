@@ -83,7 +83,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         // check login
         if (
             (! $this->settings['soapServer']['disableSecurityChecks'])
-            || (\TYPO3\CMS\Core\Utility\GeneralUtility::getApplicationContext()->isProduction())
+            || (strtolower(\TYPO3\CMS\Core\Utility\GeneralUtility::getApplicationContext()->__toString()) === 'production')
         ){
             if (
                 ($_SERVER['PHP_AUTH_USER'] != $this->settings['soapServer']['username'])
