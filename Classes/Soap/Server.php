@@ -311,6 +311,7 @@ class Server
      *
      * @param integer $timestamp
      * @return array
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findOrdersByTimestamp($timestamp)
     {
@@ -344,11 +345,12 @@ class Server
 
                 );
 
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderRepository->findByTimestamp($timestamp);
+                /** @var array $results */
+                $results = $this->orderRepository->findByTimestampSoap($timestamp);
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, print_r($this->filterArray($results, $keys),true));
+                    return $this->filterArray($results, $keys);
                 }
                 //===
 
@@ -720,7 +722,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
+                if ($order = $this->orderRepository->findByUidSoap(intval($uid))) {
 
                     if (!in_array($status, array(1, 0))) {
                         $status = 0;
@@ -769,7 +771,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
+                if ($order = $this->orderRepository->findByUidSoap(intval($uid))) {
 
                     if (!in_array($deleted, array(1, 0))) {
                         $deleted = 0;
@@ -809,61 +811,62 @@ class Server
      * Builds a multidimensional array from the QueryResultInterface
      *
      * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results The query results
-     * @param array                                               $keys The field names
+     * @param array $keys The field names
      * @return array
      */
     protected function toArray($results, $keys)
     {
 
         $finalData = array();
-
         if ($results instanceof \Countable) {
 
             foreach ($results as $data) {
 
-                $tempData = array();
-                foreach ($keys as $key) {
+                if ($data instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+                    $tempData = array();
+                    foreach ($keys as $key) {
 
-                    $getter = 'get' . ucFirst(Common::camelize($key));
+                        $getter = 'get' . ucFirst(Common::camelize($key));
 
-                    // check if we get an Sub-Repository
-                    if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Country) {
-                        $tempData[$key] = $data->$getter()->getIsoCodeA2();
-
-                    } else {
-                        if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Currency) {
-                            $tempData[$key] = $data->$getter()->getIsoCodeA3();
-
+                        // check if we get an Sub-Repository
+                        if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Country) {
+                            $tempData[$key] = $data->$getter()->getIsoCodeA2();
 
                         } else {
-                            if ($data->$getter() instanceof \Countable) {
+                            if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Currency) {
+                                $tempData[$key] = $data->$getter()->getIsoCodeA3();
 
-                                $uidList = array();
-                                foreach ($data->$getter() as $item)
-                                    $uidList[] = $item->getUid();
-
-                                $tempData[$key] = implode(',', $uidList);
 
                             } else {
-                                if ($data->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
-                                    $tempData[$key] = $data->$getter()->getUid();
+                                if ($data->$getter() instanceof \Countable) {
 
+                                    $uidList = array();
+                                    foreach ($data->$getter() as $item) {
+                                        $uidList[] = $item->getUid();
+                                    }
+
+                                    $tempData[$key] = implode(',', $uidList);
 
                                 } else {
-                                    if (is_bool($data->$getter())) {
-                                        $tempData[$key] = intval($data->$getter());
+                                    if ($data->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+                                        $tempData[$key] = $data->$getter()->getUid();
+
 
                                     } else {
-                                        $tempData[$key] = $data->$getter();
+                                        if (is_bool($data->$getter())) {
+                                            $tempData[$key] = intval($data->$getter());
+
+                                        } else {
+                                            $tempData[$key] = $data->$getter();
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
+                    $finalData[] = $tempData;
                 }
-
-                $finalData[] = $tempData;
             }
         }
 
@@ -872,6 +875,45 @@ class Server
 
     }
 
+
+    /**
+     * Filters raw data according to given array-key
+     *
+     * @param array $results The query results
+     * @param array $keys The field names
+     * @return array
+     */
+    protected function filterArray($results, $keys)
+    {
+
+        $finalData = array();
+        if (is_array( $results)) {
+
+            foreach ($results as $data) {
+                if (is_array($data)) {
+                    $tempData = array();
+                    foreach ($keys as $key) {
+
+                        if (isset($data[$key])) {
+                            if (
+                                ($data[$key] == (string) intval($data[$key]))
+                            ){
+                                $tempData[$key] = intval($data[$key]);
+                            } else {
+                                $tempData[$key] = $data[$key];
+                            }
+                        }
+                    }
+
+                    $finalData[] = $tempData;
+                }
+            }
+        }
+
+        return $finalData;
+        //===
+
+    }
 
     /**
      * Returns logger instance
