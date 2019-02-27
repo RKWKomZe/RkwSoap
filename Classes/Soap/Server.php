@@ -349,10 +349,10 @@ class Server
                 $results = $this->orderRepository->findByTimestampSoap($timestamp);
 
                 if ($results) {
-                    $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, print_r($this->filterArray($results, $keys),true));
                     return $this->filterArray($results, $keys);
+                    //===
                 }
-                //===
+
 
             } catch (\Exception $e) {
                 $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
