@@ -72,17 +72,11 @@ plugin.tx_rkwsoap  {
 
 		soapServer {
 
-			disableSecurityChecks = {$plugin.tx_rkwsoap.settings.soapServer.disableSecurityChecks}
-
-			# Credentials for client-authentification
 			username = {$plugin.tx_rkwsoap.settings.soapServer.username}
 			password = {$plugin.tx_rkwsoap.settings.soapServer.password}
-
-			# URL of soap server
 			url = {$plugin.tx_rkwsoap.settings.soapServer.url}
-
-			# List of allowed remote IPs
 			allowedRemoteIpList = {$plugin.tx_rkwsoap.settings.soapServer.allowedRemoteIpList}
+            disableAuthentification  = {$plugin.tx_rkwsoap.settings.soapServer.disableAuthentification}
 		}
 	}
 }

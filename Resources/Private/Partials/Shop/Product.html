@@ -1,0 +1,71 @@
+<f:section name="Types">
+    <xsd:complexType name="RkwShopProductList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="RkwShopProduct" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="RkwShopProduct[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RkwShopProduct">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="pid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="hidden" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="title" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="subtitle" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="page" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="stock" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="product_bundle" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="allow_single_order" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="ordered_external" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="backend_user" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="record_type" type="xsd:string" />
+        </xsd:all>
+    </xsd:complexType>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <message name="rkwShopFindAllProductsRequest" />
+    <message name="rkwShopFindAllProductsResponse">
+        <part name="return" type="RkwShopProductList"/>
+    </message>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <operation name="rkwShopFindAllProducts">
+        <input message="tns:rkwShopFindAllProductsRequest"/>
+        <output message="tns:rkwShopFindAllProductsResponse"/>
+    </operation>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <operation name="rkwShopFindAllProducts">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#rkwShopFindAllProducts"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>

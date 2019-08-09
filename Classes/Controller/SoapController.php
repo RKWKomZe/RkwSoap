@@ -57,10 +57,10 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
     }
 
     /**
-     * action boxes
+     * action soap
      *
      * @return void
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
      */
     public function soapAction()
     {
@@ -98,10 +98,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                 header('HTTP/1.0 401 Unauthorized');
                 $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, sprintf('Login failed for user "%s" from IP %s.', $_SERVER['PHP_AUTH_USER'], $remoteAddr));
                 exit;
-                //===
             }
-        } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, 'Security checks are disabled by configuration. THIS IS A POTENTIAL SECURITY ISSUE!');
         }
 
         // check if an url is set
@@ -145,7 +142,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         header('Retry-After: 300');
         $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Service unavailable.');
         exit();
-        //===
     }
 
 
@@ -162,7 +158,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         }
 
         return $this->logger;
-        //===
     }
 }
 

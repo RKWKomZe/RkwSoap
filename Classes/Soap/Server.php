@@ -2,8 +2,7 @@
 
 namespace RKW\RkwSoap\Soap;
 
-use \RKW\RkwBasics\Helper\Common;
-
+use RKW\RkwSoap\Utility\ObjectToArrayUtility;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -45,33 +44,19 @@ class Server
 
 
     /**
-     * frontendUserRepository
-     *
-     * @var \RKW\RkwRegistration\Domain\Repository\TitleRepository
-     */
-    protected $titleRepository;
-
-    /**
      * orderRepository
      *
-     * @var \RKW\RkwOrder\Domain\Repository\OrderRepository
+     * @var \RKW\RkwShop\Domain\Repository\OrderRepository
      */
     protected $orderRepository;
 
-    /**
-     * orderRepository
-     *
-     * @var \RKW\RkwOrder\Domain\Repository\PublicationRepository
-     */
-    protected $publicationRepository;
-
 
     /**
-     * pagesRepository
+     * productRepository
      *
-     * @var \RKW\RkwOrder\Domain\Repository\PagesRepository
+     * @var \RKW\RkwShop\Domain\Repository\ProductRepository
      */
-    protected $pagesRepository;
+    protected $productRepository;
 
 
     /**
@@ -124,6 +109,41 @@ class Server
      * @var \TYPO3\CMS\Core\Log\Logger
      */
     protected $logger;
+
+
+
+    public function __construct()
+    {
+
+        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+            $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
+            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
+        } else {
+            $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
+            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
+        }
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+            $this->orderRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\OrderRepository');
+            $this->productRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\ProductRepository');
+        }
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
+            $this->eventRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventRepository');
+            $this->eventPlaceRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventPlaceRepository');
+            $this->eventReservationRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationRepository');
+            $this->eventReservationAddPersonRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository');
+        }
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_basics')) {
+            $this->seriesRepository = $objectManager->get('RKW\RkwBasics\Domain\Repository\SeriesRepository');
+        }
+
+        $this->persistenceManager = $objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager');
+
+    }
 
 
     /**
@@ -186,7 +206,6 @@ class Server
                     'usergroup',
                     'company',
                     'tx_rkwregistration_gender',
-                    'tx_rkwregistration_title',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -208,7 +227,7 @@ class Server
             $results = $this->frontendUserRepository->findByTimestamp($timestamp);
 
             if ($results) {
-                return $this->toArray($results, $keys);
+                return ObjectToArrayUtility::toArray($results, $keys);
             }
             //===
 
@@ -277,7 +296,7 @@ class Server
             $results = $this->frontendUserGroupRepository->findByTimestamp($timestamp, $serviceOnly);
 
             if ($results) {
-                return $this->toArray($results, $keys);
+                return ObjectToArrayUtility::toArray($results, $keys);
             }
             //===
 
@@ -311,7 +330,6 @@ class Server
      *
      * @param integer $timestamp
      * @return array
-     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findOrdersByTimestamp($timestamp)
     {
@@ -327,10 +345,12 @@ class Server
                     'hidden',
                     'deleted',
                     'status',
+                    'page_title',
+                    'page_subtitle',
+                    'series_title',
                     'send_series',
                     'subscribe',
                     'gender',
-                    'title',
                     'first_name',
                     'last_name',
                     'company',
@@ -341,18 +361,81 @@ class Server
                     'amount',
                     'frontend_user',
                     'pages',
-                    'publication',
 
                 );
 
-                /** @var array $results */
+                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
+                $results = $this->orderRepository->findByTimestamp($timestamp);
+
+                if ($results) {
+                    return ObjectToArrayUtility::toArray($results, $keys);
+                }
+                //===
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+        }
+
+        return array();
+        //===
+    }
+
+
+    /**
+     * Returns all new orders since $timestamp
+     *
+     * @param integer $timestamp
+     * @return array
+     */
+    public function rkwShopFindOrdersByTimestamp($timestamp)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                $keys = array(
+                    'uid',
+                    'pid',
+                    'crdate',
+                    'tstamp',
+                    'hidden',
+                    'deleted',
+                    'status',
+
+                    'email',
+                    'frontend_user',
+                    'remark',
+
+                    'shipping_address' => [
+                        'gender',
+                        'title',
+                        'first_name',
+                        'last_name',
+                        'company',
+                        'address',
+                        'zip',
+                        'city'
+                    ]
+                );
+
+                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
                 $results = $this->orderRepository->findByTimestampSoap($timestamp);
 
                 if ($results) {
-                    return $this->filterArray($results, $keys);
-                    //===
-                }
+                    $finalResult = ObjectToArrayUtility::toArray($results, $keys);
 
+                    // add shipping address without subarray
+                    $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+                    unset($finalResult['shipping_address']);
+
+                    var_dump($finalResult);
+                    return $finalResult;
+                }
 
             } catch (\Exception $e) {
                 $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
@@ -372,41 +455,90 @@ class Server
      *
      * @return array
      */
-    public function findAllPublications()
+    public function rkwShopFindAllProducts()
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
                 $keys = array(
                     'uid',
+                    'pid',
                     'crdate',
                     'tstamp',
                     'hidden',
                     'deleted',
                     'title',
                     'subtitle',
+                    'page',
                     'stock',
-                    'allowSeries',
-                    'allowSubscription',
-                    'series',
+                    'product_bundle',
+                    'allow_single_order',
+                    'ordered_external',
+                    'backend_user',
+                    'record_type',
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->publicationRepository->findAll();
+                $results = $this->productRepository->findAllSoap();
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    return ObjectToArrayUtility::toArray($results, $keys);
                 }
-                //===
 
             } catch (\Exception $e) {
                 $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return array();
+        //===
+    }
+
+
+    /**
+     * Returns all imported publication pages
+     *
+     * @return array
+     * @deprecated since 08-08-2019
+     */
+    public function findAllPublications()
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            // now we need some mapping in order to make the old stuff work
+            $tempResults = $this->rkwShopFindAllProducts();
+            $finalResults = [];
+
+            /** @var \RKW\RkwShop\Domain\Model\Product $result */
+            foreach ($tempResults as $result) {
+
+                // do not include what was formerly called "series"
+                if (
+                    ($result['record_type'] != '\RKW\RkwShop\Domain\Model\ProductBundle')
+                    && ($result['record_type'] != '\RKW\RkwShop\Domain\Model\ProductSubscription')
+                ) {
+                    $result['tx_rkwbasics_series'] = $result['product_bundle'];
+
+                    unset($result['pid']);
+                    unset($result['page']);
+                    unset($result['stock']);
+                    unset($result['product_bundle']);
+                    unset($result['allow_single_order']);
+                    unset($result['ordered_external']);
+                    unset($result['backend_user']);
+                    unset($result['record_type']);
+
+                    $finalResults[] = $result;
+                }
+            }
+
+            return $finalResults;
         }
 
         return array();
@@ -418,42 +550,48 @@ class Server
      * Returns all series
      *
      * @return array
+     * @deprecated since 08-08-2019
      */
     public function findAllSeries()
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_basics')) {
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
-            try {
+            // now we need some mapping in order to make the old stuff work
+            $tempResults = $this->rkwShopFindAllProducts();
+            $finalResults = [];
 
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'name',
-                    'short_name',
-                    'description',
-                );
+            /** @var \RKW\RkwShop\Domain\Model\Product $result */
+            foreach ($tempResults as $result) {
 
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->seriesRepository->findAll();
+                // do not include what was formerly called "series"
+                if (
+                    ($result['record_type'] == '\RKW\RkwShop\Domain\Model\ProductBundle')
+                    || ($result['record_type'] == '\RKW\RkwShop\Domain\Model\ProductSubscription')
+                ) {
+                    $result['name'] = $result['title'];
+                    $result['short_name'] = $result['subtitle'];
+                    $result['description'] = '';
 
-                if ($results) {
-                    return $this->toArray($results, $keys);
+                    unset($result['pid']);
+                    unset($result['title']);
+                    unset($result['subtitle']);
+                    unset($result['page']);
+                    unset($result['stock']);
+                    unset($result['product_bundle']);
+                    unset($result['allow_single_order']);
+                    unset($result['ordered_external']);
+                    unset($result['backend_user']);
+                    unset($result['record_type']);
+
+                    $finalResults[] = $result;
                 }
-                //===
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
             }
-        } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+
+            return $finalResults;
         }
 
         return array();
-        //===
     }
 
     /**
@@ -501,7 +639,7 @@ class Server
                 $results = $this->eventRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    return ObjectToArrayUtility::toArray($results, $keys);
                 }
                 //===
 
@@ -548,7 +686,7 @@ class Server
                 $results = $this->eventPlaceRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    return ObjectToArrayUtility::toArray($results, $keys);
                 }
                 //===
 
@@ -603,7 +741,7 @@ class Server
                 $results = $this->eventReservationRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    return ObjectToArrayUtility::toArray($results, $keys);
                 }
                 //===
 
@@ -624,7 +762,7 @@ class Server
      * Returns all existing eventReservationAddPersons by timestamp
      *
      * @param integer $timestamp
-     * @return  array
+     * @return array
      */
     public function findEventReservationAddPersonsByTimestamp($timestamp)
     {
@@ -648,7 +786,7 @@ class Server
                 $results = $this->eventReservationAddPersonRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return $this->toArray($results, $keys);
+                    return ObjectToArrayUtility::toArray($results, $keys);
                 }
                 //===
 
@@ -666,49 +804,6 @@ class Server
 
 
     /**
-     * Returns all imported publication pages
-     *
-     * @return array
-     */
-    public function findAllTitles()
-    {
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'name',
-                    'name_long',
-                    'is_title_after',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->titleRepository->findAll();
-
-                if ($results) {
-                    return $this->toArray($results, $keys);
-                }
-                //===
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
-            }
-
-        } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
-        }
-
-        return array();
-        //===
-    }
-
-    /**
      * Set the status of an order
      *
      * @param integer $uid
@@ -722,7 +817,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidSoap(intval($uid))) {
+                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
 
                     if (!in_array($status, array(1, 0))) {
                         $status = 0;
@@ -771,7 +866,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidSoap(intval($uid))) {
+                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
 
                     if (!in_array($deleted, array(1, 0))) {
                         $deleted = 0;
@@ -808,114 +903,6 @@ class Server
 
 
     /**
-     * Builds a multidimensional array from the QueryResultInterface
-     *
-     * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results The query results
-     * @param array $keys The field names
-     * @return array
-     */
-    protected function toArray($results, $keys)
-    {
-
-        $finalData = array();
-        if ($results instanceof \Countable) {
-
-            foreach ($results as $data) {
-
-                if ($data instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
-                    $tempData = array();
-                    foreach ($keys as $key) {
-
-                        $getter = 'get' . ucFirst(Common::camelize($key));
-
-                        // check if we get an Sub-Repository
-                        if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Country) {
-                            $tempData[$key] = $data->$getter()->getIsoCodeA2();
-
-                        } else {
-                            if ($data->$getter() instanceof \SJBR\StaticInfoTables\Domain\Model\Currency) {
-                                $tempData[$key] = $data->$getter()->getIsoCodeA3();
-
-
-                            } else {
-                                if ($data->$getter() instanceof \Countable) {
-
-                                    $uidList = array();
-                                    foreach ($data->$getter() as $item) {
-                                        $uidList[] = $item->getUid();
-                                    }
-
-                                    $tempData[$key] = implode(',', $uidList);
-
-                                } else {
-                                    if ($data->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
-                                        $tempData[$key] = $data->$getter()->getUid();
-
-
-                                    } else {
-                                        if (is_bool($data->$getter())) {
-                                            $tempData[$key] = intval($data->$getter());
-
-                                        } else {
-                                            $tempData[$key] = $data->$getter();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $finalData[] = $tempData;
-                }
-            }
-        }
-
-        return $finalData;
-        //===
-
-    }
-
-
-    /**
-     * Filters raw data according to given array-key
-     *
-     * @param array $results The query results
-     * @param array $keys The field names
-     * @return array
-     */
-    protected function filterArray($results, $keys)
-    {
-
-        $finalData = array();
-        if (is_array( $results)) {
-
-            foreach ($results as $data) {
-                if (is_array($data)) {
-                    $tempData = array();
-                    foreach ($keys as $key) {
-
-                        if (isset($data[$key])) {
-                            if (
-                                ($data[$key] == (string) intval($data[$key]))
-                            ){
-                                $tempData[$key] = intval($data[$key]);
-                            } else {
-                                $tempData[$key] = $data[$key];
-                            }
-                        }
-                    }
-
-                    $finalData[] = $tempData;
-                }
-            }
-        }
-
-        return $finalData;
-        //===
-
-    }
-
-    /**
      * Returns logger instance
      *
      * @return \TYPO3\CMS\Core\Log\Logger
@@ -928,44 +915,9 @@ class Server
         }
 
         return $this->logger;
-        //===
     }
 
 
-    public function __construct()
-    {
 
-        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
-            $this->titleRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\TitleRepository');
-
-        } else {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
-        }
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
-            $this->orderRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\OrderRepository');
-            $this->pagesRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\PagesRepository');
-            $this->publicationRepository = $objectManager->get('RKW\RkwOrder\Domain\Repository\PublicationRepository');
-        }
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
-            $this->eventRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventRepository');
-            $this->eventPlaceRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventPlaceRepository');
-            $this->eventReservationRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationRepository');
-            $this->eventReservationAddPersonRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository');
-        }
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_basics')) {
-            $this->seriesRepository = $objectManager->get('RKW\RkwBasics\Domain\Repository\SeriesRepository');
-        }
-
-        $this->persistenceManager = $objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager');
-
-    }
 }
 
