@@ -24,14 +24,14 @@
     "conflict": {
         "rkw/rkw-basics": "<8.7.2",
         "rkw/rkw-mailer": "<8.7.1",
-        "rkw/rkw-order": "<8.7",
-        "rkw/rkw-registration": "<8.7"
+        "rkw/rkw-order": "*",
+        "rkw/rkw-registration": "<8.7.5"
     },
     "suggest": {
         "rkw/rkw-basics": "~8.7.2",
         "rkw/rkw-mailer": "~8.7.1",
-        "rkw/rkw-order": "~8.7.0",
-        "rkw/rkw-registration": "~8.7.0"
+        "rkw/rkw-shop": "~7.6.0",
+        "rkw/rkw-registration": "~8.7.5"
     },
     "autoload": {
         "psr-4": {

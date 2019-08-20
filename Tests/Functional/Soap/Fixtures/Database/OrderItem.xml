@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>1</uid>
+        <pid>1</pid>
+        <amount>4</amount>
+        <product>1</product>
+        <ext_order>10</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>2</uid>
+        <pid>1</pid>
+        <amount>5</amount>
+        <product>2</product>
+        <ext_order>10</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>3</uid>
+        <pid>1</pid>
+        <amount>50</amount>
+        <product>2</product>
+        <ext_order>11</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>4</uid>
+        <pid>1</pid>
+        <amount>50</amount>
+        <product>1</product>
+        <ext_order>12</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>5</uid>
+        <pid>10</pid>
+        <amount>50</amount>
+        <product>1</product>
+        <ext_order>13</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+
+    <!-- order item check -->
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>10</uid>
+        <pid>1</pid>
+        <amount>4</amount>
+        <product>1</product>
+        <ext_order>20</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>11</uid>
+        <pid>1</pid>
+        <amount>5</amount>
+        <product>1</product>
+        <deleted>1</deleted>
+        <ext_order>20</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>12</uid>
+        <pid>1000</pid>
+        <amount>6</amount>
+        <product>3</product>
+        <ext_order>20</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <!-- Check for deprecated findOrdersByTimestamp -->
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>20</uid>
+        <pid>1</pid>
+        <amount>5</amount>
+        <product>10</product>
+        <ext_order>30</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>21</uid>
+        <pid>1000</pid>
+        <amount>6</amount>
+        <product>11</product>
+        <ext_order>30</ext_order>
+    </tx_rkwshop_domain_model_orderitem>
+</dataset>

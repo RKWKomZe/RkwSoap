@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+
+    <tx_rkwshop_domain_model_order>
+        <uid>10</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>1,2</order_item>
+        <tstamp>1</tstamp>
+        <shipping_address>10</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+    <tx_rkwshop_domain_model_order>
+        <uid>11</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>3</order_item>
+        <tstamp>10</tstamp>
+        <shipping_address>10</shipping_address>
+        <deleted>1</deleted>
+    </tx_rkwshop_domain_model_order>
+
+    <tx_rkwshop_domain_model_order>
+        <uid>12</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>4</order_item>
+        <tstamp>100</tstamp>
+        <shipping_address>10</shipping_address>
+        <hidden>1</hidden>
+    </tx_rkwshop_domain_model_order>
+
+    <tx_rkwshop_domain_model_order>
+        <uid>13</uid>
+        <pid>1000</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>5</order_item>
+        <tstamp>1000</tstamp>
+        <shipping_address>10</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+    <!-- Order-Item check -->
+    <tx_rkwshop_domain_model_order>
+        <uid>20</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>10,11,12</order_item>
+        <tstamp>1</tstamp>
+        <shipping_address>10</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+    <!-- Check for deprecated findOrdersByTimestamp -->
+    <tx_rkwshop_domain_model_order>
+        <uid>30</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>20,21</order_item>
+        <tstamp>10000</tstamp>
+        <shipping_address>10</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+</dataset>

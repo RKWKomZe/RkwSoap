@@ -31,6 +31,9 @@ plugin.tx_rkwsoap {
 
             # cat=plugin.tx_rkwsoap//a; type=string; label=List of allowed IPs for SOAP Server (comma-separated)
             allowedRemoteIpList =
+
+            # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentification
+            disableSecurityChecks = 0
         }
 
 	}
