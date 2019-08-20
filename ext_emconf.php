@@ -21,7 +21,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 0,
-	'version' => '8.7.4',
+	'version' => '7.6.6',
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '7.6.0-8.7.99',
@@ -30,15 +30,15 @@ $EM_CONF[$_EXTKEY] = array(
 		),
 		'conflicts' => array(
             'rkw_basics' => '7.6.0-8.7.1',
-            'rkw_mailer' => '7.6.0-8.7.0',
-            'rkw_order' => '7.6.0-7.6.99',
-            'rkw_registration' => '7.6.0-7.6.99'
+            'rkw_mailer' => '7.6.0-8.7.1',
+            'rkw_order' => '',
+            'rkw_registration' => '7.6.0-8.7.4'
 		),
 		'suggests' => array(
             'rkw_basics' => '8.7.2-8.7.99',
             'rkw_mailer' => '8.7.1-8.7.99',
-            'rkw_order' => '8.7.0-8.7.99',
-            'rkw_registration' => '8.7.0-8.7.99'
+            'rkw_shop' => '7.6.0-7.6.99',
+            'rkw_registration' => '8.7.5-8.7.99'
 		),
 	),
 );

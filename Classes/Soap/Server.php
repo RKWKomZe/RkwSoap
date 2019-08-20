@@ -2,7 +2,7 @@
 
 namespace RKW\RkwSoap\Soap;
 
-use RKW\RkwSoap\Utility\ObjectToArrayUtility;
+use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -50,6 +50,13 @@ class Server
      */
     protected $orderRepository;
 
+    /**
+     * orderItemRepository
+     *
+     * @var \RKW\RkwShop\Domain\Repository\OrderItemRepository
+     */
+    protected $orderItemRepository;
+
 
     /**
      * productRepository
@@ -58,6 +65,12 @@ class Server
      */
     protected $productRepository;
 
+    /**
+     * stockRepository
+     *
+     * @var \RKW\RkwShop\Domain\Repository\StockRepository
+     */
+    protected $stockRepository;
 
     /**
      * seriesRepository
@@ -127,7 +140,10 @@ class Server
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
             $this->orderRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\OrderRepository');
+            $this->orderItemRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\OrderItemRepository');
             $this->productRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\ProductRepository');
+            $this->stockRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\StockRepository');
+
         }
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
@@ -227,7 +243,7 @@ class Server
             $results = $this->frontendUserRepository->findByTimestamp($timestamp);
 
             if ($results) {
-                return ObjectToArrayUtility::toArray($results, $keys);
+                return FilteredPropertiesUtility::filter($results, $keys);
             }
             //===
 
@@ -296,7 +312,7 @@ class Server
             $results = $this->frontendUserGroupRepository->findByTimestamp($timestamp, $serviceOnly);
 
             if ($results) {
-                return ObjectToArrayUtility::toArray($results, $keys);
+                return FilteredPropertiesUtility::filter($results, $keys);
             }
             //===
 
@@ -330,55 +346,114 @@ class Server
      *
      * @param integer $timestamp
      * @return array
+     * @deprecated since 12-08-2019
      */
     public function findOrdersByTimestamp($timestamp)
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'status',
-                    'page_title',
-                    'page_subtitle',
-                    'series_title',
-                    'send_series',
-                    'subscribe',
-                    'gender',
-                    'first_name',
-                    'last_name',
-                    'company',
-                    'address',
-                    'zip',
-                    'city',
-                    'email',
-                    'amount',
-                    'frontend_user',
-                    'pages',
-
-                );
-
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderRepository->findByTimestamp($timestamp);
+                $results = $this->orderRepository->findByTimestampSoap($timestamp);
+                $finalResults = [];
 
-                if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                /** @var \RKW\RkwShop\Domain\Model\Order $order */
+                foreach ($results as $order) {
+
+                    // first we need to check for all items in this order
+                    // and sort them according to the product-type into three types.
+                    // The key is the product uid
+                    $orderItemDefaults = [];
+                    $orderItemBundles = [];
+                    $orderItemSubscriptions = [];
+
+                    /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
+                    foreach ($order->getOrderItem() as $orderItem) {
+
+                        if ($orderItem->getProduct()) {
+                            if ($orderItem->getProduct()->getRecordType() == '\RKW\RkwShop\Domain\Model\ProductSubscription') {
+                                $orderItemSubscriptions[$orderItem->getProduct()->getUid()] = $orderItem;
+
+                            } else {
+                                if ($orderItem->getProduct()->getRecordType() == '\RKW\RkwShop\Domain\Model\ProductBundle') {
+                                    $orderItemBundles[$orderItem->getProduct()->getUid()] = $orderItem;
+
+                                } else {
+                                    $orderItemDefaults[$orderItem->getProduct()->getUid()] = $orderItem;
+
+                                }
+                            }
+                        } else {
+                            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, sprintf('Non existing product in orderItem with id = %s referenced.', $orderItem->getUid()));
+                        }
+                    }
+
+                    // based on the default we check for corresponding subscriptions
+                    $subscribe = false;
+                    $sendSeries = false;
+                    $seriesTitle = null;
+
+                    /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItemDefault */
+                    foreach ($orderItemDefaults as $orderItemDefault) {
+
+                        // has a bundle?
+                        /** @var \RKW\RkwShop\Domain\Model\Product $productBundle */
+                        if ($productBundle = $orderItemDefault->getProduct()->getProductBundle()) {
+
+                            // is a subscription?
+                            if ($productBundle->getRecordType() == '\RKW\RkwShop\Domain\Model\ProductSubscription') {
+                                if (isset($orderItemSubscriptions[$productBundle->getUid()])) {
+                                    $subscribe = true;
+                                }
+                            } else {
+                                $sendSeries = true;
+                            }
+
+                            $seriesTitle = $productBundle->getTitle();
+                        }
+
+                        // now build order the old way:
+                        $orderOld = [
+                            'uid'           => $orderItemDefault->getOrder()->getUid(),
+                            'crdate'        => $orderItemDefault->getOrder()->getCrdate(),
+                            'tstamp'        => $orderItemDefault->getOrder()->getTstamp(),
+                            'hidden'        => $orderItemDefault->getOrder()->getHidden(),
+                            'deleted'       => $orderItemDefault->getOrder()->getDeleted(),
+                            'status'        => $orderItem->getOrder()->getStatus(),
+                            'page_title'    => $orderItemDefault->getProduct()->getTitle(),
+                            'page_subtitle' => $orderItemDefault->getProduct()->getSubtitle(),
+                            'series_title'  => $seriesTitle,
+                            'send_series'   => intval($sendSeries),
+                            'subscribe'     => intval($subscribe),
+                            'gender'        => $orderItemDefault->getOrder()->getShippingAddress()->getGender(),
+                            'first_name'    => $orderItemDefault->getOrder()->getShippingAddress()->getFirstName(),
+                            'last_name'     => $orderItemDefault->getOrder()->getShippingAddress()->getLastName(),
+                            'company'       => $orderItemDefault->getOrder()->getShippingAddress()->getCompany(),
+                            'address'       => $orderItemDefault->getOrder()->getShippingAddress()->getAddress(),
+                            'zip'           => $orderItemDefault->getOrder()->getShippingAddress()->getZip(),
+                            'city'          => $orderItemDefault->getOrder()->getShippingAddress()->getCity(),
+                            'email'         => $orderItemDefault->getOrder()->getEmail(),
+                            'amount'        => $orderItemDefault->getAmount(),
+                            'frontend_user' => ($orderItemDefault->getOrder()->getFrontendUser() ? $orderItemDefault->getOrder()->getFrontendUser()->getUid() : 0),
+                            'pages'         => $orderItemDefault->getProduct()->getUid(),
+                        ];
+
+                        $finalResults[] = $orderOld;
+                    }
                 }
-                //===
+
+                return $finalResults;
 
             } catch (\Exception $e) {
                 $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
+
 
         return array();
         //===
@@ -391,7 +466,7 @@ class Server
      * @param integer $timestamp
      * @return array
      */
-    public function rkwShopFindOrdersByTimestamp($timestamp)
+    public function rkwShopFindOrdersByTimestamp($timestamp = 0)
     {
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
@@ -419,22 +494,23 @@ class Server
                         'company',
                         'address',
                         'zip',
-                        'city'
-                    ]
+                        'city',
+                    ],
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
                 $results = $this->orderRepository->findByTimestampSoap($timestamp);
 
                 if ($results) {
-                    $finalResult = ObjectToArrayUtility::toArray($results, $keys);
+                    $finalResults = FilteredPropertiesUtility::filter($results, $keys);
 
-                    // add shipping address without subarray
-                    $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
-                    unset($finalResult['shipping_address']);
+                    // add shipping address without sub-array
+                    foreach ($finalResults as &$finalResult) {
+                        $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+                        unset($finalResult['shipping_address']);
+                    }
 
-                    var_dump($finalResult);
-                    return $finalResult;
+                    return $finalResults;
                 }
 
             } catch (\Exception $e) {
@@ -442,7 +518,56 @@ class Server
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return array();
+        //===
+    }
+
+
+
+    /**
+     * Returns all order items for given order-uid
+     *
+     * @param integer $orderUid
+     * @return array
+     */
+    public function rkwShopFindOrderItemsByOrder($orderUid)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                $keys = array(
+                    'uid',
+                    'pid',
+                    'crdate',
+                    'tstamp',
+                    'deleted',
+
+                    'ext_order',
+                    'product',
+                    'amount',
+                    'is_pre_order',
+
+                );
+
+                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
+                $results = $this->orderItemRepository->findByOrderUidSoap($orderUid);
+                if ($results) {
+
+                    $finalResults = FilteredPropertiesUtility::filter($results, $keys);
+                    return $finalResults;
+                }
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return array();
@@ -484,7 +609,7 @@ class Server
                 $results = $this->productRepository->findAllSoap();
 
                 if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
 
             } catch (\Exception $e) {
@@ -498,6 +623,179 @@ class Server
         return array();
         //===
     }
+
+
+    /**
+     * Sets external orders for given product uid
+     *
+     * @param int $productUid
+     * @param int $orderedExternal
+     * @return bool
+     */
+    public function rkwShopSetOrderedExternalForProduct($productUid, $orderedExternal)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                /** @var \RKW\RkwShop\Domain\Model\Product $product */
+                if ($product = $this->productRepository->findByUid(intval($productUid))) {
+                    $product->setOrderedExternal(intval($orderedExternal));
+                    $this->productRepository->update($product);
+                    $this->persistenceManager->persistAll();
+
+                    return true;
+                }
+
+                return false;
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds stock for given product uid
+     *
+     * @param int $productUid
+     * @param int $amount
+     * @param string $comment
+     * @param int $deliveryStart
+     * @return bool
+     */
+    public function rkwShopAddStockForProduct($productUid, $amount, $comment, $deliveryStart = 0)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                /** @var \RKW\RkwShop\Domain\Model\Product $product */
+                if ($product = $this->productRepository->findByUid($productUid)) {
+
+                    /** @var \RKW\RkwShop\Domain\Model\Stock $stock */
+                    $stock = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
+                    $stock->setAmount(intval($amount));
+                    $stock->setComment($comment);
+                    $stock->setDeliveryStart(intval($deliveryStart));
+
+                    $this->stockRepository->add($stock);
+
+                    $product->addStock($stock);
+                    $this->productRepository->update($product);
+                    $this->persistenceManager->persistAll();
+
+
+                    return true;
+                }
+
+                return false;
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Sets status for given order uid
+     *
+     * @param int $orderUid
+     * @param int $status
+     * @return bool
+     */
+    public function rkwShopSetStatusForOrder($orderUid, $status)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                $validValues = [0, 90, 100, 200];
+
+                /** @var \RKW\RkwShop\Domain\Model\Order $order*/
+                if ($order = $this->orderRepository->findByUid($orderUid)) {
+
+                    if (in_array($status, $validValues)) {
+                        $order->setStatus($status);
+                        $this->orderRepository->update($order);
+                        $this->persistenceManager->persistAll();
+
+                        return true;
+                    }
+                }
+
+                return false;
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Sets deleted for given order uid
+     *
+     * @param int $orderUid
+     * @param int $deleted
+     * @return bool
+     */
+    public function rkwShopSetDeletedForOrder($orderUid, $deleted)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                $validValues = [0, 1];
+
+                /** @var \RKW\RkwShop\Domain\Model\Order $order*/
+                if ($order = $this->orderRepository->findByUid($orderUid)) {
+
+                    if (in_array($deleted, $validValues)) {
+                        $order->setDeleted($deleted);
+                        $this->orderRepository->update($order);
+                        $this->persistenceManager->persistAll();
+
+                        return true;
+                    }
+                }
+
+                return false;
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return false;
+    }
+
+
+
+
 
 
     /**
@@ -594,6 +892,108 @@ class Server
         return array();
     }
 
+
+    /**
+     * Set the status of an order
+     *
+     * @param integer $uid
+     * @param integer $status
+     * @return integer
+     * @deprecated since 08-08-2019
+     */
+    public function setOrderStatus($uid, $status)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+            try {
+
+                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
+                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
+
+                    if (!in_array($status, array(1, 0))) {
+                        $status = 0;
+                    }
+
+                    $order->setStatus(intval($status));
+
+                    $this->orderRepository->update($order);
+                    $this->persistenceManager->persistAll();
+
+                    return 1;
+                    //===
+
+                }
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+
+                return 99;
+                //===
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+
+            return 99;
+            //===
+        }
+
+        return 0;
+        //===
+    }
+
+
+    /**
+     * Set the delete-value of an order
+     *
+     * @param integer $uid
+     * @param integer $deleted
+     * @return integer
+     * @deprecated since 08-08-2019
+     */
+    public function setOrderDeleted($uid, $deleted)
+    {
+
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+            try {
+
+                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
+                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
+
+                    if (!in_array($deleted, array(1, 0))) {
+                        $deleted = 0;
+                    }
+
+                    $order->setDeleted(intval($deleted));
+
+                    $this->orderRepository->update($order);
+                    $this->persistenceManager->persistAll();
+
+                    return 1;
+                    //===
+
+                }
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+
+                return 99;
+                //===
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+
+            return 99;
+            //===
+        }
+
+
+        return 0;
+        //===
+    }
+
+
     /**
      * Returns all existing events by timestamp
      *
@@ -639,7 +1039,7 @@ class Server
                 $results = $this->eventRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
                 //===
 
@@ -686,7 +1086,7 @@ class Server
                 $results = $this->eventPlaceRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
                 //===
 
@@ -741,7 +1141,7 @@ class Server
                 $results = $this->eventReservationRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
                 //===
 
@@ -786,7 +1186,7 @@ class Server
                 $results = $this->eventReservationAddPersonRepository->findByTimestamp($timestamp);
 
                 if ($results) {
-                    return ObjectToArrayUtility::toArray($results, $keys);
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
                 //===
 
@@ -803,103 +1203,6 @@ class Server
     }
 
 
-    /**
-     * Set the status of an order
-     *
-     * @param integer $uid
-     * @param integer $status
-     * @return integer
-     */
-    public function setOrderStatus($uid, $status)
-    {
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
-            try {
-
-                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
-
-                    if (!in_array($status, array(1, 0))) {
-                        $status = 0;
-                    }
-
-                    $order->setStatus(intval($status));
-
-                    $this->orderRepository->update($order);
-                    $this->persistenceManager->persistAll();
-
-                    return 1;
-                    //===
-
-                }
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
-
-                return 99;
-                //===
-            }
-
-        } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
-
-            return 99;
-            //===
-        }
-
-        return 0;
-        //===
-    }
-
-
-    /**
-     * Set the delete-value of an order
-     *
-     * @param integer $uid
-     * @param integer $deleted
-     * @return integer
-     */
-    public function setOrderDeleted($uid, $deleted)
-    {
-
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
-            try {
-
-                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
-                if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
-
-                    if (!in_array($deleted, array(1, 0))) {
-                        $deleted = 0;
-                    }
-
-                    $order->setDeleted(intval($deleted));
-
-                    $this->orderRepository->update($order);
-                    $this->persistenceManager->persistAll();
-
-                    return 1;
-                    //===
-
-                }
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
-
-                return 99;
-                //===
-            }
-
-        } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
-
-            return 99;
-            //===
-        }
-
-
-        return 0;
-        //===
-    }
 
 
     /**

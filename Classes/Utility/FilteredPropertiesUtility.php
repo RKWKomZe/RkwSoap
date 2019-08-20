@@ -17,29 +17,62 @@ use \RKW\RkwBasics\Helper\Common;
  */
 
 /**
- * ObjectToArrayUtility
+ * ObjectToFilteredArrayUtility
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @copyright Rkw Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ObjectToArrayUtility
+class FilteredPropertiesUtility
 {
 
     /**
-     * Builds a multidimensional array from the objects in QueryResultInterface or an array
+     * Builds a multidimensional array from the objects in QueryResultInterface or an array of objects
      *
-     * @param \Traversable $results The query results
+     * @param object|array $results The query results
      * @param array $keys The field names
      * @return array
      */
-    public static function toArray(\Traversable $results, $keys)
+    public static function filter($results, $keys)
     {
 
         $result = array();
-        foreach ($results as $object) {
-            $result[] = self::getPropertiesFromObject($object, $keys);
+        foreach ($results as $objectOrArray) {
+            if ($objectOrArray instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+                $result[] = self::getPropertiesFromObject($objectOrArray, $keys);
+            } else if (is_array($objectOrArray)) {
+                $result[] = self::getPropertiesFromArray($objectOrArray, $keys);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Returns the relevant values depending on the object given
+     *
+     * @param array $dataArray
+     * @param array $propertyArray
+     * @return array
+     */
+    protected static function getPropertiesFromArray($dataArray, $propertyArray)
+    {
+
+        $result = [];
+        foreach ($propertyArray as $property => $subProperties) {
+
+            // if there are no sub-properties to fetch
+            if (
+                (is_numeric($property))
+                && (! is_array($subProperties))
+            ){
+                $property = $subProperties;
+                unset($subProperties);
+            }
+
+            $result[$property] = self::getPropertyFromArray($dataArray, $property, $subProperties);
         }
 
         return $result;
@@ -123,6 +156,36 @@ class ObjectToArrayUtility
     }
 
 
+    /**
+     * Returns the relevant values depending on the object given
+     *
+     * @param array $dataArray
+     * @param string $property
+     * @param array $subProperties
+     * @return mixed
+     */
+    protected static function getPropertyFromArray($dataArray, $property, $subProperties = [])
+    {
+
+        if (isset($dataArray[$property])) {
+
+            if (is_array($dataArray[$property])) {
+
+                self::getPropertiesFromArray($dataArray[$property], $subProperties);
+
+            } else {
+
+                 if (is_bool($dataArray[$property])) {
+                    return intval($dataArray[$property]);
+
+                } else {
+                    return $dataArray[$property];
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Returns the relevant values depending on the object given
@@ -140,16 +203,17 @@ class ObjectToArrayUtility
 
             // is it an object-storage?
             if ($object->$getter() instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
+
                 return self::getPropertiesFromObjectStorage($object->$getter(), $subProperties);
 
-                // is it an object?
+            // is it an object or array?
             } else if ($object->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
 
                 // if we have sub-properties we go and get them as array
                 if (! empty($subProperties)) {
                     return self::getPropertiesFromObject($object->$getter(), $subProperties);
 
-                    // otherwise we return a single value
+                // otherwise we return a single value
                 } else {
                     return self::getDefaultPropertyFromObject($object->$getter());
                 }

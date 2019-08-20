@@ -4,6 +4,8 @@ namespace RKW\RkwSoap\Tests\Functional\Soap;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 
 use \RKW\RkwSoap\Soap\Server;
+use \RKW\RkwShop\Domain\Repository\ProductRepository;
+use \RKW\RkwShop\Domain\Repository\OrderRepository;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -56,6 +58,16 @@ class ServerTest extends FunctionalTestCase
     private $subject = null;
 
     /**
+     * @var \RKW\RkwShop\Domain\Repository\ProductRepository
+     */
+    private $productRepository;
+
+    /**
+     * @var \RKW\RkwShop\Domain\Repository\OrderRepository
+     */
+    private $orderRepository;
+
+    /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
      */
     private $persistenceManager;
@@ -81,6 +93,11 @@ class ServerTest extends FunctionalTestCase
         $this->importDataSet(__DIR__ . '/Fixtures/Database/BeUsers.xml');
         $this->importDataSet(__DIR__ . '/Fixtures/Database/Product.xml');
         $this->importDataSet(__DIR__ . '/Fixtures/Database/Stock.xml');
+        $this->importDataSet(__DIR__ . '/Fixtures/Database/Order.xml');
+        $this->importDataSet(__DIR__ . '/Fixtures/Database/OrderItem.xml');
+        $this->importDataSet(__DIR__ . '/Fixtures/Database/ShippingAddress.xml');
+
+
 
         $this->setUpFrontendRootPage(
             1,
@@ -99,6 +116,9 @@ class ServerTest extends FunctionalTestCase
 
         /** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
+        $this->productRepository = $this->objectManager->get(ProductRepository::class);
+        $this->orderRepository = $this->objectManager->get(OrderRepository::class);
 
         $this->subject = $this->objectManager->get(Server::class);
      }
@@ -192,11 +212,183 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindOrdersByTimestampReturnsOrdersIncludingHiddenAndDeleted()
+    public function rkwShopFindOrdersByTimestampReturnsOrdersIncludingHiddenAndDeletedAndIgnoresStoragePid()
+    {
+        $result = $this->subject->rkwShopFindOrdersByTimestamp(0);
+        $this::assertCount(4, $result);
+    }
+
+
+    /**
+     * @test
+     */
+    public function rkwShopFindOrdersByTimestampGivenTimestampReturnsOrdersWithTstampGreaterThanOrEqualGivenTimestamp()
+    {
+        $result = $this->subject->rkwShopFindOrdersByTimestamp(100);
+        $this::assertCount(2, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function rkwShopFindOrdersByTimestampReturnsOrdersWithShippingAddressWithoutSubArray()
+    {
+        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $this::assertEquals('Emmentaler Allee 15', $result[0]['address']);
+    }
+
+
+    //=============================================
+
+    /**
+     * @test
+     */
+    public function rkwShopFindOrderItemsByOrderGivenOrderUidReturnsOrderItemsOfGivenOrderIodIncludingDeletedAndIgnoresStoragePid()
+    {
+        $result = $this->subject->rkwShopFindOrderItemsByOrder(20);
+        $this::assertCount(3, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function rkwShopFindOrderItemsByOrderGivenOrderUidReturnsOrderItemsWithReferencesToDeletedProducts()
+    {
+        $result = $this->subject->rkwShopFindOrderItemsByOrder(20);
+        $this::assertEquals(3, $result[2]['product']);
+    }
+
+    //=============================================
+
+    /**
+     * @test
+     */
+    public function findOrdersByTimestampReturnsOrderListWithSubscribeValueSetForSubscriptions()
+    {
+        $result = $this->subject->findOrdersByTimestamp(10000);
+        $this::assertEquals(true, $result[0]['subscribe']);
+        $this::assertEquals(false, $result[0]['send_series']);
+
+    }
+
+
+
+    //=============================================
+    /**
+     * @test
+     */
+    public function rkwShopSetOrderedExternalForProductGivenExistingProductAndOrderedExternalReturnsTrueAndSetsGivenOrderedExternalToGivenProduct ()
     {
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp(1);
-        $this::assertCount(5, $result);
+        static::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+
+        /** @var \RKW\RkwShop\Domain\Model\Product $product */
+        $product = $this->productRepository->findByUid(1);
+        self::assertEquals(999, $product->getOrderedExternal());
+
+    }
+
+    //=============================================
+    /**
+     * @test
+     */
+    public function rkwShopSetStatusForOrderGivenExistingOrderAndStatusReturnsTrueAndSetsGivenStatusToOrder ()
+    {
+
+        static::assertTrue($this->subject->rkwShopSetStatusForOrder(10, 100));
+
+        /** @var \RKW\RkwShop\Domain\Model\Order $order */
+        $order = $this->orderRepository->findByUid(10);
+        self::assertEquals(100, $order->getStatus());
+
+    }
+
+    /**
+     * @test
+     */
+    public function rkwShopSetStatusForOrderGivenNonExistingOrderAndStatusReturnsFalse ()
+    {
+
+        static::assertFalse($this->subject->rkwShopSetStatusForOrder(99999999, 0));
+    }
+
+
+    /**
+     * @test
+     */
+    public function rkwShopSetStatusForOrderGivenExistingOrderAndInvalidStatusReturnsFalseAndDoesNotSetGivenStatusToOrder ()
+    {
+
+        static::assertFalse($this->subject->rkwShopSetStatusForOrder(10, 18));
+
+        /** @var \RKW\RkwShop\Domain\Model\Order $order */
+        $order = $this->orderRepository->findByUid(10);
+        self::assertEquals(0, $order->getStatus());
+
+    }
+
+
+
+    //=============================================
+    /**
+     * @test
+     */
+    public function rkwShopSetDeletedForOrderGivenExistingOrderAndStatusReturnsTrueAndSetsDeletedToOrder ()
+    {
+
+        static::assertTrue($this->subject->rkwShopSetDeletedForOrder(10, 1));
+
+        /** @var \RKW\RkwShop\Domain\Model\Order $order */
+        $order = $this->orderRepository->findByUid(10);
+        self::assertEquals(1, $order->getDeleted());
+
+    }
+
+    /**
+     * @test
+     */
+    public function rkwShopSetDeletedForOrderGivenNonExistingOrderAndStatusReturnsFalse ()
+    {
+        static::assertFalse($this->subject->rkwShopSetDeletedForOrder(99999999, 1));
+
+    }
+
+
+    /**
+     * @test
+     */
+    public function rkwShopSetDeletedForOrderGivenExistingOrderAndInvalidStatusReturnsFalseAndDoesNotSetDeletedToOrder ()
+    {
+
+        static::assertFalse($this->subject->rkwShopSetDeletedForOrder(10, 5));
+
+        /** @var \RKW\RkwShop\Domain\Model\Order $order */
+        $order = $this->orderRepository->findByUid(10);
+        self::assertEquals(0, $order->getDeleted());
+
+    }
+
+
+
+    //=============================================
+
+    /**
+     * @test
+     */
+    public function rkwShopAddStockForProductGivenExistingProductAndStockValueReturnsTrueAndAddsStockToProduct ()
+    {
+
+        static::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+
+        /** @var \RKW\RkwShop\Domain\Model\Product $product */
+        $product = $this->productRepository->findByUid(1);
+        $stock = $product->getStock()->toArray();
+
+        self::assertCount(4, $stock);
+
+        self::assertEquals(5, $stock[3]->getAmount());
+        self::assertEquals('Test', $stock[3]->getComment());
+        self::assertEquals(111, $stock[3]->getDeliveryStart());
 
     }
 

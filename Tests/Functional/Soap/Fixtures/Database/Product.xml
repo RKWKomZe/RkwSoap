@@ -58,4 +58,29 @@
         <backend_user>2</backend_user>
         <record_type>\RKW\RkwShop\Domain\Model\ProductSubscription</record_type>
     </tx_rkwshop_domain_model_product>
+
+
+    <!-- Check for deprecated findOrdersByTimestamp -->
+    <tx_rkwshop_domain_model_product>
+        <uid>10</uid>
+        <pid>1</pid>
+        <title>RKW Magazin</title>
+        <subtitle />
+        <admin_email />
+        <stock>1</stock>
+        <backend_user>0</backend_user>
+        <record_type>\RKW\RkwShop\Domain\Model\ProductSubscription</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <tx_rkwshop_domain_model_product>
+        <uid>11</uid>
+        <pid>1</pid>
+        <title>RKW Magazin</title>
+        <subtitle>Ausgabe 3/2019</subtitle>
+        <admin_email />
+        <stock>4</stock>
+        <backend_user>0</backend_user>
+        <record_type>0</record_type>
+        <product_bundle>10</product_bundle>
+    </tx_rkwshop_domain_model_product>
 </dataset>

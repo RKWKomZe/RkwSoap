@@ -33,7 +33,7 @@ plugin.tx_rkwsoap {
             allowedRemoteIpList =
 
             # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentification
-            disableAuthentification = 0
+            disableSecurityChecks = 0
         }
 
 	}
