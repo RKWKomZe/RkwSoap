@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <be_users>
+        <uid>1</uid>
+        <pid>0</pid>
+        <username>Sebastian Kurz</username>
+        <email>test1@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>2</uid>
+        <pid>0</pid>
+        <username>Anneliese Smarty</username>
+        <email>test2@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>3</uid>
+        <pid>0</pid>
+        <username>Clemens Queißner</username>
+        <email>test3@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>4</uid>
+        <pid>0</pid>
+        <username>Gaylord Fucker</username>
+        <email>test4@test.de</email>
+        <lang>de</lang>
+    </be_users>
+</dataset>

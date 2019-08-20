@@ -57,9 +57,10 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
     }
 
     /**
-     * action boxes
+     * action soap
      *
      * @return void
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
      */
     public function soapAction()
     {
@@ -81,19 +82,23 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         // check login
         if (
-            ($_SERVER['PHP_AUTH_USER'] != $this->settings['soapServer']['username'])
-            || ($_SERVER['PHP_AUTH_PW'] != $this->settings['soapServer']['password'])
-            || (
-                ($allowedIps = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->settings['soapServer']['allowedRemoteIpList'], true))
-                && (!in_array($remoteAddr, $allowedIps))
-            )
-        ) {
+            (! $this->settings['soapServer']['disableSecurityChecks'])
+            || (strtolower(\TYPO3\CMS\Core\Utility\GeneralUtility::getApplicationContext()->__toString()) === 'production')
+        ){
+            if (
+                ($_SERVER['PHP_AUTH_USER'] != $this->settings['soapServer']['username'])
+                || ($_SERVER['PHP_AUTH_PW'] != $this->settings['soapServer']['password'])
+                || (
+                    ($allowedIps = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $this->settings['soapServer']['allowedRemoteIpList'], true))
+                    && (!in_array($remoteAddr, $allowedIps))
+                )
+            ) {
 
-            header('WWW-Authenticate: Basic realm="Checking Authentification"');
-            header('HTTP/1.0 401 Unauthorized');
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, sprintf('Login failed for user "%s" from IP %s.', $_SERVER['PHP_AUTH_USER'], $remoteAddr));
-            exit;
-            //===
+                header('WWW-Authenticate: Basic realm="Checking Authentification"');
+                header('HTTP/1.0 401 Unauthorized');
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, sprintf('Login failed for user "%s" from IP %s.', $_SERVER['PHP_AUTH_USER'], $remoteAddr));
+                exit;
+            }
         }
 
         // check if an url is set
@@ -137,7 +142,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         header('Retry-After: 300');
         $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Service unavailable.');
         exit();
-        //===
     }
 
 
@@ -154,7 +158,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         }
 
         return $this->logger;
-        //===
     }
 }
 
