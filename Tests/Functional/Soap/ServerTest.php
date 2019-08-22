@@ -129,18 +129,18 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindAllProductsReturnsProductsIncludingHiddenAndDeletedAndBundlesAndSubscriptions ()
+    public function rkwShopFindAllProducts_ReturnsProductsIncludingHiddenAndDeletedAndBundlesAndSubscriptions ()
     {
 
         $result = $this->subject->rkwShopFindAllProducts();
-        $this::assertCount(5, $result);
+        $this::assertCount(7, $result);
 
     }
 
     /**
      * @test
      */
-    public function rkwShopFindAllProductsReturnsProductsWithCumulatedStocks ()
+    public function rkwShopFindAllProducts_ReturnsProductsWithCumulatedStocks ()
     {
 
         $result = $this->subject->rkwShopFindAllProducts();
@@ -156,7 +156,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindAllProductsReturnsProductsWithCommaSeparatedAdminEmails ()
+    public function rkwShopFindAllProducts_ReturnsProductsWithCommaSeparatedAdminEmails ()
     {
 
         $result = $this->subject->rkwShopFindAllProducts();
@@ -174,11 +174,11 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllPublicationsReturnsProductsIncludingHiddenAndDeletedButWithoutBundlesAndSubscriptions ()
+    public function findAllPublications_ReturnsProductsIncludingHiddenAndDeletedButWithoutBundlesAndSubscriptions ()
     {
 
         $result = $this->subject->findAllPublications();
-        $this::assertCount(3, $result);
+        $this::assertCount(4, $result);
 
     }
 
@@ -186,7 +186,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllPublicationsReturnsProductsInBundlesAsSeries ()
+    public function findAllPublications_ReturnsProductsInBundlesAsSeries ()
     {
 
         $result = $this->subject->findAllPublications();
@@ -199,11 +199,11 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findAllSeriesReturnsProductsIncludingHiddenAndDeletedButOnlyBundlesAndSubscriptions ()
+    public function findAllSeries_ReturnsProductsIncludingHiddenAndDeletedButOnlyBundlesAndSubscriptions ()
     {
 
         $result = $this->subject->findAllSeries();
-        $this::assertCount(2, $result);
+        $this::assertCount(3, $result);
 
     }
 
@@ -212,26 +212,26 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindOrdersByTimestampReturnsOrdersIncludingHiddenAndDeletedAndIgnoresStoragePid()
+    public function rkwShopFindOrdersByTimestamp_GivenNothing_ReturnsOrdersIncludingHiddenAndDeletedAndIgnoresStoragePid()
     {
-        $result = $this->subject->rkwShopFindOrdersByTimestamp(0);
-        $this::assertCount(4, $result);
+        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $this::assertCount(6, $result);
     }
 
 
     /**
      * @test
      */
-    public function rkwShopFindOrdersByTimestampGivenTimestampReturnsOrdersWithTstampGreaterThanOrEqualGivenTimestamp()
+    public function rkwShopFindOrdersByTimestamp_GivenTimestamp_ReturnsOrdersWithTstampGreaterThanOrEqualGivenTimestamp()
     {
         $result = $this->subject->rkwShopFindOrdersByTimestamp(100);
-        $this::assertCount(2, $result);
+        $this::assertCount(3, $result);
     }
 
     /**
      * @test
      */
-    public function rkwShopFindOrdersByTimestampReturnsOrdersWithShippingAddressWithoutSubArray()
+    public function rkwShopFindOrdersByTimestamp_GivenNothing_ReturnsOrdersWithShippingAddressWithoutSubArray()
     {
         $result = $this->subject->rkwShopFindOrdersByTimestamp();
         $this::assertEquals('Emmentaler Allee 15', $result[0]['address']);
@@ -243,7 +243,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindOrderItemsByOrderGivenOrderUidReturnsOrderItemsOfGivenOrderIodIncludingDeletedAndIgnoresStoragePid()
+    public function rkwShopFindOrderItemsByOrder_GivenOrderUid_ReturnsOrderItemsOfGivenOrderIodIncludingDeletedAndIgnoresStoragePid()
     {
         $result = $this->subject->rkwShopFindOrderItemsByOrder(20);
         $this::assertCount(3, $result);
@@ -252,7 +252,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopFindOrderItemsByOrderGivenOrderUidReturnsOrderItemsWithReferencesToDeletedProducts()
+    public function rkwShopFindOrderItemsByOrder_GivenOrderUid_ReturnsOrderItemsWithReferencesToDeletedProducts()
     {
         $result = $this->subject->rkwShopFindOrderItemsByOrder(20);
         $this::assertEquals(3, $result[2]['product']);
@@ -263,7 +263,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function findOrdersByTimestampReturnsOrderListWithSubscribeValueSetForSubscriptions()
+    public function findOrdersByTimestamp_GivenTimestamp_ReturnsOrderListWithSubscribeValueSetForSubscriptions()
     {
         $result = $this->subject->findOrdersByTimestamp(10000);
         $this::assertEquals(true, $result[0]['subscribe']);
@@ -277,7 +277,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetOrderedExternalForProductGivenExistingProductAndOrderedExternalReturnsTrueAndSetsGivenOrderedExternalToGivenProduct ()
+    public function rkwShopSetOrderedExternalForProduct_GivenExistingProductAndOrderedExternal_ReturnsTrueAndSetsGivenOrderedExternalTo_GivenProduct ()
     {
 
         static::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
@@ -292,7 +292,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetStatusForOrderGivenExistingOrderAndStatusReturnsTrueAndSetsGivenStatusToOrder ()
+    public function rkwShopSetStatusForOrder_GivenExistingOrderAndStatus_ReturnsTrueAndSetsGivenStatusToOrder ()
     {
 
         static::assertTrue($this->subject->rkwShopSetStatusForOrder(10, 100));
@@ -306,7 +306,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetStatusForOrderGivenNonExistingOrderAndStatusReturnsFalse ()
+    public function rkwShopSetStatusForOrder_GivenNonExistingOrderAndStatus_ReturnsFalse ()
     {
 
         static::assertFalse($this->subject->rkwShopSetStatusForOrder(99999999, 0));
@@ -316,7 +316,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetStatusForOrderGivenExistingOrderAndInvalidStatusReturnsFalseAndDoesNotSetGivenStatusToOrder ()
+    public function rkwShopSetStatusForOrder_GivenExistingOrderAndInvalidStatus_ReturnsFalseAndDoesNotSetGivenStatusToOrder ()
     {
 
         static::assertFalse($this->subject->rkwShopSetStatusForOrder(10, 18));
@@ -333,7 +333,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetDeletedForOrderGivenExistingOrderAndStatusReturnsTrueAndSetsDeletedToOrder ()
+    public function rkwShopSetDeletedForOrder_GivenExistingOrderAndStatus_ReturnsTrueAndSetsDeletedToOrder ()
     {
 
         static::assertTrue($this->subject->rkwShopSetDeletedForOrder(10, 1));
@@ -347,7 +347,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetDeletedForOrderGivenNonExistingOrderAndStatusReturnsFalse ()
+    public function rkwShopSetDeletedForOrder_GivenNonExistingOrderAndStatus_ReturnsFalse ()
     {
         static::assertFalse($this->subject->rkwShopSetDeletedForOrder(99999999, 1));
 
@@ -357,7 +357,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopSetDeletedForOrderGivenExistingOrderAndInvalidStatusReturnsFalseAndDoesNotSetDeletedToOrder ()
+    public function rkwShopSetDeletedForOrder_GivenExistingOrderAndInvalidStatus_ReturnsFalseAndDoesNotSetDeletedToOrder ()
     {
 
         static::assertFalse($this->subject->rkwShopSetDeletedForOrder(10, 5));
@@ -375,7 +375,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function rkwShopAddStockForProductGivenExistingProductAndStockValueReturnsTrueAndAddsStockToProduct ()
+    public function rkwShopAddStockForProduct_GivenExistingProductAndStockValue_ReturnsTrueAndAddsStockToProduct ()
     {
 
         static::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
