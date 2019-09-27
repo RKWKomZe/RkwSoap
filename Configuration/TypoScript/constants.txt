@@ -14,11 +14,7 @@ plugin.tx_rkwsoap {
 
 	settings {
 
-
         soapServer {
-
-			# cat=plugin.tx_rkwsoap//a; type=integer; label=Disables all security checks - BE CAREFUL WITH THIS OPTION!
-			disableSecurityChecks =
 
             # cat=plugin.tx_rkwsoap//a; type=string; label=Username for SOAP Server Login
             username =
