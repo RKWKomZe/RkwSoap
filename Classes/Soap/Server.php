@@ -396,6 +396,7 @@ class Server
                     $seriesTitle = null;
 
                     /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItemDefault */
+                    $cnt = 0;
                     foreach ($orderItemDefaults as $orderItemDefault) {
 
                         // has a bundle?
@@ -416,7 +417,7 @@ class Server
 
                         // now build order the old way:
                         $orderOld = [
-                            'uid'           => $orderItemDefault->getOrder()->getUid(),
+                            'uid'           => $orderItemDefault->getOrder()->getUid() + $cnt,
                             'crdate'        => $orderItemDefault->getOrder()->getCrdate(),
                             'tstamp'        => $orderItemDefault->getOrder()->getTstamp(),
                             'hidden'        => $orderItemDefault->getOrder()->getHidden(),
@@ -441,6 +442,7 @@ class Server
                         ];
 
                         $finalResults[] = $orderOld;
+                        $cnt += 100000;
                     }
                 }
 
