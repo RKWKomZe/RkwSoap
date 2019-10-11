@@ -8,12 +8,12 @@ if (!defined('TYPO3_MODE')) {
     'RKW.' . $_EXTKEY,
     'Rkwsoap',
     array(
-        'Soap' => 'soap',
+        'Soap' => 'soap, wsdl',
 
     ),
     // non-cacheable actions
     array(
-        'Soap' => 'soap',
+        'Soap' => 'soap, wsdl',
     )
 );
 
