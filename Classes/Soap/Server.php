@@ -539,8 +539,13 @@ class Server
 
                     // add shipping address without sub-array
                     foreach ($finalResults as &$finalResult) {
-                        $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
-                        unset($finalResult['shipping_address']);
+                        if (
+                            (isset($finalResult['shipping_address']))
+                            && (is_array($finalResult['shipping_address']))
+                        ) {
+                            $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+                            unset($finalResult['shipping_address']);
+                        }
                     }
 
                     return $finalResults;
