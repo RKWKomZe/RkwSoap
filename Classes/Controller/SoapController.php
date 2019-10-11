@@ -43,7 +43,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         // check if an url is set
         if ($this->settings['soapServer']['url']) {
             $this->view->assign('url', $this->settings['soapServer']['url']);
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::INFO, sprintf('Successfull WSDL request.'));
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::INFO, sprintf('Successful WSDL request from IP %s.', $this->getRemoteIp()));
 
         } else {
 
@@ -55,6 +55,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             //===
         }
     }
+ 
 
     /**
      * action soap
@@ -71,13 +72,15 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         // include authentification for PHP-CGI
         list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
 
-        // proof remote addr
-        $remoteAddr = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
-        if ($_SERVER['HTTP_X_FORWARDED_FOR']) {
-            $ips = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            if ($ips[0]) {
-                $remoteAddr = filter_var($ips[0], FILTER_VALIDATE_IP);
-            }
+        // get remote addr
+        $remoteAddr = $this->getRemoteIp();
+
+        // only WSDL wanted?
+        if (isset($_GET['wsdl'])) {
+            
+            $this->forward('wsdl');
+            exit();
+            //===
         }
 
         // check login
@@ -103,14 +106,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         // check if an url is set
         if ($this->settings['soapServer']['url']) {
-
-            if (isset($_GET['wsdl'])) {
-                $this->forward('wsdl');
-
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::INFO, sprintf('Successfull WSDL request from IP %s.', $remoteAddr));
-                exit();
-                //===
-            }
 
             try {
 
@@ -142,6 +137,27 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         header('Retry-After: 300');
         $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Service unavailable.');
         exit();
+    }
+
+
+    /**
+     * Returns remote IP
+     *
+     * @return string
+     */
+    protected function getRemoteIp()
+    {
+
+        // proof remote addr
+        $remoteAddr = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
+        if ($_SERVER['HTTP_X_FORWARDED_FOR']) {
+            $ips = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            if ($ips[0]) {
+                $remoteAddr = filter_var($ips[0], FILTER_VALIDATE_IP);
+            }
+        }
+
+        return $remoteAddr;
     }
 
 

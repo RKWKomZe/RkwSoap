@@ -54,7 +54,7 @@
         <title>Leitfaden deluxe</title>
         <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
         <admin_email>test3@test.de</admin_email>
-        <stock>7</stock>
+        <stock />
         <backend_user>2</backend_user>
         <record_type>\RKW\RkwShop\Domain\Model\ProductSubscription</record_type>
     </tx_rkwshop_domain_model_product>

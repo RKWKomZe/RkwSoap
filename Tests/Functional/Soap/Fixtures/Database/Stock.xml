@@ -51,12 +51,5 @@
         <comment>Auf- und Unterlage</comment>
     </tx_rkwshop_domain_model_stock>
 
-    <tx_rkwshop_domain_model_stock>
-        <uid>7</uid>
-        <pid>1</pid>
-        <product>5</product>
-        <amount>19</amount>
-        <comment>Auf- und Unterlage</comment>
-    </tx_rkwshop_domain_model_stock>
 
 </dataset>

@@ -149,7 +149,7 @@ class ServerTest extends FunctionalTestCase
         $this::assertEquals(50, $result[1]['stock']);
         $this::assertEquals(53, $result[2]['stock']);
         $this::assertEquals(54, $result[3]['stock']);
-        $this::assertEquals(19, $result[4]['stock']);
+        $this::assertEquals(0, $result[4]['stock']);
 
     }
 

@@ -119,6 +119,7 @@ TxRkwSoapSoapPage {
 			# Again: Controller-Name and Action
 			Soap {
 				1 = soap
+				2 = wsdl
 			}
 		}
 
