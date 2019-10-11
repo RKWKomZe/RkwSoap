@@ -42,6 +42,12 @@ class Server
      */
     protected $frontendUserGroupRepository;
 
+    /**
+     * shippingAddressRepository
+     *
+     * @var \RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository
+     */
+    protected $shippingAddressRepository;
 
     /**
      * orderRepository
@@ -133,6 +139,7 @@ class Server
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
             $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
             $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
+            $this->shippingAddressRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository');
         } else {
             $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
             $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
@@ -240,7 +247,31 @@ class Server
             }
 
             /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-            $results = $this->frontendUserRepository->findByTimestamp($timestamp);
+            $results = $this->frontendUserRepository->findByTimestamp($timestamp, false);
+
+            // get basic data from shipping address if nothing is set in account
+            if ($this->shippingAddressRepository) {
+
+                /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
+                foreach ($results as $result) {
+                    if (
+                        (! $result->getFirstName())
+                        && (! $result->getLastName())
+                    ){
+
+                        /** @var \RKW\RkwRegistration\Domain\Model\ShippingAddress $shippingAddress */
+                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
+                            $result->setTxRkwregistrationGender($shippingAddress->getGender());
+                            $result->setFirstName($shippingAddress->getFirstName());
+                            $result->setLastName($shippingAddress->getLastName());
+                            $result->setAddress($shippingAddress->getAddress());
+                            $result->setZip($shippingAddress->getZip());
+                            $result->setCity($shippingAddress->getCity());
+                            $result->setCompany($shippingAddress->getCompany());
+                        }
+                    }
+                }
+            }
 
             if ($results) {
                 return FilteredPropertiesUtility::filter($results, $keys);
