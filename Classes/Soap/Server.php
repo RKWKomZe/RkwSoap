@@ -180,6 +180,7 @@ class Server
     public function findFeUserByTimestamp($timestamp)
     {
 
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findFeUsersByTimestamp($timestamp);
         //===
     }
@@ -297,7 +298,7 @@ class Server
      */
     public function findFeUserGroupByTimestamp($timestamp, $serviceOnly = 0)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
         //===
     }
@@ -366,7 +367,7 @@ class Server
      */
     public function findOrderByTimestamp($timestamp)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findOrdersByTimestamp($timestamp);
         //===
     }
@@ -381,7 +382,7 @@ class Server
      */
     public function findOrdersByTimestamp($timestamp)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
@@ -839,7 +840,7 @@ class Server
      */
     public function findAllPublications()
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -885,7 +886,7 @@ class Server
      */
     public function findAllSeries()
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -936,7 +937,7 @@ class Server
      */
     public function setOrderStatus($uid, $status)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
@@ -986,7 +987,7 @@ class Server
      */
     public function setOrderDeleted($uid, $deleted)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
