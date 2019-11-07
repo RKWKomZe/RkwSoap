@@ -84,8 +84,8 @@ plugin.tx_rkwsoap  {
 // #########################################################
 // AJAX Configuration
 // #########################################################
-TxRkwSoapSoapPage = PAGE
-TxRkwSoapSoapPage {
+txRkwSoapSoapPage = PAGE
+txRkwSoapSoapPage {
 
 
 	typeNum = 1445105145
