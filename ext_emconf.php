@@ -10,9 +10,9 @@
  * "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
 	'title' => 'RKW SOAP',
-	'description' => 'SOAP Schnittstelle',
+	'description' => 'SOAP API',
 	'category' => 'plugin',
 	'author' => 'Steffen Kroggel',
 	'author_email' => 'developer@steffenkroggel.de',
@@ -21,24 +21,22 @@ $EM_CONF[$_EXTKEY] = array(
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 0,
-	'version' => '7.6.11',
-	'constraints' => array(
-		'depends' => array(
+	'version' => '8.7.0',
+	'constraints' => [
+		'depends' => [
 			'typo3' => '7.6.0-8.7.99',
-			'extbase' => '7.6.0-8.7.99',
-			'fluid' => '7.6.0-8.7.99',
-		),
-		'conflicts' => array(
+		],
+		'conflicts' => [
             'rkw_basics' => '7.6.0-8.7.1',
             'rkw_mailer' => '7.6.0-8.7.1',
             'rkw_order' => '',
             'rkw_registration' => '7.6.0-8.7.4'
-		),
-		'suggests' => array(
+		],
+		'suggests' => [
             'rkw_basics' => '8.7.2-8.7.99',
             'rkw_mailer' => '8.7.1-8.7.99',
-            'rkw_shop' => '7.6.0-7.6.99',
+            'rkw_shop' => '7.6.0-8.7.99',
             'rkw_registration' => '8.7.5-8.7.99'
-		),
-	),
-);
+		],
+	],
+];
