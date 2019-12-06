@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <dataset>
+
+    <!-- products -->
+    <tx_rkwshop_domain_model_product>
+        <uid>1</uid>
+        <pid>1</pid>
+        <title>Leitfaden deluxe</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email />
+        <stock>1,2,3</stock>
+        <backend_user />
+        <record_type>0</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <tx_rkwshop_domain_model_product>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Leitfaden Ohne Admin-Mails</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email />
+        <stock>4</stock>
+        <backend_user />
+        <record_type>0</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <tx_rkwshop_domain_model_product>
+        <uid>3</uid>
+        <pid>1</pid>
+        <title>Leitfaden mit invalider Ersatz-Admin-Mail</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email />
+        <stock>5,6</stock>
+        <backend_user />
+    </tx_rkwshop_domain_model_product>
+
+
+    <!-- stocks -->
     <tx_rkwshop_domain_model_stock>
         <uid>1</uid>
         <pid>1</pid>
@@ -46,10 +82,10 @@
     <tx_rkwshop_domain_model_stock>
         <uid>6</uid>
         <pid>1</pid>
-        <product>4</product>
-        <amount>54</amount>
+        <product>3</product>
+        <amount>77</amount>
         <comment>Auf- und Unterlage</comment>
+        <deleted>1</deleted>
     </tx_rkwshop_domain_model_stock>
-
 
 </dataset>

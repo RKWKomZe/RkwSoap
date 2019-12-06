@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <!-- products -->
+    <tx_rkwshop_domain_model_product>
+        <uid>1</uid>
+        <pid>1</pid>
+        <title>Leitfaden deluxe</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email>test3@test.de</admin_email>
+        <stock />
+        <backend_user>1,2,3</backend_user>
+        <record_type>0</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <tx_rkwshop_domain_model_product>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Leitfaden Ohne Admin-Mails</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email>fallback-invalid</admin_email>
+        <stock />
+        <backend_user />
+        <record_type>0</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <tx_rkwshop_domain_model_product>
+        <uid>3</uid>
+        <pid>1</pid>
+        <title>Leitfaden mit invalider Ersatz-Admin-Mail</title>
+        <subtitle>Mit Unterüberschriften kann man alles länger machen</subtitle>
+        <admin_email>test3@test.de</admin_email>
+        <stock />
+        <backend_user>1,2</backend_user>
+        <record_type>0</record_type>
+    </tx_rkwshop_domain_model_product>
+
+    <!-- BE-User -->
+    <be_users>
+        <uid>1</uid>
+        <pid>0</pid>
+        <username>Sebastian Kurz</username>
+        <email>test1@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>2</uid>
+        <pid>0</pid>
+        <username>Anneliese Smarty</username>
+        <email>test2@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>3</uid>
+        <pid>0</pid>
+        <username>Clemens Queißner</username>
+        <email>test3@test.de</email>
+        <lang>de</lang>
+    </be_users>
+    <be_users>
+        <uid>4</uid>
+        <pid>0</pid>
+        <username>Gaylord Fucker</username>
+        <email>test4@test.de</email>
+        <lang>de</lang>
+    </be_users>
+</dataset>

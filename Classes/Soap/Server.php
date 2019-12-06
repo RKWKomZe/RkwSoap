@@ -540,7 +540,10 @@ class Server
 
                     // add shipping address without sub-array
                     foreach ($finalResults as &$finalResult) {
-                        $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+
+                        if (is_array($finalResult['shipping_address'])) {
+                            $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+                        }
                         unset($finalResult['shipping_address']);
                     }
 
@@ -674,7 +677,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid(intval($productUid))) {
+                if ($product = $this->productRepository->findByUidSoap(intval($productUid))) {
                     $product->setOrderedExternal(intval($orderedExternal));
                     $this->productRepository->update($product);
                     $this->persistenceManager->persistAll();
@@ -712,7 +715,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid($productUid)) {
+                if ($product = $this->productRepository->findByUidSoap($productUid)) {
 
                     /** @var \RKW\RkwShop\Domain\Model\Stock $stock */
                     $stock = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
@@ -761,8 +764,7 @@ class Server
                 $validValues = [0, 90, 100, 200];
 
                 /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
-
+                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
                     if (in_array($status, $validValues)) {
                         $order->setStatus($status);
                         $this->orderRepository->update($order);
@@ -803,7 +805,7 @@ class Server
                 $validValues = [0, 1];
 
                 /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
+                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
 
                     if (in_array($deleted, $validValues)) {
                         $order->setDeleted($deleted);
