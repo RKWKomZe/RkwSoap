@@ -40,6 +40,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function wsdlAction()
     {
+
         // check if an url is set
         if ($this->settings['soapServer']['url']) {
             $this->view->assign('url', $this->settings['soapServer']['url']);
