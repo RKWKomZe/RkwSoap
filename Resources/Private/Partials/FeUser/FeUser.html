@@ -59,6 +59,13 @@
     <message name="findFeUsersByTimestampResponse">
         <part name="return" type="FeUserList"/>
     </message>
+
+    <message name="findFeUserByUidRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findFeUserByUidResponse">
+        <part name="return" type="FeUser"/>
+    </message>
 </f:section>
 
 <!-- ========================================================================= -->
@@ -74,6 +81,11 @@
     <operation name="findFeUsersByTimestamp">
         <input message="tns:findFeUsersByTimestampRequest"/>
         <output message="tns:findFeUsersByTimestampResponse"/>
+    </operation>
+
+    <operation name="findFeUserByUid">
+        <input message="tns:findFeUserByUidRequest"/>
+        <output message="tns:findFeUserByUidResponse"/>
     </operation>
 </f:section>
 
@@ -98,6 +110,17 @@
         <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findFeUsersByTimestamp"/>
         <input>
             <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+    <operation name="findFeUserByUid">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findFeUserByUid"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
         </input>
 
         <output>

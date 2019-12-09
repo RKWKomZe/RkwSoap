@@ -46,6 +46,10 @@ class FilteredPropertiesUtility
             }
         }
 
+        if ($results instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+            $result = self::getPropertiesFromObject($results, $keys);
+        }
+
         return $result;
     }
 

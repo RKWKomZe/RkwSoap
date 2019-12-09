@@ -37,6 +37,14 @@
         <part name="return" type="rkwShopOrderItemsList"/>
     </message>
 
+    <message name="rkwShopSetStatusForOrderItemRequest">
+        <part name="orderItemUid" type="xsd:int"/>
+        <part name="status" type="xsd:int"/>
+    </message>
+    <message name="rkwShopSetStatusForOrderItemResponse">
+        <part name="return" type="xsd:int"/>
+    </message>
+
 
 </f:section>
 
@@ -49,6 +57,11 @@
         <output message="tns:rkwShopFindOrderItemsByOrderResponse"/>
     </operation>
 
+    <operation name="rkwShopSetStatusForOrderItem">
+        <input message="tns:rkwShopSetStatusForOrderItemRequest"/>
+        <output message="tns:rkwShopSetStatusForOrderItemResponse"/>
+    </operation>
+
 </f:section>
 
 
@@ -58,6 +71,17 @@
 
     <operation name="rkwShopFindOrderItemsByOrder">
         <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#rkwShopFindOrderItemsByOrder"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+    <operation name="rkwShopSetStatusForOrderItem">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#rkwShopSetStatusForOrderItem"/>
         <input>
         <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
         </input>

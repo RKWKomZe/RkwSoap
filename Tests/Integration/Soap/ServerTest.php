@@ -4,8 +4,11 @@ namespace RKW\RkwSoap\Tests\Integration\Soap;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 
 use \RKW\RkwSoap\Soap\Server;
+use \RKW\RkwSoap\Domain\Repository\FrontendUserRepository;
+
 use \RKW\RkwShop\Domain\Repository\ProductRepository;
 use \RKW\RkwShop\Domain\Repository\OrderRepository;
+use \RKW\RkwShop\Domain\Repository\OrderItemRepository;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -58,6 +61,11 @@ class ServerTest extends FunctionalTestCase
     private $subject = null;
 
     /**
+     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository
+     */
+    private $frontendUserRepository;
+
+    /**
      * @var \RKW\RkwShop\Domain\Repository\ProductRepository
      */
     private $productRepository;
@@ -66,6 +74,12 @@ class ServerTest extends FunctionalTestCase
      * @var \RKW\RkwShop\Domain\Repository\OrderRepository
      */
     private $orderRepository;
+
+    /**
+     * @var \RKW\RkwShop\Domain\Repository\OrderItemRepository
+     */
+    private $orderItemRepository;
+
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
@@ -108,6 +122,8 @@ class ServerTest extends FunctionalTestCase
 
         $this->productRepository = $this->objectManager->get(ProductRepository::class);
         $this->orderRepository = $this->objectManager->get(OrderRepository::class);
+        $this->orderItemRepository = $this->objectManager->get(OrderItemRepository::class);
+        $this->frontendUserRepository = $this->objectManager->get(FrontendUserRepository::class);
 
         $this->subject = $this->objectManager->get(Server::class);
      }
@@ -501,7 +517,7 @@ class ServerTest extends FunctionalTestCase
      * @test
      * @throws \Exception
      */
-    public function rkwShopSetStatusForOrderSetsGivenStatusToOrder ()
+    public function rkwShopSetStatusForOrderSetsGivenStatus ()
     {
 
         /**
@@ -567,7 +583,7 @@ class ServerTest extends FunctionalTestCase
      * @test
      * @throws \Exception
      */
-    public function rkwShopSetStatusForOrderSetsGivenStatusToOrderIfOrderIsDeleted ()
+    public function rkwShopSetStatusForOrderSetsGivenStatusIfOrderIsDeleted ()
     {
 
         /**
@@ -587,7 +603,6 @@ class ServerTest extends FunctionalTestCase
         self::assertEquals(100, $order->getStatus());
 
     }
-
 
 
     //=============================================
@@ -752,8 +767,245 @@ class ServerTest extends FunctionalTestCase
 
     }
 
+
+
+    //=============================================
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function rkwShopSetStatusForOrderItemSetsGivenStatus ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a order item
+         * When I set a valid status for that order item
+         * Then true is returned
+         * Then the value is stored in the database
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check200.xml');
+
+        static::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+
+        /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
+        $orderItem = $this->orderItemRepository->findByUid(1);
+        self::assertEquals(100, $orderItem->getStatus());
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function rkwShopSetStatusForOrderItemChecksForValidStatusCodes ()
+    {
+        /**
+         * Scenario:
+         *
+         * Given there is a order item
+         * When I set an invalid status for that order item
+         * Then false is returned
+         * Then the value is not stored in the database
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check200.xml');
+
+        static::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 99999));
+
+        /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
+        $orderItem = $this->orderItemRepository->findByUid(1);
+        self::assertEquals(0, $orderItem->getStatus());
+    }
+
+
+    /**
+     * @test
+     */
+    public function rkwShopSetStatusForOrderItemChecksForExistingOrderItems ()
+    {
+        /**
+         * Scenario:
+         *
+         * Given there no order item
+         * When I set a valid status for a non-existing order item
+         * Then false is returned
+         */
+        static::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function rkwShopSetStatusForOrderItemSetsGivenStatusIfOrderItemIsDeleted ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a deleted order item
+         * When I set a valid status for that order item
+         * Then true is returned
+         * Then the value is stored in the database
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check210.xml');
+
+        static::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+
+        /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
+        $orderItem = $this->orderItemRepository->findByUid(1);
+        self::assertEquals(100, $orderItem->getStatus());
+
+    }
+
     //=============================================
 
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findFeUserByUidIncludesDeletedFrontendUser()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a frontend user
+         * Given the frontend user is deleted
+         * When I fetch the frontend user by uid
+         * Then the frontend user is returned
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check220.xml');
+
+        $result = $this->subject->findFeUserByUid(1);
+
+        static::assertNotNull($result);
+        static::assertEquals(1, $result['uid']);
+
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findFeUserByUidIncludesDisabledFrontendUser()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a frontend user
+         * Given the frontend user is disabled
+         * When I fetch the frontend user by uid
+         * Then the frontend user is returned
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check230.xml');
+
+        $result = $this->subject->findFeUserByUid(1);
+
+        static::assertNotNull($result);
+        static::assertEquals(1, $result['uid']);
+
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findFeUserByUidIgnoresStoragePid ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a frontend user
+         * Given the frontend user has a different storage pid
+         * When I fetch the frontend user by uid
+         * Then the frontend user is returned
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check240.xml');
+
+        $result = $this->subject->findFeUserByUid(1);
+
+        static::assertNotNull($result);
+        static::assertEquals(1, $result['uid']);
+
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findFeUserByUidReturnsAddressDetails ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a frontend user
+         * Given the frontend user has a shipping address
+         * Given the frontend user has a first name and a last name set
+         * Given the frontend user has address details
+         * When I fetch the frontend user by uid
+         * Then the details of the frontend user are returned
+         * Then the shipping address of the frontend user is ignored
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check250.xml');
+
+        $result = $this->subject->findFeUserByUid(1);
+
+        static::assertNotNull($result);
+        static::assertEquals(1, $result['uid']);
+        static::assertEquals('Karl', $result['first_name']);
+        static::assertEquals('Lauterbach', $result['last_name']);
+        static::assertEquals('SPD', $result['company']);
+        static::assertEquals('Wilhelmstraße 141', $result['address']);
+        static::assertEquals('10963', $result['zip']);
+        static::assertEquals('Berlin', $result['city']);
+
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findFeUserByUidReturnsShippingAddressIfThereIsNoNameSet()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a frontend user
+         * Given the frontend user has a shipping address
+         * Given the frontend user has no first name and no last name set
+         * Given the frontend user has address details
+         * When I fetch the frontend user by uid
+         * Then the shipping address overrides name and address data
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check260.xml');
+
+        $result = $this->subject->findFeUserByUid(1);
+
+        static::assertNotNull($result);
+        static::assertEquals(1, $result['uid']);
+        static::assertEquals('Johannes', $result['first_name']);
+        static::assertEquals('Spacko', $result['last_name']);
+        static::assertEquals('', $result['company']);
+        static::assertEquals('Emmentaler Allee 15', $result['address']);
+        static::assertEquals('12345', $result['zip']);
+        static::assertEquals('Gauda', $result['city']);
+
+    }
+    //=============================================
 
     /**
      * TearDown
