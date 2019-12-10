@@ -50,6 +50,7 @@
         <part name="return" type="OrderList"/>
     </message>
 
+    <!-- DEPRECATED -->
     <message name="findOrdersByTimestampRequest">
         <part name="timestamp" type="xsd:int"/>
     </message>
@@ -57,6 +58,7 @@
         <part name="return" type="OrderList"/>
     </message>
 
+    <!-- DEPRECATED -->
     <message name="setOrderStatusRequest">
         <part name="uid" type="xsd:int"/>
         <part name="status" type="xsd:int"/>
@@ -65,6 +67,7 @@
         <part name="return" type="xsd:int"/>
     </message>
 
+    <!-- DEPRECATED -->
     <message name="setOrderDeletedRequest">
         <part name="uid" type="xsd:int"/>
         <part name="deleted" type="xsd:int"/>
@@ -85,16 +88,19 @@
         <output message="tns:findOrderByTimestampResponse"/>
     </operation>
 
+    <!-- DEPRECATED -->
     <operation name="findOrdersByTimestamp">
         <input message="tns:findOrdersByTimestampRequest"/>
         <output message="tns:findOrdersByTimestampResponse"/>
     </operation>
 
+    <!-- DEPRECATED -->
     <operation name="setOrderStatus">
         <input message="tns:setOrderStatusRequest"/>
         <output message="tns:setOrderStatusResponse"/>
     </operation>
 
+    <!-- DEPRECATED -->
     <operation name="setOrderDeleted">
         <input message="tns:setOrderDeletedRequest"/>
         <output message="tns:setOrderDeletedResponse"/>

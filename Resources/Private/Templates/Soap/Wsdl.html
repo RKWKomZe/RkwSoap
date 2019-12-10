@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="Server"
 			 targetNamespace="{url}/rkw/rkwsoap/soap/server"
-			 xmlns:tns="{url}/rkw/rkwsoap/soap/server"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:tns="{url}/rkw/rkwsoap/soap/server"
 			 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 			 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 			 xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-			 xmlns="http://schemas.xmlsoap.org/wsdl/"
 			 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 			 xmlns:ns="{url}/rkw/rkwsoap/soap/server/types">
 
-	<!-- ################################################################################### -->
+    <!-- This is WSDL Version 1.1 -->
+
+    <!-- ################################################################################### -->
 	<!-- describes all the data types used between the client and the server -->
 	<types>
         <f:render partial="FeUser/FeUser" section="Types" arguments="{_all}" />
@@ -24,6 +26,7 @@
         <f:render partial="Event/EventPlace" section="Types" arguments="{_all}" />
         <f:render partial="Event/EventReservation" section="Types" arguments="{_all}" />
         <f:render partial="Event/EventReservationAddPerson" section="Types" arguments="{_all}" />
+        <f:render partial="Global/Version" section="Types" arguments="{_all}" />
     </types>
 
 	<!-- ################################################################################### -->
@@ -40,6 +43,8 @@
     <f:render partial="Event/EventPlace" section="Messages" arguments="{_all}" />
     <f:render partial="Event/EventReservation" section="Messages" arguments="{_all}" />
     <f:render partial="Event/EventReservationAddPerson" section="Messages" arguments="{_all}" />
+    <f:render partial="Global/Version" section="Messages" arguments="{_all}" />
+
 
     <!-- ################################################################################### -->
 	<!-- defines operations with their input and output messages-->
@@ -56,12 +61,14 @@
         <f:render partial="Event/EventPlace" section="PortTypes" arguments="{_all}" />
         <f:render partial="Event/EventReservation" section="PortTypes" arguments="{_all}" />
         <f:render partial="Event/EventReservationAddPerson" section="PortTypes" arguments="{_all}" />
+        <f:render partial="Global/Version" section="PortTypes" arguments="{_all}" />
     </portType>
 
 	<!-- ################################################################################### -->
 	<!-- defines how to transmit the communication over wire -->
 	<binding name="ServerBinding" type="tns:ServerPortType">
-		<!-- setting soap as envelope -->
+
+        <!-- setting soap as envelope -->
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
 
 		<!-- set encoding for operation -->
@@ -77,6 +84,7 @@
         <f:render partial="Event/EventPlace" section="Bindings" arguments="{_all}" />
         <f:render partial="Event/EventReservation" section="Bindings" arguments="{_all}" />
         <f:render partial="Event/EventReservationAddPerson" section="Bindings" arguments="{_all}" />
+        <f:render partial="Global/Version" section="Bindings" arguments="{_all}" />
     </binding>
 
 	<!-- finally defines the service and the port -->
