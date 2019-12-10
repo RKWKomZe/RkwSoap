@@ -46,6 +46,10 @@ class FilteredPropertiesUtility
             }
         }
 
+        if ($results instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+            $result = self::getPropertiesFromObject($results, $keys);
+        }
+
         return $result;
     }
 
@@ -100,7 +104,6 @@ class FilteredPropertiesUtility
                 $property = $subProperties;
                 unset($subProperties);
             }
-
             $result[$property] = self::getPropertyFromObject($object, $property, $subProperties);
         }
 
@@ -198,13 +201,20 @@ class FilteredPropertiesUtility
     protected static function getPropertyFromObject(\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object, $property, $subProperties = [])
     {
 
+        if (strpos($property, 'ext_') === 0) {
+            $property = substr($property, 4);
+        }
         $getter = 'get' . ucFirst(Common::camelize($property));
         if (method_exists($object, $getter)) {
 
             // is it an object-storage?
             if ($object->$getter() instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
 
-                return self::getPropertiesFromObjectStorage($object->$getter(), $subProperties);
+                if (count($object->$getter()) > 0) {
+                    return self::getPropertiesFromObjectStorage($object->$getter(), $subProperties);
+                } else {
+                    return 0;
+                }
 
             // is it an object or array?
             } else if ($object->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {

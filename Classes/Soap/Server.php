@@ -34,7 +34,6 @@ class Server
      */
     protected $frontendUserRepository;
 
-
     /**
      * frontendUserGroupRepository
      *
@@ -170,6 +169,20 @@ class Server
 
 
     /**
+     * Returns current version
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     * @throws \TYPO3\CMS\Core\Package\Exception
+     */
+    public function getVersion()
+    {
+        return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getExtensionVersion('rkw_soap');
+        //===
+    }
+
+
+    /**
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUsersByTimestamp
      *
@@ -180,6 +193,7 @@ class Server
     public function findFeUserByTimestamp($timestamp)
     {
 
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findFeUsersByTimestamp($timestamp);
         //===
     }
@@ -286,6 +300,115 @@ class Server
         //===
     }
 
+
+    /**
+     * Returns a FE-users by uid
+     *
+     * @param integer $uid
+     * @return array
+     */
+    public function findFeUserByUid($uid)
+    {
+
+        try {
+
+            $keys = array(
+                'uid',
+                'crdate',
+                'tstamp',
+                'disable',
+                'deleted',
+                'username',
+                'usergroup',
+                'company',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'address',
+                'zip',
+                'city',
+                'telephone',
+                'fax',
+                'email',
+                'www',
+            );
+
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+
+                $keys = array(
+                    'uid',
+                    'crdate',
+                    'tstamp',
+                    'disable',
+                    'deleted',
+                    'username',
+                    'usergroup',
+                    'company',
+                    'tx_rkwregistration_gender',
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'address',
+                    'zip',
+                    'city',
+                    'telephone',
+                    'fax',
+                    'email',
+                    'www',
+                    'tx_rkwregistration_facebook_url',
+                    'tx_rkwregistration_twitter_url',
+                    'tx_rkwregistration_xing_url',
+
+                );
+            }
+
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+
+                /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
+                $result = $this->frontendUserRepository->findByUidSoap($uid);
+
+            } else {
+
+                /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
+                $result = $this->frontendUserRepository->findByUid($uid);
+            }
+
+            if ($result) {
+
+                // get basic data from shipping address if nothing is set in account
+                if ($this->shippingAddressRepository) {
+
+                    /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
+                    if (
+                        (! $result->getFirstName())
+                        && (! $result->getLastName())
+                    ){
+
+                        /** @var \RKW\RkwRegistration\Domain\Model\ShippingAddress $shippingAddress */
+                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
+                            $result->setTxRkwregistrationGender($shippingAddress->getGender());
+                            $result->setFirstName($shippingAddress->getFirstName());
+                            $result->setLastName($shippingAddress->getLastName());
+                            $result->setAddress($shippingAddress->getAddress());
+                            $result->setZip($shippingAddress->getZip());
+                            $result->setCity($shippingAddress->getCity());
+                            $result->setCompany($shippingAddress->getCompany());
+                        }
+                    }
+
+                }
+
+                return FilteredPropertiesUtility::filter($result, $keys);
+            }
+
+        } catch (\Exception $e) {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+        }
+
+        return array();
+        //===
+    }
+
     /**
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUserGroupsByTimestamp
@@ -297,7 +420,7 @@ class Server
      */
     public function findFeUserGroupByTimestamp($timestamp, $serviceOnly = 0)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
         //===
     }
@@ -366,7 +489,7 @@ class Server
      */
     public function findOrderByTimestamp($timestamp)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         return $this->findOrdersByTimestamp($timestamp);
         //===
     }
@@ -381,7 +504,7 @@ class Server
      */
     public function findOrdersByTimestamp($timestamp)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
@@ -539,8 +662,13 @@ class Server
 
                     // add shipping address without sub-array
                     foreach ($finalResults as &$finalResult) {
-                        $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
-                        unset($finalResult['shipping_address']);
+                        if (
+                            (isset($finalResult['shipping_address']))
+                            && (is_array($finalResult['shipping_address']))
+                        ) {
+                            $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
+                            unset($finalResult['shipping_address']);
+                        }
                     }
 
                     return $finalResults;
@@ -589,6 +717,7 @@ class Server
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
                 $results = $this->orderItemRepository->findByOrderUidSoap($orderUid);
+
                 if ($results) {
 
                     $finalResults = FilteredPropertiesUtility::filter($results, $keys);
@@ -673,7 +802,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid(intval($productUid))) {
+                if ($product = $this->productRepository->findByUidSoap(intval($productUid))) {
                     $product->setOrderedExternal(intval($orderedExternal));
                     $this->productRepository->update($product);
                     $this->persistenceManager->persistAll();
@@ -711,7 +840,7 @@ class Server
             try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid($productUid)) {
+                if ($product = $this->productRepository->findByUidSoap($productUid)) {
 
                     /** @var \RKW\RkwShop\Domain\Model\Stock $stock */
                     $stock = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
@@ -760,8 +889,7 @@ class Server
                 $validValues = [0, 90, 100, 200];
 
                 /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
-
+                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
                     if (in_array($status, $validValues)) {
                         $order->setStatus($status);
                         $this->orderRepository->update($order);
@@ -802,7 +930,7 @@ class Server
                 $validValues = [0, 1];
 
                 /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
+                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
 
                     if (in_array($deleted, $validValues)) {
                         $order->setDeleted($deleted);
@@ -827,7 +955,45 @@ class Server
     }
 
 
+    /**
+     * Sets status for given orderItem uid
+     *
+     * @param int $orderItemUid
+     * @param int $status
+     * @return bool
+     */
+    public function rkwShopSetStatusForOrderItem($orderItemUid, $status)
+    {
 
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+
+            try {
+
+                $validValues = [0, 90, 100, 200];
+
+                /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem*/
+                if ($orderItem = $this->orderItemRepository->findByUidSoap($orderItemUid)) {
+                    if (in_array($status, $validValues)) {
+                        $orderItem->setStatus($status);
+                        $this->orderItemRepository->update($orderItem);
+                        $this->persistenceManager->persistAll();
+
+                        return true;
+                    }
+                }
+
+                return false;
+
+            } catch (\Exception $e) {
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            }
+
+        } else {
+            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+        }
+
+        return false;
+    }
 
 
 
@@ -839,7 +1005,7 @@ class Server
      */
     public function findAllPublications()
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -885,7 +1051,7 @@ class Server
      */
     public function findAllSeries()
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -936,7 +1102,7 @@ class Server
      */
     public function setOrderStatus($uid, $status)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
@@ -986,7 +1152,7 @@ class Server
      */
     public function setOrderDeleted($uid, $deleted)
     {
-
+        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
