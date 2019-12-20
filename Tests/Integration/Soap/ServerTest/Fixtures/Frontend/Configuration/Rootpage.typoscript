@@ -1,7 +1,14 @@
-plugin.tx_rkwsoap  {
+module.tx_rkwsoap {
 
+	settings {
 
+		soapServer {
+
+            version = 0.8.15
+		}
+	}
 }
+
 
 config {
     doctype = html5
