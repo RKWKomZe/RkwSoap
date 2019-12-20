@@ -104,7 +104,6 @@ class FilteredPropertiesUtility
                 $property = $subProperties;
                 unset($subProperties);
             }
-
             $result[$property] = self::getPropertyFromObject($object, $property, $subProperties);
         }
 
@@ -202,6 +201,9 @@ class FilteredPropertiesUtility
     protected static function getPropertyFromObject(\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object, $property, $subProperties = [])
     {
 
+        if (strpos($property, 'ext_') === 0) {
+            $property = substr($property, 4);
+        }
         $getter = 'get' . ucFirst(Common::camelize($property));
         if (method_exists($object, $getter)) {
 
