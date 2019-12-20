@@ -717,6 +717,7 @@ class Server
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
                 $results = $this->orderItemRepository->findByOrderUidSoap($orderUid);
+
                 if ($results) {
 
                     $finalResults = FilteredPropertiesUtility::filter($results, $keys);

@@ -438,6 +438,34 @@ class ServerTest extends FunctionalTestCase
         $this::assertEquals(3, $result[2]['product']);
     }
 
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function rkwShopFindOrderItemsByOrderHasAllRelevantReferences ()
+    {
+        /**
+         * Scenario:
+         *
+         * Given there is an order
+         * Given that order has one order item
+         * Given that order item has a reference to a product
+         * Given that order item has a reference to an order
+         * When I fetch the order-items for that order
+         * Then the order item is returned
+         * Then the reference to the product is returned
+         * Then the reference to the order is returned
+         */
+        $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check121.xml');
+
+        $result = $this->subject->rkwShopFindOrderItemsByOrder(1);
+        $this::assertCount(1, $result);
+
+        $this::assertEquals(1, $result[0]['product']);
+        $this::assertEquals(1, $result[0]['ext_order']);
+    }
+
     //=============================================
 
     /**
