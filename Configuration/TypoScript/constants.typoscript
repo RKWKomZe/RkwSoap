@@ -30,6 +30,9 @@ plugin.tx_rkwsoap {
 
             # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentification
             disableSecurityChecks = 0
+
+            # cat=plugin.tx_rkwsoap//a; type=string; label=Version number that is returned via getVersion()
+            version = 8.7.3
         }
 
 	}

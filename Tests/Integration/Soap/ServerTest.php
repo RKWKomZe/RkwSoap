@@ -47,6 +47,7 @@ class ServerTest extends FunctionalTestCase
         'typo3conf/ext/rkw_registration',
         'typo3conf/ext/rkw_mailer',
         'typo3conf/ext/rkw_shop',
+        'typo3conf/ext/rkw_soap',
     ];
 
     /**
@@ -110,10 +111,9 @@ class ServerTest extends FunctionalTestCase
                 'EXT:rkw_registration/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_shop/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_soap/Configuration/TypoScript/setup.txt',
-                'EXT:rkw_soap/Tests/Functional/Soap/Fixtures/Frontend/Configuration/Rootpage.typoscript',
+                'EXT:rkw_soap/Tests/Integration/Soap/ServerTest/Fixtures/Frontend/Configuration/Rootpage.typoscript',
             ]
         );
-
 
         $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
 
@@ -128,6 +128,26 @@ class ServerTest extends FunctionalTestCase
         $this->subject = $this->objectManager->get(Server::class);
      }
 
+    //=============================================
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function getVersionReturnsConfiguredVersion ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there is a version number configured
+         * When I fetch the version number
+         * Then the version number is returned
+         */
+
+        $this::assertEquals('0.8.15', $this->subject->getVersion());
+
+    }
 
     //=============================================
 

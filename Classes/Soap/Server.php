@@ -3,6 +3,9 @@
 namespace RKW\RkwSoap\Soap;
 
 use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
+use \RKW\RkwBasics\Helper\Common;
+use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+
 /*
  * This file is part of the TYPO3 CMS project.
  *
@@ -174,11 +177,18 @@ class Server
      * @return string
      * @throws \InvalidArgumentException
      * @throws \TYPO3\CMS\Core\Package\Exception
+     *  @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function getVersion()
     {
-        return \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getExtensionVersion('rkw_soap');
-        //===
+        $settings = $this->getSettings();
+        $version = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getExtensionVersion('rkw_soap');
+
+        if ($settings['soapServer']['version']) {
+            $version = $settings['soapServer']['version'];
+        }
+
+        return $version;
     }
 
 
@@ -1411,13 +1421,26 @@ class Server
      */
     protected function getLogger()
     {
-
         if (!$this->logger instanceof \TYPO3\CMS\Core\Log\Logger) {
             $this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
         }
 
         return $this->logger;
     }
+
+
+    /**
+     * Returns TYPO3 settings
+     *
+     * @param string $which Which type of settings will be loaded
+     * @return array
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     */
+    protected function getSettings($which = ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS)
+    {
+        return Common::getTyposcriptConfiguration('rkwsoap', $which);
+    }
+
 
 
 
