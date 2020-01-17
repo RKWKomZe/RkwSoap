@@ -857,13 +857,13 @@ class Server
                     $stock->setAmount(intval($amount));
                     $stock->setComment($comment);
                     $stock->setDeliveryStart(intval($deliveryStart));
+                    $stock->setIsExternal(true);
 
                     $this->stockRepository->add($stock);
 
                     $product->addStock($stock);
                     $this->productRepository->update($product);
                     $this->persistenceManager->persistAll();
-
 
                     return true;
                 }
