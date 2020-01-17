@@ -88,4 +88,31 @@
         <deleted>1</deleted>
     </tx_rkwshop_domain_model_stock>
 
+    <tx_rkwshop_domain_model_stock>
+        <uid>7</uid>
+        <pid>1</pid>
+        <product>1</product>
+        <amount>100</amount>
+        <comment>Auf- und Unterlage</comment>
+        <is_external>1</is_external>
+    </tx_rkwshop_domain_model_stock>
+
+    <tx_rkwshop_domain_model_stock>
+        <uid>8</uid>
+        <pid>1</pid>
+        <product>2</product>
+        <amount>100</amount>
+        <comment>Auf- und Unterlage</comment>
+        <is_external>1</is_external>
+    </tx_rkwshop_domain_model_stock>
+
+    <tx_rkwshop_domain_model_stock>
+        <uid>9</uid>
+        <pid>1</pid>
+        <product>3</product>
+        <amount>100</amount>
+        <comment>Auf- und Unterlage</comment>
+        <is_external>1</is_external>
+    </tx_rkwshop_domain_model_stock>
+
 </dataset>

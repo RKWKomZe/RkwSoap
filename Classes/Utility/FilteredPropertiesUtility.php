@@ -260,7 +260,11 @@ class FilteredPropertiesUtility
             return $object->getEmail();
 
         } else if ($object instanceof \RKW\RkwShop\Domain\Model\Stock) {
-            return $object->getAmount();
+            if (! $object->getIsExternal()) {
+                return $object->getAmount();
+            } else {
+                return 0;
+            }
         }
 
         // default

@@ -231,6 +231,7 @@ class ServerTest extends FunctionalTestCase
          * Given each products has two stocks
          * When I fetch the products
          * Then the stocks of the products are cumulated
+         * Then external stocks are ignored
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check40.xml');
 
@@ -738,6 +739,7 @@ class ServerTest extends FunctionalTestCase
          * When I add a stock to the product
          * Then true is returned
          * Then the stock is added with all given values
+         * Then the stock has isExternal set
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check170.xml');
 
@@ -752,6 +754,8 @@ class ServerTest extends FunctionalTestCase
         self::assertEquals(5, $stock[1]->getAmount());
         self::assertEquals('Test', $stock[1]->getComment());
         self::assertEquals(111, $stock[1]->getDeliveryStart());
+        self::assertEquals(true, $stock[1]->getIsExternal());
+
 
     }
 
@@ -768,6 +772,7 @@ class ServerTest extends FunctionalTestCase
          * When I add a stock to the product
          * Then true is returned
          * Then the stock is added with all given values
+         * Then the stock has isExternal set
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check180.xml');
 
@@ -782,6 +787,7 @@ class ServerTest extends FunctionalTestCase
         self::assertEquals(5, $stock[1]->getAmount());
         self::assertEquals('Test', $stock[1]->getComment());
         self::assertEquals(111, $stock[1]->getDeliveryStart());
+        self::assertEquals(true, $stock[1]->getIsExternal());
 
     }
 
@@ -798,6 +804,7 @@ class ServerTest extends FunctionalTestCase
          * When I add a stock to the product
          * Then true is returned
          * Then the stock is added with all given values
+         * Then the stock has isExternal set
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check190.xml');
 
@@ -812,6 +819,7 @@ class ServerTest extends FunctionalTestCase
         self::assertEquals(5, $stock[1]->getAmount());
         self::assertEquals('Test', $stock[1]->getComment());
         self::assertEquals(111, $stock[1]->getDeliveryStart());
+        self::assertEquals(true, $stock[1]->getIsExternal());
 
     }
 
