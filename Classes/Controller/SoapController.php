@@ -121,12 +121,12 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                 $server->setClass('RKW\RkwSoap\Soap\Server');
                 $server->handle();
 
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::INFO, sprintf('Successfull SOAP call from IP %s.', $remoteAddr));
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::INFO, sprintf('Successful SOAP call from IP %s. Request: %s', $remoteAddr, str_replace(array("\n", "\r"), '', file_get_contents("php://input"))));
                 exit();
                 //===
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, sprintf('An error occurred. Message: %s', str_replace(array("\n", "\r"), '', $e->getMessage())));
+                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, sprintf('An error occurred. Message: %s. Request: %s', str_replace(array("\n", "\r"), '', $e->getMessage()), str_replace(array("\n", "\r"), '', file_get_contents("php://input"))));
                 header('HTTP/1.1 500 Internal Server Error');
                 exit();
                 //===
