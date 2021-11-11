@@ -29,7 +29,7 @@
     },
     "suggest": {
         "rkw/rkw-basics": "~8.7.2",
-        "rkw/rkw-mailer": "~8.7.1",
+        "rkw/rkw-mailer": "~8.7.1 || ~9.5.0",
         "rkw/rkw-shop": "~8.7.99",
         "rkw/rkw-registration": "~8.7.5"
     },
