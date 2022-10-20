@@ -3,7 +3,7 @@
 namespace RKW\RkwSoap\Soap;
 
 use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
-use \RKW\RkwBasics\Helper\Common;
+use RKW\RkwBasics\Utility\GeneralUtility as Common;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /*
@@ -177,7 +177,7 @@ class Server
      * @return string
      * @throws \InvalidArgumentException
      * @throws \TYPO3\CMS\Core\Package\Exception
-     *  @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function getVersion()
     {
@@ -203,7 +203,7 @@ class Server
     public function findFeUserByTimestamp($timestamp)
     {
 
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUsersByTimestamp($timestamp);
         //===
     }
@@ -430,7 +430,7 @@ class Server
      */
     public function findFeUserGroupByTimestamp($timestamp, $serviceOnly = 0)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
         //===
     }
@@ -499,7 +499,7 @@ class Server
      */
     public function findOrderByTimestamp($timestamp)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findOrdersByTimestamp($timestamp);
         //===
     }
@@ -514,7 +514,7 @@ class Server
      */
     public function findOrdersByTimestamp($timestamp)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
@@ -1015,7 +1015,7 @@ class Server
      */
     public function findAllPublications()
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -1061,7 +1061,7 @@ class Server
      */
     public function findAllSeries()
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -1112,7 +1112,7 @@ class Server
      */
     public function setOrderStatus($uid, $status)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
@@ -1162,7 +1162,7 @@ class Server
      */
     public function setOrderDeleted($uid, $deleted)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
