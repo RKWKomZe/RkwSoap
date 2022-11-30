@@ -21,7 +21,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  * Class FrontendUserGroupRepository
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

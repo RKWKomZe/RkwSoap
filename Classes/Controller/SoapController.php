@@ -19,7 +19,7 @@ namespace RKW\RkwSoap\Controller;
  * Class SoapController
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -56,7 +56,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             //===
         }
     }
- 
+
 
     /**
      * action soap
@@ -78,7 +78,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
         // only WSDL wanted?
         if (isset($_GET['wsdl'])) {
-            
+
             $this->forward('wsdl');
             exit();
             //===

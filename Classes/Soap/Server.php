@@ -23,7 +23,7 @@ use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
  * Class Server
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -139,12 +139,7 @@ class Server
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
             $this->shippingAddressRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository');
-        } else {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
         }
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
@@ -166,6 +161,8 @@ class Server
             $this->seriesRepository = $objectManager->get('RKW\RkwBasics\Domain\Repository\SeriesRepository');
         }
 
+        $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
+        $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
         $this->persistenceManager = $objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager');
 
     }
@@ -372,17 +369,9 @@ class Server
                 );
             }
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
 
-                /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
-                $result = $this->frontendUserRepository->findByUidSoap($uid);
-
-            } else {
-
-                /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
-                $result = $this->frontendUserRepository->findByUid($uid);
-            }
-
+            /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
+            $result = $this->frontendUserRepository->findByUid($uid);
             if ($result) {
 
                 // get basic data from shipping address if nothing is set in account
