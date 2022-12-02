@@ -3,7 +3,7 @@
 namespace RKW\RkwSoap\Soap;
 
 use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
-use RKW\RkwBasics\Utility\GeneralUtility as Common;
+use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /*
@@ -1427,7 +1427,7 @@ class Server
      */
     protected function getSettings($which = ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS)
     {
-        return Common::getTyposcriptConfiguration('rkwsoap', $which);
+        return Common::getTypoScriptConfiguration('rkwsoap', $which);
     }
 
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace RKW\RkwSoap\Utility;
-use RKW\RkwBasics\Utility\GeneralUtility as Common;
+use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
 
 /*
  * This file is part of the TYPO3 CMS project.
