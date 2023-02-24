@@ -32,7 +32,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
  * ServerTest
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -44,8 +44,8 @@ class ServerTest extends FunctionalTestCase
      */
     protected $testExtensionsToLoad = [
         'typo3conf/ext/rkw_basics',
-        'typo3conf/ext/rkw_registration',
         'typo3conf/ext/rkw_mailer',
+        'typo3conf/ext/rkw_registration',
         'typo3conf/ext/rkw_shop',
         'typo3conf/ext/rkw_soap',
     ];
@@ -98,7 +98,7 @@ class ServerTest extends FunctionalTestCase
      * Setup
      * @throws \Exception
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -378,11 +378,11 @@ class ServerTest extends FunctionalTestCase
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check90.xml');
 
         $result = $this->subject->rkwShopFindOrdersByTimestamp();
-        static::assertCount(3, $result);
+        self::assertCount(3, $result);
 
-        static::assertGreaterThan(0, $result[0]['frontend_user']);
-        static::assertGreaterThan(0, $result[1]['frontend_user']);
-        static::assertGreaterThan(0, $result[2]['frontend_user']);
+        self::assertGreaterThan(0, $result[0]['frontend_user']);
+        self::assertGreaterThan(0, $result[1]['frontend_user']);
+        self::assertGreaterThan(0, $result[2]['frontend_user']);
 
 
     }
@@ -505,7 +505,7 @@ class ServerTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check130.xml');
-        static::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -528,7 +528,7 @@ class ServerTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check131.xml');
-        static::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -553,7 +553,7 @@ class ServerTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check132.xml');
-        static::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -579,7 +579,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check140.xml');
 
-        static::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -603,7 +603,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check140.xml');
 
-        static::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 99999));
+        self::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 99999));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -623,7 +623,7 @@ class ServerTest extends FunctionalTestCase
          * When I set a valid status for a non-existing order
          * Then false is returned
          */
-        static::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 100));
 
     }
 
@@ -645,7 +645,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check150.xml');
 
-        static::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -671,7 +671,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check160.xml');
 
-        static::assertTrue($this->subject->rkwShopSetDeletedForOrder(1, 1));
+        self::assertTrue($this->subject->rkwShopSetDeletedForOrder(1, 1));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -692,7 +692,7 @@ class ServerTest extends FunctionalTestCase
          * When I set a set a non-existing order to deleted
          * Then false is returned
          */
-        static::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 1));
+        self::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 1));
 
     }
 
@@ -714,7 +714,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check160.xml');
 
-        static::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 5));
+        self::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 5));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -743,7 +743,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check170.xml');
 
-        static::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -776,7 +776,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check180.xml');
 
-        static::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -808,7 +808,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check190.xml');
 
-        static::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -843,7 +843,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check200.xml');
 
-        static::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByUid(1);
@@ -867,7 +867,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check200.xml');
 
-        static::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 99999));
+        self::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 99999));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByUid(1);
@@ -887,7 +887,7 @@ class ServerTest extends FunctionalTestCase
          * When I set a valid status for a non-existing order item
          * Then false is returned
          */
-        static::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 100));
 
     }
 
@@ -909,7 +909,7 @@ class ServerTest extends FunctionalTestCase
          */
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check210.xml');
 
-        static::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByUid(1);
@@ -940,8 +940,8 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        static::assertNotNull($result);
-        static::assertEquals(1, $result['uid']);
+        self::assertNotNull($result);
+        self::assertEquals(1, $result['uid']);
 
     }
 
@@ -965,8 +965,8 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        static::assertNotNull($result);
-        static::assertEquals(1, $result['uid']);
+        self::assertNotNull($result);
+        self::assertEquals(1, $result['uid']);
 
     }
 
@@ -990,8 +990,8 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        static::assertNotNull($result);
-        static::assertEquals(1, $result['uid']);
+        self::assertNotNull($result);
+        self::assertEquals(1, $result['uid']);
 
     }
 
@@ -1018,14 +1018,14 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        static::assertNotNull($result);
-        static::assertEquals(1, $result['uid']);
-        static::assertEquals('Karl', $result['first_name']);
-        static::assertEquals('Lauterbach', $result['last_name']);
-        static::assertEquals('SPD', $result['company']);
-        static::assertEquals('Wilhelmstraße 141', $result['address']);
-        static::assertEquals('10963', $result['zip']);
-        static::assertEquals('Berlin', $result['city']);
+        self::assertNotNull($result);
+        self::assertEquals(1, $result['uid']);
+        self::assertEquals('Karl', $result['first_name']);
+        self::assertEquals('Lauterbach', $result['last_name']);
+        self::assertEquals('SPD', $result['company']);
+        self::assertEquals('Wilhelmstraße 141', $result['address']);
+        self::assertEquals('10963', $result['zip']);
+        self::assertEquals('Berlin', $result['city']);
 
     }
 
@@ -1051,14 +1051,14 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        static::assertNotNull($result);
-        static::assertEquals(1, $result['uid']);
-        static::assertEquals('Johannes', $result['first_name']);
-        static::assertEquals('Spacko', $result['last_name']);
-        static::assertEquals('', $result['company']);
-        static::assertEquals('Emmentaler Allee 15', $result['address']);
-        static::assertEquals('12345', $result['zip']);
-        static::assertEquals('Gauda', $result['city']);
+        self::assertNotNull($result);
+        self::assertEquals(1, $result['uid']);
+        self::assertEquals('Johannes', $result['first_name']);
+        self::assertEquals('Spacko', $result['last_name']);
+        self::assertEquals('', $result['company']);
+        self::assertEquals('Emmentaler Allee 15', $result['address']);
+        self::assertEquals('12345', $result['zip']);
+        self::assertEquals('Gauda', $result['city']);
 
     }
     //=============================================
@@ -1066,7 +1066,7 @@ class ServerTest extends FunctionalTestCase
     /**
      * TearDown
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

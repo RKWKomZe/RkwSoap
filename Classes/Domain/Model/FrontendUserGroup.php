@@ -1,5 +1,4 @@
 <?php
-
 namespace RKW\RkwSoap\Domain\Model;
 
 /*
@@ -19,7 +18,7 @@ namespace RKW\RkwSoap\Domain\Model;
  * Class FrontendUserGroup
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -27,75 +26,74 @@ class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGrou
 {
 
     /**
-     * @var integer
+     * @var int
      */
-    protected $crdate;
-
-    /**
-     * @var integer
-     */
-    protected $tstamp;
+    protected int $crdate = 0;
 
 
     /**
-     * @var integer
+     * @var int
      */
-    protected $hidden;
+    protected int $tstamp = 0;
+
 
     /**
-     * @var integer
+     * @var bool
      */
-    protected $deleted;
+    protected bool $hidden = false;
+
+
+    /**
+     * @var bool
+     */
+    protected bool $deleted = false;
 
 
     /**
      * Returns the crdate value
      *
-     * @return integer
+     * @return int
      * @api
      */
-    public function getCrdate()
+    public function getCrdate(): int
     {
         return $this->crdate;
-        //===
     }
+
 
     /**
      * Returns the tstamp value
      *
-     * @return integer
+     * @return int
      * @api
      */
-    public function getTstamp()
+    public function getTstamp(): int
     {
         return $this->tstamp;
-        //===
     }
 
 
     /**
      * Returns the hidden value
      *
-     * @return integer
+     * @return bool
      * @api
      */
-    public function getHidden()
+    public function getHidden(): bool
     {
         return $this->hidden;
-        //===
     }
 
 
     /**
-     * Returns the deletedvalue
+     * Returns the deleted value
      *
-     * @return integer
+     * @return bool
      * @api
      */
-    public function getDeleted()
+    public function getDeleted(): bool
     {
         return $this->deleted;
-        //===
     }
 
 
