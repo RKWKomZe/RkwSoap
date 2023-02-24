@@ -1,8 +1,5 @@
 <?php
-
 namespace RKW\RkwSoap\Domain\Repository;
-
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -17,6 +14,9 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+
 /**
  * Class FrontendUserGroupRepository
  *
@@ -28,17 +28,16 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 class FrontendUserGroupRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
 
-
     /**
      * initializeObject
      *
      * @return void
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
 
         /** @var $querySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
-        $querySettings = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
+        $querySettings = $this->objectManager->get(Typo3QuerySettings::class);
 
         // don't add the pid constraint
         $querySettings->setRespectStoragePage(false);
@@ -46,15 +45,14 @@ class FrontendUserGroupRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         $querySettings->setIncludeDeleted(true);
 
         $this->setDefaultQuerySettings($querySettings);
-
     }
 
 
     /**
      * Find all users that have been updated recently
      *
-     * @param integer $timestamp
-     * @param integer $serviceOnly
+     * @param int $timestamp
+     * @param int $serviceOnly
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
@@ -69,7 +67,6 @@ class FrontendUserGroupRepository extends \TYPO3\CMS\Extbase\Persistence\Reposit
         $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
 
         return $query->execute();
-        //===
     }
 
 }

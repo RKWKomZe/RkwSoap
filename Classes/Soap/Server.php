@@ -193,7 +193,7 @@ class Server
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUsersByTimestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 05-10-2017
      */
@@ -209,7 +209,7 @@ class Server
     /**
      * Returns all FE-users that have been updated since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findFeUsersByTimestamp($timestamp)
@@ -311,7 +311,7 @@ class Server
     /**
      * Returns a FE-users by uid
      *
-     * @param integer $uid
+     * @param int $uid
      * @return array
      */
     public function findFeUserByUid($uid)
@@ -412,8 +412,8 @@ class Server
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUserGroupsByTimestamp
      *
-     * @param integer $timestamp
-     * @param integer $serviceOnly
+     * @param int $timestamp
+     * @param int $serviceOnly
      * @return array
      * @deprecated since 05-10-2017
      */
@@ -428,8 +428,8 @@ class Server
     /**
      * Returns all FE-users that have been updated since $timestamp
      *
-     * @param integer $timestamp
-     * @param integer $serviceOnly
+     * @param int $timestamp
+     * @param int $serviceOnly
      * @return array
      */
     public function findFeUserGroupsByTimestamp($timestamp, $serviceOnly = 0)
@@ -482,7 +482,7 @@ class Server
      * Returns all new orders since $timestamp
      * Alias of $this->findOrdersByTimestamp(
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 05-10-2017
      */
@@ -497,7 +497,7 @@ class Server
     /**
      * Returns all new orders since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 12-08-2019
      */
@@ -618,7 +618,7 @@ class Server
     /**
      * Returns all new orders since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function rkwShopFindOrdersByTimestamp($timestamp = 0)
@@ -690,7 +690,7 @@ class Server
     /**
      * Returns all order items for given order-uid
      *
-     * @param integer $orderUid
+     * @param int $orderUid
      * @return array
      */
     public function rkwShopFindOrderItemsByOrder($orderUid)
@@ -1094,9 +1094,9 @@ class Server
     /**
      * Set the status of an order
      *
-     * @param integer $uid
-     * @param integer $status
-     * @return integer
+     * @param int $uid
+     * @param int $status
+     * @return int
      * @deprecated since 08-08-2019
      */
     public function setOrderStatus($uid, $status)
@@ -1144,9 +1144,9 @@ class Server
     /**
      * Set the delete-value of an order
      *
-     * @param integer $uid
-     * @param integer $deleted
-     * @return integer
+     * @param int $uid
+     * @param int $deleted
+     * @return int
      * @deprecated since 08-08-2019
      */
     public function setOrderDeleted($uid, $deleted)
@@ -1195,7 +1195,7 @@ class Server
     /**
      * Returns all existing events by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventsByTimestamp($timestamp)
@@ -1256,7 +1256,7 @@ class Server
     /**
      * Returns all existing eventPlaces by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventPlacesByTimestamp($timestamp)
@@ -1304,7 +1304,7 @@ class Server
     /**
      * Returns all existing eventReservations by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventReservationsByTimestamp($timestamp)
@@ -1359,7 +1359,7 @@ class Server
     /**
      * Returns all existing eventReservationAddPersons by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventReservationAddPersonsByTimestamp($timestamp)

@@ -44,8 +44,8 @@ class ServerTest extends FunctionalTestCase
      */
     protected $testExtensionsToLoad = [
         'typo3conf/ext/rkw_basics',
-        'typo3conf/ext/rkw_registration',
         'typo3conf/ext/rkw_mailer',
+        'typo3conf/ext/rkw_registration',
         'typo3conf/ext/rkw_shop',
         'typo3conf/ext/rkw_soap',
     ];

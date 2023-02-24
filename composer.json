@@ -19,14 +19,12 @@
     "require": {
         "php": ">=7.4",
         "ext-soap" : "*",
-        "typo3/cms-core": "~9.5.0"
-    },
+        "typo3/cms-core": "~9.5.0",
+		"madj2k/t3-core-extended": "~9.5.4"
+	},
     "conflict": {
-        "rkw/rkw-basics": "<8.7.2",
-        "rkw/rkw-mailer": "<8.7.1",
-        "rkw/rkw-order": "*",
-        "rkw/rkw-registration": "<8.7.5"
-    },
+        "rkw/rkw-order": "*"
+	},
     "suggest": {
         "rkw/rkw-basics": "~9.5.0",
         "rkw/rkw-mailer": "~9.5.0",

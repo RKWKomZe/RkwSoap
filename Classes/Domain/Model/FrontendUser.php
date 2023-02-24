@@ -14,6 +14,8 @@ namespace RKW\RkwSoap\Domain\Model;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
 /**
  * Class FrontendUser
  *
@@ -27,36 +29,41 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 {
 
     /**
-     * @var integer
+     * @var int
      */
-    protected $crdate;
-
-    /**
-     * @var integer
-     */
-    protected $tstamp;
-
-    /**
-     * @var integer
-     */
-    protected $disable;
-
-    /**
-     * @var integer
-     */
-    protected $deleted;
+    protected int $crdate = 0;
 
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\RKW\RkwSoap\Domain\Model\FrontendUserGroup>
+     * @var int
      */
-    protected $usergroup;
+    protected int $tstamp = 0;
+
+
+    /**
+     * @var bool
+     */
+    protected bool $disable = false;
+
+
+    /**
+     * @var bool
+     */
+    protected bool $deleted = false;
+
+
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\RKW\RkwSoap\Domain\Model\FrontendUserGroup>|null
+     */
+    protected $usergroup = null;
+
 
     /**
      * initialize objectStorage
      *
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->usergroup = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
     }
@@ -69,56 +76,52 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
      * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage An object storage containing the usergroup
      * @api
      */
-    public function getUsergroup() {
+    public function getUsergroup(): ObjectStorage
+    {
         return $this->usergroup;
-        //===
     }
 
 
     /**
      * Returns the crdate value
      *
-     * @return integer
+     * @return int
      * @api
      */
-    public function getCrdate() {
-
+    public function getCrdate(): int
+    {
         return $this->crdate;
-        //===
     }
 
 
     /**
      * Returns the tstamp value
      *
-     * @return integer
+     * @return int
      * @api
      */
-    public function getTstamp() {
+    public function getTstamp(): int
+    {
         return $this->tstamp;
-        //===
     }
 
 
     /**
      * Returns the disable value
      *
-     * @return integer
+     * @return bool
      */
-    public function getDisable() {
+    public function getDisable(): bool {
         return $this->disable;
-        //===
     }
 
 
     /**
      * Returns the deleted value
      *
-     * @return integer
-     *
+     * @return bool
      */
-    public function getDeleted() {
+    public function getDeleted(): bool {
         return $this->deleted;
-        //===
     }
 }
