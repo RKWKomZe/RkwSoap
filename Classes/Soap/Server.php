@@ -3,7 +3,7 @@
 namespace RKW\RkwSoap\Soap;
 
 use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
-use \RKW\RkwBasics\Helper\Common;
+use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 /*
@@ -23,7 +23,7 @@ use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
  * Class Server
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -139,12 +139,7 @@ class Server
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository');
             $this->shippingAddressRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository');
-        } else {
-            $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
-            $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
         }
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
@@ -166,6 +161,8 @@ class Server
             $this->seriesRepository = $objectManager->get('RKW\RkwBasics\Domain\Repository\SeriesRepository');
         }
 
+        $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
+        $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
         $this->persistenceManager = $objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager');
 
     }
@@ -177,7 +174,7 @@ class Server
      * @return string
      * @throws \InvalidArgumentException
      * @throws \TYPO3\CMS\Core\Package\Exception
-     *  @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
     public function getVersion()
     {
@@ -196,14 +193,14 @@ class Server
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUsersByTimestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 05-10-2017
      */
     public function findFeUserByTimestamp($timestamp)
     {
 
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUsersByTimestamp($timestamp);
         //===
     }
@@ -212,7 +209,7 @@ class Server
     /**
      * Returns all FE-users that have been updated since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findFeUsersByTimestamp($timestamp)
@@ -314,7 +311,7 @@ class Server
     /**
      * Returns a FE-users by uid
      *
-     * @param integer $uid
+     * @param int $uid
      * @return array
      */
     public function findFeUserByUid($uid)
@@ -372,17 +369,9 @@ class Server
                 );
             }
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
 
-                /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
-                $result = $this->frontendUserRepository->findByUidSoap($uid);
-
-            } else {
-
-                /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
-                $result = $this->frontendUserRepository->findByUid($uid);
-            }
-
+            /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
+            $result = $this->frontendUserRepository->findByUid($uid);
             if ($result) {
 
                 // get basic data from shipping address if nothing is set in account
@@ -423,14 +412,14 @@ class Server
      * Returns all FE-users that have been updated since $timestamp
      * Alias of $this->findFeUserGroupsByTimestamp
      *
-     * @param integer $timestamp
-     * @param integer $serviceOnly
+     * @param int $timestamp
+     * @param int $serviceOnly
      * @return array
      * @deprecated since 05-10-2017
      */
     public function findFeUserGroupByTimestamp($timestamp, $serviceOnly = 0)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
         //===
     }
@@ -439,8 +428,8 @@ class Server
     /**
      * Returns all FE-users that have been updated since $timestamp
      *
-     * @param integer $timestamp
-     * @param integer $serviceOnly
+     * @param int $timestamp
+     * @param int $serviceOnly
      * @return array
      */
     public function findFeUserGroupsByTimestamp($timestamp, $serviceOnly = 0)
@@ -493,13 +482,13 @@ class Server
      * Returns all new orders since $timestamp
      * Alias of $this->findOrdersByTimestamp(
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 05-10-2017
      */
     public function findOrderByTimestamp($timestamp)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findOrdersByTimestamp($timestamp);
         //===
     }
@@ -508,13 +497,13 @@ class Server
     /**
      * Returns all new orders since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      * @deprecated since 12-08-2019
      */
     public function findOrdersByTimestamp($timestamp)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
@@ -629,7 +618,7 @@ class Server
     /**
      * Returns all new orders since $timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function rkwShopFindOrdersByTimestamp($timestamp = 0)
@@ -701,7 +690,7 @@ class Server
     /**
      * Returns all order items for given order-uid
      *
-     * @param integer $orderUid
+     * @param int $orderUid
      * @return array
      */
     public function rkwShopFindOrderItemsByOrder($orderUid)
@@ -1015,7 +1004,7 @@ class Server
      */
     public function findAllPublications()
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -1061,7 +1050,7 @@ class Server
      */
     public function findAllSeries()
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
@@ -1105,14 +1094,14 @@ class Server
     /**
      * Set the status of an order
      *
-     * @param integer $uid
-     * @param integer $status
-     * @return integer
+     * @param int $uid
+     * @param int $status
+     * @return int
      * @deprecated since 08-08-2019
      */
     public function setOrderStatus($uid, $status)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
@@ -1155,14 +1144,14 @@ class Server
     /**
      * Set the delete-value of an order
      *
-     * @param integer $uid
-     * @param integer $deleted
-     * @return integer
+     * @param int $uid
+     * @param int $deleted
+     * @return int
      * @deprecated since 08-08-2019
      */
     public function setOrderDeleted($uid, $deleted)
     {
-        \TYPO3\CMS\Core\Utility\GeneralUtility::deprecationLog(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon');
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
@@ -1206,7 +1195,7 @@ class Server
     /**
      * Returns all existing events by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventsByTimestamp($timestamp)
@@ -1267,7 +1256,7 @@ class Server
     /**
      * Returns all existing eventPlaces by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventPlacesByTimestamp($timestamp)
@@ -1315,7 +1304,7 @@ class Server
     /**
      * Returns all existing eventReservations by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventReservationsByTimestamp($timestamp)
@@ -1370,7 +1359,7 @@ class Server
     /**
      * Returns all existing eventReservationAddPersons by timestamp
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @return array
      */
     public function findEventReservationAddPersonsByTimestamp($timestamp)
@@ -1438,7 +1427,7 @@ class Server
      */
     protected function getSettings($which = ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS)
     {
-        return Common::getTyposcriptConfiguration('rkwsoap', $which);
+        return Common::getTypoScriptConfiguration('rkwsoap', $which);
     }
 
 

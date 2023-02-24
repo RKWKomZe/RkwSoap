@@ -1,7 +1,7 @@
 <?php
 
 namespace RKW\RkwSoap\Utility;
-use \RKW\RkwBasics\Helper\Common;
+use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -20,7 +20,7 @@ use \RKW\RkwBasics\Helper\Common;
  * ObjectToFilteredArrayUtility
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

@@ -21,7 +21,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  * Class FrontendUserRepository
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
- * @copyright Rkw Kompetenzzentrum
+ * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
@@ -53,7 +53,7 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /**
      * Find all users that have been updated recently
      *
-     * @param integer $timestamp
+     * @param int $timestamp
      * @param bool    $excludeEmptyName
      * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
