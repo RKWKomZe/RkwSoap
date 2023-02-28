@@ -43,9 +43,9 @@ class ServerTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
+        'typo3conf/ext/postmaster',
         'typo3conf/ext/rkw_basics',
-        'typo3conf/ext/rkw_mailer',
-        'typo3conf/ext/rkw_registration',
+        'typo3conf/ext/fe_register',
         'typo3conf/ext/rkw_shop',
         'typo3conf/ext/rkw_soap',
     ];
@@ -107,8 +107,8 @@ class ServerTest extends FunctionalTestCase
             1,
             [
                 'EXT:rkw_basics/Configuration/TypoScript/setup.txt',
-                'EXT:rkw_mailer/Configuration/TypoScript/setup.txt',
-                'EXT:rkw_registration/Configuration/TypoScript/setup.txt',
+                'EXT:postmaster/Configuration/TypoScript/setup.txt',
+                'EXT:fe_register/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_shop/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_soap/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_soap/Tests/Integration/Soap/ServerTest/Fixtures/Frontend/Configuration/Rootpage.typoscript',
