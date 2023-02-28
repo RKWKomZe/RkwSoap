@@ -33,21 +33,21 @@ class Server
     /**
      * frontendUserRepository
      *
-     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository|\RKW\RkwRegistration\Domain\Repository\FrontendUserRepository
+     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository|\Madj2k\FeRegister\Domain\Repository\FrontendUserRepository
      */
     protected $frontendUserRepository;
 
     /**
      * frontendUserGroupRepository
      *
-     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository|\RKW\RkwRegistration\Domain\Repository\FrontendUserGroupRepository
+     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository|\Madj2k\FeRegister\Domain\Repository\FrontendUserGroupRepository
      */
     protected $frontendUserGroupRepository;
 
     /**
      * shippingAddressRepository
      *
-     * @var \RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository
+     * @var \Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository
      */
     protected $shippingAddressRepository;
 
@@ -138,8 +138,8 @@ class Server
 
         $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
-            $this->shippingAddressRepository = $objectManager->get('RKW\RkwRegistration\Domain\Repository\ShippingAddressRepository');
+        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
+            $this->shippingAddressRepository = $objectManager->get('Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository');
         }
 
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
@@ -238,7 +238,7 @@ class Server
                 'www',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -249,7 +249,7 @@ class Server
                     'username',
                     'usergroup',
                     'company',
-                    'tx_rkwregistration_gender',
+                    'tx_feregister_gender',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -260,9 +260,9 @@ class Server
                     'fax',
                     'email',
                     'www',
-                    'tx_rkwregistration_facebook_url',
-                    'tx_rkwregistration_twitter_url',
-                    'tx_rkwregistration_xing_url',
+                    'tx_feregister_facebook_url',
+                    'tx_feregister_twitter_url',
+                    'tx_feregister_xing_url',
 
                 );
             }
@@ -273,16 +273,16 @@ class Server
             // get basic data from shipping address if nothing is set in account
             if ($this->shippingAddressRepository) {
 
-                /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
+                /** @var \Madj2k\FeRegister\Domain\Model\FrontendUser $result */
                 foreach ($results as $result) {
                     if (
                         (! $result->getFirstName())
                         && (! $result->getLastName())
                     ){
 
-                        /** @var \RKW\RkwRegistration\Domain\Model\ShippingAddress $shippingAddress */
+                        /** @var \Madj2k\FeRegister\Domain\Model\ShippingAddress $shippingAddress */
                         if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
-                            $result->setTxRkwregistrationGender($shippingAddress->getGender());
+                            $result->setTxFeregisterGender($shippingAddress->getGender());
                             $result->setFirstName($shippingAddress->getFirstName());
                             $result->setLastName($shippingAddress->getLastName());
                             $result->setAddress($shippingAddress->getAddress());
@@ -340,7 +340,7 @@ class Server
                 'www',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -351,7 +351,7 @@ class Server
                     'username',
                     'usergroup',
                     'company',
-                    'tx_rkwregistration_gender',
+                    'tx_feregister_gender',
                     'first_name',
                     'middle_name',
                     'last_name',
@@ -362,9 +362,9 @@ class Server
                     'fax',
                     'email',
                     'www',
-                    'tx_rkwregistration_facebook_url',
-                    'tx_rkwregistration_twitter_url',
-                    'tx_rkwregistration_xing_url',
+                    'tx_feregister_facebook_url',
+                    'tx_feregister_twitter_url',
+                    'tx_feregister_xing_url',
 
                 );
             }
@@ -377,15 +377,15 @@ class Server
                 // get basic data from shipping address if nothing is set in account
                 if ($this->shippingAddressRepository) {
 
-                    /** @var \RKW\RkwRegistration\Domain\Model\FrontendUser $result */
+                    /** @var \Madj2k\FeRegister\Domain\Model\FrontendUser $result */
                     if (
                         (! $result->getFirstName())
                         && (! $result->getLastName())
                     ){
 
-                        /** @var \RKW\RkwRegistration\Domain\Model\ShippingAddress $shippingAddress */
+                        /** @var \Madj2k\FeRegister\Domain\Model\ShippingAddress $shippingAddress */
                         if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
-                            $result->setTxRkwregistrationGender($shippingAddress->getGender());
+                            $result->setTxFeregisterGender($shippingAddress->getGender());
                             $result->setFirstName($shippingAddress->getFirstName());
                             $result->setLastName($shippingAddress->getLastName());
                             $result->setAddress($shippingAddress->getAddress());
@@ -447,7 +447,7 @@ class Server
                 'description',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_registration')) {
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -457,7 +457,7 @@ class Server
                     'deleted',
                     'title',
                     'description',
-                    'tx_rkwregistration_is_service',
+                    'tx_feregister_is_service',
                 );
             }
 

@@ -14,7 +14,7 @@
         <shipping_address>1</shipping_address>
     </tx_rkwshop_domain_model_order>
 
-    <tx_rkwregistration_domain_model_shippingaddress>
+    <tx_feregister_domain_model_shippingaddress>
         <uid>1</uid>
         <pid>1</pid>
         <title>0</title>
@@ -25,5 +25,5 @@
         <zip>12345</zip>
         <city>Gauda</city>
         <frontend_user>0</frontend_user>
-    </tx_rkwregistration_domain_model_shippingaddress>
+    </tx_feregister_domain_model_shippingaddress>
 </dataset>
