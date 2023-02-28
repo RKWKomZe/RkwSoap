@@ -16,12 +16,12 @@ $EM_CONF[$_EXTKEY] = [
 	'category' => 'plugin',
 	'author' => 'Steffen Kroggel',
 	'author_email' => 'developer@steffenkroggel.de',
-	'state' => 'beta',
+	'state' => 'stable',
 	'internal' => '',
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'clearCacheOnLoad' => 0,
-	'version' => '9.5.0',
+	'version' => '9.5.2',
 	'constraints' => [
 		'depends' => [
 			'typo3' => '9.5.0-9.5.99',
@@ -32,9 +32,9 @@ $EM_CONF[$_EXTKEY] = [
 		],
 		'suggests' => [
             'rkw_basics' => '9.5.0-9.5.99',
-            'rkw_mailer' => '9.5.0-9.5.99',
+            'postmaster' => '9.5.0-9.5.99',
             'rkw_shop' => '9.5.0-9.5.99',
-            'rkw_registration' => '9.5.0-9.5.99'
+            'fe_register' => '9.5.0-9.5.99'
 		],
 	],
 ];
