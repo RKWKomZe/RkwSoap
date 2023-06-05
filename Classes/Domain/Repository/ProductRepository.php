@@ -52,33 +52,31 @@ class ProductRepository extends EnabledFieldsAwareAbstractRepository
         return $returnValue;
     }
 
+
     /**
      * Get all products including hidden and deleted
      *
      * @return array|null|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
-    public function findAllSoap()
+    public function findAll()
     {
-
         $query = $this->createQuery();
-        // $query->getQuerySettings()->setRespectStoragePage(false);
-        $query->getQuerySettings()->setIncludeDeleted(true);
-        $query->getQuerySettings()->setIgnoreEnableFields(true);
 
         return $query->execute();
     }
 
+
     /**
      * Finds an object matching the given identifier.
+     *
+     * toDo: The parent findByUid-function prevents typecast
      *
      * @param int $uid The identifier of the object to find
      * @return Product|null The matching object if found, otherwise NULL
      */
-    public function findByUidSoap(int $uid):? Product
+    public function findByUid($uid):? Product
     {
         $query = $this->createQuery();
-        $query->getQuerySettings()->setIncludeDeleted(true);
-        $query->getQuerySettings()->setIgnoreEnableFields(true);
 
         $query->matching(
             $query->equals('uid', $uid)

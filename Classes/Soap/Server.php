@@ -145,26 +145,26 @@ class Server
         $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
 
         if (ExtensionManagementUtility::isLoaded('fe_register')) {
-            $this->shippingAddressRepository = $objectManager->get(\Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository::class);
+            $this->shippingAddressRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\ShippingAddressRepository::class);
         }
 
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-            $this->orderRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\OrderRepository::class);
-            $this->orderItemRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\OrderItemRepository::class);
-            $this->productRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\ProductRepository::class);
-            $this->stockRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\StockRepository::class);
+            $this->orderRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\OrderRepository::class);
+            $this->orderItemRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\OrderItemRepository::class);
+            $this->productRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\ProductRepository::class);
+            $this->stockRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\StockRepository::class);
 
         }
 
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
-            $this->eventRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventRepository::class);
-            $this->eventPlaceRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventPlaceRepository::class);
-            $this->eventReservationRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventReservationRepository::class);
-            $this->eventReservationAddPersonRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository::class);
+            $this->eventRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventRepository::class);
+            $this->eventPlaceRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventPlaceRepository::class);
+            $this->eventReservationRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventReservationRepository::class);
+            $this->eventReservationAddPersonRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventReservationAddPersonRepository::class);
         }
 
         if (ExtensionManagementUtility::isLoaded('rkw_basics')) {
-            $this->seriesRepository = $objectManager->get(\RKW\RkwBasics\Domain\Repository\SeriesRepository::class);
+            $this->seriesRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\SeriesRepository::class);
         }
 
         $this->frontendUserRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserRepository::class);
@@ -323,7 +323,7 @@ class Server
     public function findFeUserByUid(int $uid): array
     {
 
-    //    try {
+        try {
 
             $keys = array(
                 'uid',
@@ -406,12 +406,11 @@ class Server
                 return FilteredPropertiesUtility::filter($result, $keys);
             }
 
-    //    } catch (\Exception $e) {
-    //        $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-    //    }
+        } catch (\Exception $e) {
+            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
+        }
 
         return array();
-        
     }
 
     /**
@@ -513,7 +512,7 @@ class Server
             try {
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderRepository->findByTimestampSoap($timestamp);
+                $results = $this->orderRepository->findByTimestamp($timestamp);
                 $finalResults = [];
 
                 /** @var \RKW\RkwShop\Domain\Model\Order $order */
@@ -656,7 +655,7 @@ class Server
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderRepository->findByTimestampSoap($timestamp);
+                $results = $this->orderRepository->findByTimestamp($timestamp);
 
                 if ($results) {
                     $finalResults = FilteredPropertiesUtility::filter($results, $keys);
@@ -684,7 +683,6 @@ class Server
         }
 
         return array();
-        
     }
 
 
@@ -697,7 +695,6 @@ class Server
      */
     public function rkwShopFindOrderItemsByOrder(int $orderUid): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
@@ -717,12 +714,11 @@ class Server
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderItemRepository->findByOrderUidSoap($orderUid);
+                $results = $this->orderItemRepository->findByOrderUid($orderUid);
 
                 if ($results) {
 
-                    $finalResults = FilteredPropertiesUtility::filter($results, $keys);
-                    return $finalResults;
+                    return FilteredPropertiesUtility::filter($results, $keys);
                 }
 
             } catch (\Exception $e) {
@@ -767,7 +763,7 @@ class Server
                 );
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->productRepository->findAllSoap();
+                $results = $this->productRepository->findAll();
 
                 if ($results) {
                     return FilteredPropertiesUtility::filter($results, $keys);
@@ -800,10 +796,10 @@ class Server
 
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
-            //try {
+            try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUidSoap($productUid)) {
+                if ($product = $this->productRepository->findByUid($productUid)) {
                     $product->setOrderedExternal($orderedExternal);
                     $this->productRepository->update($product);
                     $this->persistenceManager->persistAll();
@@ -813,11 +809,9 @@ class Server
 
                 return false;
 
-                /*
             } catch (\Exception $e) {
                 $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
-                */
 
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
@@ -847,14 +841,14 @@ class Server
 
             try {
 
-                /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUidSoap($productUid)) {
+                /** @var \RKW\RkwSoap\Domain\Model\Product $product */
+                if ($product = $this->productRepository->findByUid($productUid)) {
 
-                    /** @var \RKW\RkwShop\Domain\Model\Stock $stock */
-                    $stock = GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
-                    $stock->setAmount(intval($amount));
+                    /** @var \RKW\RkwSoap\Domain\Model\Stock $stock */
+                    $stock = GeneralUtility::makeInstance(\RKW\RkwSoap\Domain\Model\Stock::class);
+                    $stock->setAmount($amount);
                     $stock->setComment($comment);
-                    $stock->setDeliveryStart(intval($deliveryStart));
+                    $stock->setDeliveryStart($deliveryStart);
                     $stock->setIsExternal(true);
 
                     $this->stockRepository->add($stock);
@@ -896,8 +890,8 @@ class Server
 
                 $validValues = [0, 90, 100, 200];
 
-                /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
+                /** @var \RKW\RkwSoap\Domain\Model\Order $order*/
+                if ($order = $this->orderRepository->findByUid($orderUid)) {
                     if (in_array($status, $validValues)) {
                         $order->setStatus($status);
                         $this->orderRepository->update($order);
@@ -937,8 +931,8 @@ class Server
 
                 $validValues = [0, 1];
 
-                /** @var \RKW\RkwShop\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUidSoap($orderUid)) {
+                /** @var \RKW\RkwSoap\Domain\Model\Order $order*/
+                if ($order = $this->orderRepository->findByUid($orderUid)) {
 
                     if (in_array($deleted, $validValues)) {
                         $order->setDeleted($deleted);
@@ -979,8 +973,8 @@ class Server
 
                 $validValues = [0, 90, 100, 200];
 
-                /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem*/
-                if ($orderItem = $this->orderItemRepository->findByUidSoap($orderItemUid)) {
+                /** @var \RKW\RkwSoap\Domain\Model\OrderItem $orderItem*/
+                if ($orderItem = $this->orderItemRepository->findByUid($orderItemUid)) {
                     if (in_array($status, $validValues)) {
                         $orderItem->setStatus($status);
                         $this->orderItemRepository->update($orderItem);
@@ -1020,7 +1014,7 @@ class Server
             $tempResults = $this->rkwShopFindAllProducts();
             $finalResults = [];
 
-            /** @var \RKW\RkwShop\Domain\Model\Product $result */
+            /** @var \RKW\RkwSoap\Domain\Model\Product $result */
             foreach ($tempResults as $result) {
 
                 // do not include what was formerly called "series"
@@ -1066,7 +1060,7 @@ class Server
             $tempResults = $this->rkwShopFindAllProducts();
             $finalResults = [];
 
-            /** @var \RKW\RkwShop\Domain\Model\Product $result */
+            /** @var \RKW\RkwSoap\Domain\Model\Product $result */
             foreach ($tempResults as $result) {
 
                 // do not include what was formerly called "series"
@@ -1114,7 +1108,7 @@ class Server
         if (ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
-                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
+                /** @var \RKW\RkwSoap\Domain\Model\Order $order */
                 if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
 
                     if (!in_array($status, array(1, 0))) {
@@ -1164,7 +1158,7 @@ class Server
         if (ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
-                /** @var \RKW\RkwOrder\Domain\Model\Order $order */
+                /** @var \RKW\RkwSoap\Domain\Model\Order $order */
                 if ($order = $this->orderRepository->findByUidAll(intval($uid))) {
 
                     if (!in_array($deleted, array(1, 0))) {
@@ -1373,7 +1367,6 @@ class Server
      */
     public function findEventReservationAddPersonsByTimestamp(int $timestamp): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
 
             try {

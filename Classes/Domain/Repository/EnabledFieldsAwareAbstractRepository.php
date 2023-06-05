@@ -3,7 +3,10 @@ namespace RKW\RkwSoap\Domain\Repository;
 
 use Madj2k\CoreExtended\Domain\Repository\StoragePidAwareAbstractRepository;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
+use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -42,6 +45,26 @@ abstract class EnabledFieldsAwareAbstractRepository extends StoragePidAwareAbstr
 
         $this->defaultQuerySettings->setIgnoreEnableFields(true);
         $this->defaultQuerySettings->setIncludeDeleted(true);
+    }
+
+
+    /**
+     * Find all events that have been updated recently
+     *
+     * @param int $timestamp
+     * @return QueryResultInterface
+     * @throws InvalidQueryException
+     */
+    public function findByTimestamp(int $timestamp): QueryResultInterface
+    {
+        $query = $this->createQuery();
+
+        $query->matching(
+            $query->greaterThanOrEqual('tstamp', $timestamp)
+        );
+        $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
+
+        return $query->execute();
     }
 
 }

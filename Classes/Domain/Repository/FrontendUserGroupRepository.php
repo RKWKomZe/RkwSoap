@@ -31,43 +31,4 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 class FrontendUserGroupRepository extends EnabledFieldsAwareAbstractRepository
 {
 
-    /**
-     * initializeObject
-     *
-     * @return void
-     * @throws InvalidConfigurationTypeException
-
-    public function initializeObject(): void
-    {
-        parent::initializeObject();
-
-        $querySettings = $this->objectManager->get(Typo3QuerySettings::class);
-
-        // don't add the pid constraint
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setIncludeDeleted(true);
-
-        $this->setDefaultQuerySettings($querySettings);
-    }*/
-
-
-    /**
-     * Find all users that have been updated recently
-     *
-     * @param int $timestamp
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
-     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
-     */
-    public function findByTimestamp(int $timestamp)
-    {
-        $query = $this->createQuery();
-        $query->matching(
-            $query->greaterThanOrEqual('tstamp', $timestamp)
-        );
-
-        $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
-
-        return $query->execute();
-    }
-
 }

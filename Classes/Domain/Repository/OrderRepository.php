@@ -2,9 +2,7 @@
 
 namespace RKW\RkwSoap\Domain\Repository;
 
-use RKW\RkwSoap\Domain\Model\FrontendUser;
 use RKW\RkwSoap\Domain\Model\Order;
-use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
@@ -49,6 +47,53 @@ class OrderRepository extends EnabledFieldsAwareAbstractRepository
         /** @var Order $returnValue */
         $returnValue = $query->execute()->getFirst();
 
+        return $returnValue;
+    }
+
+
+    /**
+     * Find all orders that have been updated recently
+     *
+     * @param int $timestamp
+     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
+     */
+    public function findByTimestamp(int $timestamp): QueryResultInterface
+    {
+        $query = $this->createQuery();
+
+        $query->matching(
+            $query->logicalOr(
+                $query->greaterThanOrEqual('tstamp', $timestamp),
+                $query->greaterThanOrEqual('orderItem.tstamp', $timestamp)
+            )
+        );
+
+        $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
+        return $query->execute();
+    }
+
+
+    /**
+     * Finds an object matching the given identifier.
+     *
+     * toDo: The parent findByUid-function prevents typecast
+     *
+     * @param int $uid The identifier of the object to find
+     * @return \RKW\RkwShop\Domain\Model\Order|null
+     */
+    public function findByUid($uid):? Order
+    {
+        $query = $this->createQuery();
+
+        $query->matching(
+            $query->equals('uid', $uid)
+        );
+
+        $query->setLimit(1);
+
+        /** @var Order $returnValue */
+        $returnValue = $query->execute()->getFirst();
         return $returnValue;
     }
 

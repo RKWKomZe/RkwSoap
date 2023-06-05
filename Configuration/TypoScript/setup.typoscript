@@ -75,6 +75,14 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\OrderItem {
                 mapping {
                     tableName = tx_rkwshop_domain_model_orderitem
+
+                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
+                    columns {
+                        ext_order.mapOnProperty = order
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
@@ -82,6 +90,14 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\Order {
                 mapping {
                     tableName = tx_rkwshop_domain_model_order
+
+                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
+                    columns {
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
@@ -89,6 +105,14 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\Product {
                 mapping {
                     tableName = tx_rkwshop_domain_model_product
+
+                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
+                    columns {
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
