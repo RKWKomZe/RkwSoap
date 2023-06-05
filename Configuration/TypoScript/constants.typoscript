@@ -1,12 +1,12 @@
 plugin.tx_rkwsoap {
-    # ! IMPORTANT: The view paths are created dynamically in the setup.typoscript !
+    # ! IMPORTANT: The PARTIAL paths are created dynamically in the setup.typoscript !
 	view {
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template root (FE)
-		templateRootPath = EXT:rkw_soap/Resources/Private/
+		templateRootPath = EXT:rkw_soap/Resources/Private/Templates/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template partials (FE)
 		partialRootPath = EXT:rkw_soap/Resources/Private/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template layouts (FE)
-		layoutRootPath = EXT:rkw_soap/Resources/Private/
+		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/
 	}
 	persistence {
 		# cat=plugin.tx_rkwsoap//a; type=string; label=Default storage PID
@@ -33,7 +33,7 @@ plugin.tx_rkwsoap {
             disableSecurityChecks = 0
 
             # cat=plugin.tx_rkwsoap//a; type=string; label=Version number that is returned via getVersion()
-            version = 8.7.3
+            version = 9.5
         }
 
 	}

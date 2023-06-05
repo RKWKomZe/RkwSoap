@@ -15,7 +15,7 @@ module.tx_rkwsoap {
 
 plugin.tx_rkwsoap < module.tx_rkwsoap
 
-
+# FE-REGISTER
 # Following is needed to get the shippingAddress (FOR OLD SOAP TEST)
 module.tx_feregister  {
 
@@ -26,6 +26,7 @@ module.tx_feregister  {
 }
 plugin.tx_feregister < module.tx_feregister
 
+# RKW SHOP
 module.tx_rkwshop {
     persistence {
         permanentProperties {

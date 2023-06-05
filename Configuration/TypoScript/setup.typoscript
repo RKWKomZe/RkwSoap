@@ -161,15 +161,17 @@ plugin.tx_rkwsoap  {
     view {
         layoutRootPaths {
             0 = EXT:rkw_soap/Resources/Private/Layouts/
-            1 = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
+            #1 = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
+            1 = {$plugin.tx_rkwsoap.view.layoutRootPath}
         }
         templateRootPaths {
             0 = EXT:rkw_soap/Resources/Private/Templates/
-            1 = {$plugin.tx_rkwsoap.view.templateRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
+            1 = {$plugin.tx_rkwsoap.view.templateRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
+            #1 = {$plugin.tx_rkwsoap.view.templateRootPath}
         }
         partialRootPaths {
             0 = EXT:rkw_soap/Resources/Private/Partials/
-            1 = {$plugin.tx_rkwsoap.view.partialRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
+            1 = {$plugin.tx_rkwsoap.view.partialRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
         }
     }
 
