@@ -26,6 +26,18 @@ module.tx_feregister  {
 }
 plugin.tx_feregister < module.tx_feregister
 
+module.tx_rkwshop {
+    persistence {
+        permanentProperties {
+            RKW\RkwSoap\Domain\Model\OrderItem = product, order
+            RKW\RkwSoap\Domain\Model\Order = frontendUser,shippingAddress
+            RKW\RkwSoap\Domain\Model\Product = productBundle
+            RKW\RkwSoap\Domain\Model\ShippingAddress = frontendUser
+        }
+    }
+}
+plugin.tx_rkwshop < module.tx_rkwshop
+
 
 config {
     doctype = html5

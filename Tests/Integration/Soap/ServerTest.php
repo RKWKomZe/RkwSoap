@@ -372,6 +372,11 @@ class ServerTest extends FunctionalTestCase
         /**
          * Scenario:
          *
+         * Test does not work without following TypoScript configuration:
+         * module.tx_rkwshop.persistence.permanentProperties {
+         *      RKW\RkwSoap\Domain\Model\Order = frontendUser,shippingAddress
+         * }
+         *
          * Given there are three orders
          * Given that one order belongs to disabled frontend user
          * Given that one order belongs to a deleted frontend user
