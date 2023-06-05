@@ -40,56 +40,56 @@ class Server
     /**
      * frontendUserRepository
      *
-     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository|\Madj2k\FeRegister\Domain\Repository\FrontendUserRepository
+     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository
      */
     protected $frontendUserRepository;
 
     /**
      * frontendUserGroupRepository
      *
-     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository|\Madj2k\FeRegister\Domain\Repository\FrontendUserGroupRepository
+     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository
      */
     protected $frontendUserGroupRepository;
 
     /**
      * shippingAddressRepository
      *
-     * @var \Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository
+     * @var \RKW\RkwSoap\Domain\Repository\ShippingAddressRepository
      */
     protected $shippingAddressRepository;
 
     /**
      * orderRepository
      *
-     * @var \RKW\RkwShop\Domain\Repository\OrderRepository
+     * @var \RKW\RkwSoap\Domain\Repository\OrderRepository
      */
     protected $orderRepository;
 
     /**
      * orderItemRepository
      *
-     * @var \RKW\RkwShop\Domain\Repository\OrderItemRepository
+     * @var \RKW\RkwSoap\Domain\Repository\OrderItemRepository
      */
     protected $orderItemRepository;
 
     /**
      * productRepository
      *
-     * @var \RKW\RkwShop\Domain\Repository\ProductRepository
+     * @var \RKW\RkwSoap\Domain\Repository\ProductRepository
      */
     protected $productRepository;
 
     /**
      * stockRepository
      *
-     * @var \RKW\RkwShop\Domain\Repository\StockRepository
+     * @var \RKW\RkwSoap\Domain\Repository\StockRepository
      */
     protected $stockRepository;
 
     /**
      * seriesRepository
      *
-     * @var \RKW\RkwBasics\Domain\Repository\SeriesRepository
+     * @var \RKW\RkwSoap\Domain\Repository\SeriesRepository
      */
     protected $seriesRepository;
 
@@ -97,7 +97,7 @@ class Server
     /**
      * eventRepository
      *
-     * @var \RKW\RkwEvents\Domain\Repository\EventRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventRepository
      */
     protected $eventRepository;
 
@@ -105,7 +105,7 @@ class Server
     /**
      * eventPlaceRepository
      *
-     * @var \RKW\RkwEvents\Domain\Repository\EventPlaceRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventPlaceRepository
      */
     protected $eventPlaceRepository;
 
@@ -113,7 +113,7 @@ class Server
     /**
      * eventReservationRepository
      *
-     * @var \RKW\RkwEvents\Domain\Repository\EventReservationRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventReservationRepository
      */
     protected $eventReservationRepository;
 
@@ -121,7 +121,7 @@ class Server
     /**
      * eventReservationAddPersonRepository
      *
-     * @var \RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventReservationAddPersonRepository
      */
     protected $eventReservationAddPersonRepository;
 
@@ -800,11 +800,11 @@ class Server
 
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
-            try {
+            //try {
 
                 /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUidSoap(intval($productUid))) {
-                    $product->setOrderedExternal(intval($orderedExternal));
+                if ($product = $this->productRepository->findByUidSoap($productUid)) {
+                    $product->setOrderedExternal($orderedExternal);
                     $this->productRepository->update($product);
                     $this->persistenceManager->persistAll();
 
@@ -813,9 +813,11 @@ class Server
 
                 return false;
 
+                /*
             } catch (\Exception $e) {
                 $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
+                */
 
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');

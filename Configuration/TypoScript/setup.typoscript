@@ -5,6 +5,33 @@ config.tx_extbase{
 	persistence {
 		classes {
 
+            RKW\RkwSoap\Domain\Model\EventPlace {
+                mapping {
+                    tableName = tx_rkwevents_domain_model_eventplace
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Event {
+                mapping {
+                    tableName = tx_rkwevents_domain_model_event
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\EventReservationAddPerson {
+                mapping {
+                    tableName = tx_rkwevents_domain_model_eventreservationaddperson
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\EventReservation {
+                mapping {
+                    tableName = tx_rkwevents_domain_model_eventreservation
+                }
+            }
+
 
 			RKW\RkwSoap\Domain\Model\FrontendUser {
 				mapping {
@@ -44,6 +71,48 @@ config.tx_extbase{
 				}
 			}
 
+
+            RKW\RkwSoap\Domain\Model\OrderItem {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_orderitem
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Order {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_order
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Product {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_product
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Series {
+                mapping {
+                    tableName = tx_rkwbasics_domain_model_series
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\ShippingAddress {
+                mapping {
+                    tableName = tx_feregister_domain_model_shippingaddress
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Stock {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_stock
+                }
+            }
+
 		}
 	}
 }
@@ -77,11 +146,6 @@ plugin.tx_rkwsoap  {
         partialRootPaths {
             0 = EXT:rkw_soap/Resources/Private/Partials/
             1 = {$plugin.tx_rkwsoap.view.partialRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
-        }
-        widget {
-            TYPO3\CMS\Fluid\ViewHelpers\Widget\AutocompleteViewHelper {
-                templateRootPath = EXT:fe_register/Resources/Private/Templates/
-            }
         }
     }
 

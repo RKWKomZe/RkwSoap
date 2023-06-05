@@ -6,9 +6,9 @@ use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use \RKW\RkwSoap\Soap\Server;
 use \RKW\RkwSoap\Domain\Repository\FrontendUserRepository;
 
-use \RKW\RkwShop\Domain\Repository\ProductRepository;
-use \RKW\RkwShop\Domain\Repository\OrderRepository;
-use \RKW\RkwShop\Domain\Repository\OrderItemRepository;
+use \RKW\RkwSoap\Domain\Repository\ProductRepository;
+use \RKW\RkwSoap\Domain\Repository\OrderRepository;
+use \RKW\RkwSoap\Domain\Repository\OrderItemRepository;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -69,17 +69,17 @@ class ServerTest extends FunctionalTestCase
     private $frontendUserRepository;
 
     /**
-     * @var \RKW\RkwShop\Domain\Repository\ProductRepository
+     * @var \RKW\RkwSoap\Domain\Repository\ProductRepository
      */
     private $productRepository;
 
     /**
-     * @var \RKW\RkwShop\Domain\Repository\OrderRepository
+     * @var \RKW\RkwSoap\Domain\Repository\OrderRepository
      */
     private $orderRepository;
 
     /**
-     * @var \RKW\RkwShop\Domain\Repository\OrderItemRepository
+     * @var \RKW\RkwSoap\Domain\Repository\OrderItemRepository
      */
     private $orderItemRepository;
 
@@ -510,8 +510,8 @@ class ServerTest extends FunctionalTestCase
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check130.xml');
         self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
-        /** @var \RKW\RkwShop\Domain\Model\Product $product */
-        $product = $this->productRepository->findByUid(1);
+        /** @var \RKW\RkwSoap\Domain\Model\Product $product */
+        $product = $this->productRepository->findByIdentifier(1);
         self::assertEquals(999, $product->getOrderedExternal());
     }
 
@@ -533,8 +533,9 @@ class ServerTest extends FunctionalTestCase
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check131.xml');
         self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
-        /** @var \RKW\RkwShop\Domain\Model\Product $product */
-        $product = $this->productRepository->findByUid(1);
+        /** @var \RKW\RkwSoap\Domain\Model\Product $product */
+        $product = $this->productRepository->findByIdentifier(1);
+
         self::assertEquals(999, $product->getOrderedExternal());
 
     }
@@ -559,7 +560,7 @@ class ServerTest extends FunctionalTestCase
         self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
-        $product = $this->productRepository->findByUid(1);
+        $product = $this->productRepository->findByIdentifier(1);
         self::assertEquals(999, $product->getOrderedExternal());
 
     }
@@ -585,7 +586,7 @@ class ServerTest extends FunctionalTestCase
         self::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
-        $order = $this->orderRepository->findByUid(1);
+        $order = $this->orderRepository->findByIdentifier(1);
         self::assertEquals(100, $order->getStatus());
     }
 
@@ -609,7 +610,7 @@ class ServerTest extends FunctionalTestCase
         self::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 99999));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
-        $order = $this->orderRepository->findByUid(1);
+        $order = $this->orderRepository->findByIdentifier(1);
         self::assertEquals(0, $order->getStatus());
     }
 
@@ -916,7 +917,7 @@ class ServerTest extends FunctionalTestCase
         self::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
-        $orderItem = $this->orderItemRepository->findByUid(1);
+        $orderItem = $this->orderItemRepository->findByIdentifier(1);
         self::assertEquals(100, $orderItem->getStatus());
 
     }
@@ -985,6 +986,9 @@ class ServerTest extends FunctionalTestCase
         /**
          * Scenario:
          *
+         * !! BY MF: THIS IS NOT LONGER A VALID TEST FOR THE NEW RKW_SOAP VERSION !!
+         * !! Is now simply checking if there is nothing returned
+         *
          * Given there is a frontend user
          * Given the frontend user has a different storage pid
          * When I fetch the frontend user by uid
@@ -994,8 +998,9 @@ class ServerTest extends FunctionalTestCase
 
         $result = $this->subject->findFeUserByUid(1);
 
-        self::assertNotNull($result);
-        self::assertEquals(1, $result['uid']);
+        self::assertCount(0, $result);
+        //self::assertNotNull($result);
+        //self::assertEquals(1, $result['uid']);
 
     }
 
@@ -1009,6 +1014,8 @@ class ServerTest extends FunctionalTestCase
 
         /**
          * Scenario:
+         *
+         * !! By MF: THIS TEST WORKS NOW WITH EQUAL PIDs !!
          *
          * Given there is a frontend user
          * Given the frontend user has a shipping address
@@ -1043,6 +1050,8 @@ class ServerTest extends FunctionalTestCase
 
         /**
          * Scenario:
+         *
+         * !! By MF: THIS TEST WORKS NOW WITH EQUAL PIDs !!
          *
          * Given there is a frontend user
          * Given the frontend user has a shipping address

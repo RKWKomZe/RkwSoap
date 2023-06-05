@@ -21,6 +21,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
  * Class FrontendUser
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
+ * @author Maximilian Fäßler <maximilian@faesslerweb.de>
  * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later

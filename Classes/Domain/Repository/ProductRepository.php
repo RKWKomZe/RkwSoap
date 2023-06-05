@@ -3,6 +3,7 @@
 namespace RKW\RkwSoap\Domain\Repository;
 
 use RKW\RkwSoap\Domain\Model\FrontendUser;
+use RKW\RkwSoap\Domain\Model\Product;
 use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
@@ -21,7 +22,7 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
  */
 
 /**
- * Class FrontendUserRepository
+ * Class ProductRepository
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @author Maximilian Fäßler <maximilian@faesslerweb.de>
@@ -29,16 +30,15 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FrontendUserRepository extends EnabledFieldsAwareAbstractRepository
+class ProductRepository extends EnabledFieldsAwareAbstractRepository
 {
-
     /**
      * toDo: This override is only a workaround, because the "initializedObject"-configuration does not work with the core repository
      *
      * @param mixed $identifier The identifier of the object to find
-     * @return FrontendUser|null The matching object if found, otherwise NULL
+     * @return Product|null The matching object if found, otherwise NULL
      */
-    public function findByIdentifier($identifier): ?FrontendUser
+    public function findByIdentifier($identifier): ?Product
     {
         $query = $this->createQuery();
 
@@ -46,49 +46,48 @@ class FrontendUserRepository extends EnabledFieldsAwareAbstractRepository
             $query->equals('uid', $identifier)
         );
 
-        /** @var FrontendUser $returnValue */
+        /** @var Product $returnValue */
         $returnValue = $query->execute()->getFirst();
 
         return $returnValue;
     }
 
-
     /**
-     * Find all users that have been updated recently
+     * Get all products including hidden and deleted
      *
-     * @param int  $timestamp
-     * @param bool $excludeEmptyName
-     * @return QueryResultInterface
-     * @throws InvalidQueryException
+     * @return array|null|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
-    public function findByTimestamp(int $timestamp, bool $excludeEmptyName = true): QueryResultInterface
+    public function findAllSoap()
     {
+
         $query = $this->createQuery();
-        $constrains = array(
-            $query->greaterThanOrEqual('tstamp', $timestamp),
-        );
-
-        // exclude feUsers without first- and last-name
-        if ($excludeEmptyName) {
-            $constrains[] = $query->logicalAnd(
-                $query->logicalNot(
-                    $query->equals('firstName', '')
-                ),
-                $query->logicalNot(
-                    $query->equals('lastName', '')
-                )
-            );
-        }
-
-        $query->matching(
-            $query->logicalAnd(
-                $constrains
-            )
-        );
-
-        $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
+        // $query->getQuerySettings()->setRespectStoragePage(false);
+        $query->getQuerySettings()->setIncludeDeleted(true);
+        $query->getQuerySettings()->setIgnoreEnableFields(true);
 
         return $query->execute();
     }
 
+    /**
+     * Finds an object matching the given identifier.
+     *
+     * @param int $uid The identifier of the object to find
+     * @return Product|null The matching object if found, otherwise NULL
+     */
+    public function findByUidSoap(int $uid):? Product
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setIncludeDeleted(true);
+        $query->getQuerySettings()->setIgnoreEnableFields(true);
+
+        $query->matching(
+            $query->equals('uid', $uid)
+        );
+
+        $query->setLimit(1);
+
+        /** @var Product $returnValue */
+        $returnValue = $query->execute()->getFirst();
+        return $returnValue;
+    }
 }
