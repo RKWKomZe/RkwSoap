@@ -16,8 +16,12 @@ namespace RKW\RkwSoap\Controller;
  */
 
 use Madj2k\CoreExtended\Utility\GeneralUtility;
+use RKW\RkwSoap\Soap\Server;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Class SoapController
@@ -43,12 +47,11 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function wsdlAction(): void
     {
-
         // check if an url is set
         if ($this->settings['soapServer']['url']) {
             $this->view->assign('url', $this->settings['soapServer']['url']);
             $this->getLogger()->log(
-                \TYPO3\CMS\Core\Log\LogLevel::INFO,
+                LogLevel::INFO,
                 sprintf('Successful WSDL request from IP %s.', $this->getRemoteIp())
             );
 
@@ -57,9 +60,8 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
             header('HTTP/1.1 503 Service Temporarily Unavailable');
             header('Status: 503 Service Temporarily Unavailable');
             header('Retry-After: 300');
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Service unavailable.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Service unavailable.');
             exit();
-            //===
         }
     }
 
@@ -72,6 +74,13 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function soapAction(): void
     {
+        /*
+        // TEST START
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $server = $objectManager->get(Server::class);
+        DebuggerUtility::var_dump($server->findFeUserByUid(1)); exit;
+        // TEST END
+        */
 
         // kill TYPO3 output buffer
         while (ob_end_clean());
@@ -109,7 +118,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                 header('WWW-Authenticate: Basic realm="Checking Authentification"');
                 header('HTTP/1.0 401 Unauthorized');
                 $this->getLogger()->log(
-                    \TYPO3\CMS\Core\Log\LogLevel::WARNING,
+                    LogLevel::WARNING,
                     sprintf('Login failed for user "%s" from IP %s.', $_SERVER['PHP_AUTH_USER'], $remoteAddr)
                 );
                 exit;
@@ -133,7 +142,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
                 $server->handle();
 
                 $this->getLogger()->log(
-                    \TYPO3\CMS\Core\Log\LogLevel::INFO,
+                    LogLevel::INFO,
                     sprintf('Successful SOAP call from IP %s. Request: %s',
                         $remoteAddr,
                         str_replace(array("\n", "\r"), '', file_get_contents("php://input"))
@@ -143,7 +152,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
             } catch (\Exception $e) {
                 $this->getLogger()->log(
-                    \TYPO3\CMS\Core\Log\LogLevel::ERROR,
+                    LogLevel::ERROR,
                     sprintf(
                         'An error occurred. Message: %s. Request: %s',
                         str_replace(array("\n", "\r"), '', $e->getMessage()),
@@ -159,7 +168,7 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
         header('HTTP/1.1 503 Service Temporarily Unavailable');
         header('Status: 503 Service Temporarily Unavailable');
         header('Retry-After: 300');
-        $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Service unavailable.');
+        $this->getLogger()->log(LogLevel::ERROR, 'Service unavailable.');
         exit();
     }
 

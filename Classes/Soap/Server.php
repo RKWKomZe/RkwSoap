@@ -4,7 +4,14 @@ namespace RKW\RkwSoap\Soap;
 
 use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
 use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
+use Spipu\Html2Pdf\Debug\Debug;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogLevel;
+use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -64,7 +71,6 @@ class Server
      * @var \RKW\RkwShop\Domain\Repository\OrderItemRepository
      */
     protected $orderItemRepository;
-
 
     /**
      * productRepository
@@ -136,34 +142,34 @@ class Server
     public function __construct()
     {
 
-        $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+        $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
-            $this->shippingAddressRepository = $objectManager->get('Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository');
+        if (ExtensionManagementUtility::isLoaded('fe_register')) {
+            $this->shippingAddressRepository = $objectManager->get(\Madj2k\FeRegister\Domain\Repository\ShippingAddressRepository::class);
         }
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
-            $this->orderRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\OrderRepository');
-            $this->orderItemRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\OrderItemRepository');
-            $this->productRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\ProductRepository');
-            $this->stockRepository = $objectManager->get('RKW\RkwShop\Domain\Repository\StockRepository');
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
+            $this->orderRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\OrderRepository::class);
+            $this->orderItemRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\OrderItemRepository::class);
+            $this->productRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\ProductRepository::class);
+            $this->stockRepository = $objectManager->get(\RKW\RkwShop\Domain\Repository\StockRepository::class);
 
         }
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
-            $this->eventRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventRepository');
-            $this->eventPlaceRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventPlaceRepository');
-            $this->eventReservationRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationRepository');
-            $this->eventReservationAddPersonRepository = $objectManager->get('RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository');
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
+            $this->eventRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventRepository::class);
+            $this->eventPlaceRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventPlaceRepository::class);
+            $this->eventReservationRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventReservationRepository::class);
+            $this->eventReservationAddPersonRepository = $objectManager->get(\RKW\RkwEvents\Domain\Repository\EventReservationAddPersonRepository::class);
         }
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_basics')) {
-            $this->seriesRepository = $objectManager->get('RKW\RkwBasics\Domain\Repository\SeriesRepository');
+        if (ExtensionManagementUtility::isLoaded('rkw_basics')) {
+            $this->seriesRepository = $objectManager->get(\RKW\RkwBasics\Domain\Repository\SeriesRepository::class);
         }
 
-        $this->frontendUserRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserRepository');
-        $this->frontendUserGroupRepository = $objectManager->get('RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository');
-        $this->persistenceManager = $objectManager->get('TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager');
+        $this->frontendUserRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserRepository::class);
+        $this->frontendUserGroupRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository::class);
+        $this->persistenceManager = $objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
 
     }
 
@@ -176,10 +182,10 @@ class Server
      * @throws \TYPO3\CMS\Core\Package\Exception
      * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         $settings = $this->getSettings();
-        $version = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getExtensionVersion('rkw_soap');
+        $version = ExtensionManagementUtility::getExtensionVersion('rkw_soap');
 
         if ($settings['soapServer']['version']) {
             $version = $settings['soapServer']['version'];
@@ -197,12 +203,12 @@ class Server
      * @return array
      * @deprecated since 05-10-2017
      */
-    public function findFeUserByTimestamp($timestamp)
+    public function findFeUserByTimestamp(int $timestamp): array
     {
 
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUsersByTimestamp($timestamp);
-        //===
+        
     }
 
 
@@ -212,7 +218,7 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function findFeUsersByTimestamp($timestamp)
+    public function findFeUsersByTimestamp(int $timestamp): array
     {
 
         try {
@@ -238,7 +244,7 @@ class Server
                 'www',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
+            if (ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -297,14 +303,14 @@ class Server
             if ($results) {
                 return FilteredPropertiesUtility::filter($results, $keys);
             }
-            //===
+            
 
         } catch (\Exception $e) {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -314,10 +320,10 @@ class Server
      * @param int $uid
      * @return array
      */
-    public function findFeUserByUid($uid)
+    public function findFeUserByUid(int $uid): array
     {
 
-        try {
+    //    try {
 
             $keys = array(
                 'uid',
@@ -340,7 +346,7 @@ class Server
                 'www',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
+            if (ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -369,9 +375,9 @@ class Server
                 );
             }
 
-
             /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
-            $result = $this->frontendUserRepository->findByUid($uid);
+            $result = $this->frontendUserRepository->findByIdentifier(1);
+
             if ($result) {
 
                 // get basic data from shipping address if nothing is set in account
@@ -400,12 +406,12 @@ class Server
                 return FilteredPropertiesUtility::filter($result, $keys);
             }
 
-        } catch (\Exception $e) {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
-        }
+    //    } catch (\Exception $e) {
+    //        $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
+    //    }
 
         return array();
-        //===
+        
     }
 
     /**
@@ -417,11 +423,11 @@ class Server
      * @return array
      * @deprecated since 05-10-2017
      */
-    public function findFeUserGroupByTimestamp($timestamp, $serviceOnly = 0)
+    public function findFeUserGroupByTimestamp(int $timestamp, int $serviceOnly = 0): array
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
-        //===
+        
     }
 
 
@@ -432,7 +438,7 @@ class Server
      * @param int $serviceOnly
      * @return array
      */
-    public function findFeUserGroupsByTimestamp($timestamp, $serviceOnly = 0)
+    public function findFeUserGroupsByTimestamp(int $timestamp, int $serviceOnly = 0): array
     {
 
         try {
@@ -447,7 +453,7 @@ class Server
                 'description',
             );
 
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('fe_register')) {
+            if (ExtensionManagementUtility::isLoaded('fe_register')) {
 
                 $keys = array(
                     'uid',
@@ -467,14 +473,12 @@ class Server
             if ($results) {
                 return FilteredPropertiesUtility::filter($results, $keys);
             }
-            //===
 
         } catch (\Exception $e) {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
         }
 
         return array();
-        //===
     }
 
 
@@ -486,11 +490,11 @@ class Server
      * @return array
      * @deprecated since 05-10-2017
      */
-    public function findOrderByTimestamp($timestamp)
+    public function findOrderByTimestamp(int $timestamp): array
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findOrdersByTimestamp($timestamp);
-        //===
+        
     }
 
 
@@ -501,10 +505,10 @@ class Server
      * @return array
      * @deprecated since 12-08-2019
      */
-    public function findOrdersByTimestamp($timestamp)
+    public function findOrdersByTimestamp(int $timestamp): array
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -539,7 +543,7 @@ class Server
                                 }
                             }
                         } else {
-                            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::WARNING, sprintf('Non existing product in orderItem with id = %s referenced.', $orderItem->getUid()));
+                            $this->getLogger()->log(LogLevel::WARNING, sprintf('Non existing product in orderItem with id = %s referenced.', $orderItem->getUid()));
                         }
                     }
 
@@ -602,16 +606,14 @@ class Server
                 return $finalResults;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
-
         return array();
-        //===
     }
 
 
@@ -621,10 +623,10 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function rkwShopFindOrdersByTimestamp($timestamp = 0)
+    public function rkwShopFindOrdersByTimestamp(int $timestamp = 0): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -674,15 +676,15 @@ class Server
                 }
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -693,10 +695,10 @@ class Server
      * @param int $orderUid
      * @return array
      */
-    public function rkwShopFindOrderItemsByOrder($orderUid)
+    public function rkwShopFindOrderItemsByOrder(int $orderUid): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -724,15 +726,15 @@ class Server
                 }
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -741,13 +743,11 @@ class Server
      *
      * @return array
      */
-    public function rkwShopFindAllProducts()
+    public function rkwShopFindAllProducts(): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
             try {
-
                 $keys = array(
                     'uid',
                     'pid',
@@ -773,16 +773,18 @@ class Server
                     return FilteredPropertiesUtility::filter($results, $keys);
                 }
 
+
+
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -793,10 +795,10 @@ class Server
      * @param int $orderedExternal
      * @return bool
      */
-    public function rkwShopSetOrderedExternalForProduct($productUid, $orderedExternal)
+    public function rkwShopSetOrderedExternalForProduct(int $productUid, int $orderedExternal): bool
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -812,11 +814,11 @@ class Server
                 return false;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return false;
@@ -831,10 +833,15 @@ class Server
      * @param int $deliveryStart
      * @return bool
      */
-    public function rkwShopAddStockForProduct($productUid, $amount, $comment, $deliveryStart = 0)
+    public function rkwShopAddStockForProduct(
+        int $productUid,
+        int $amount,
+        string $comment,
+        int $deliveryStart = 0
+    ): bool
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -842,7 +849,7 @@ class Server
                 if ($product = $this->productRepository->findByUidSoap($productUid)) {
 
                     /** @var \RKW\RkwShop\Domain\Model\Stock $stock */
-                    $stock = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
+                    $stock = GeneralUtility::makeInstance('RKW\RkwShop\Domain\Model\Stock');
                     $stock->setAmount(intval($amount));
                     $stock->setComment($comment);
                     $stock->setDeliveryStart(intval($deliveryStart));
@@ -860,11 +867,11 @@ class Server
                 return false;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return false;
@@ -878,10 +885,10 @@ class Server
      * @param int $status
      * @return bool
      */
-    public function rkwShopSetStatusForOrder($orderUid, $status)
+    public function rkwShopSetStatusForOrder(int $orderUid, int $status): bool
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -901,11 +908,11 @@ class Server
                 return false;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return false;
@@ -919,10 +926,10 @@ class Server
      * @param int $deleted
      * @return bool
      */
-    public function rkwShopSetDeletedForOrder($orderUid, $deleted)
+    public function rkwShopSetDeletedForOrder(int $orderUid, int $deleted): bool
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -943,11 +950,11 @@ class Server
                 return false;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return false;
@@ -961,10 +968,10 @@ class Server
      * @param int $status
      * @return bool
      */
-    public function rkwShopSetStatusForOrderItem($orderItemUid, $status)
+    public function rkwShopSetStatusForOrderItem(int $orderItemUid, int $status): bool
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             try {
 
@@ -984,11 +991,11 @@ class Server
                 return false;
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_shop is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
         return false;
@@ -1002,10 +1009,10 @@ class Server
      * @return array
      * @deprecated since 08-08-2019
      */
-    public function findAllPublications()
+    public function findAllPublications(): array
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
             $tempResults = $this->rkwShopFindAllProducts();
@@ -1038,7 +1045,7 @@ class Server
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -1048,10 +1055,10 @@ class Server
      * @return array
      * @deprecated since 08-08-2019
      */
-    public function findAllSeries()
+    public function findAllSeries(): array
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_shop')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
             // now we need some mapping in order to make the old stuff work
             $tempResults = $this->rkwShopFindAllProducts();
@@ -1099,10 +1106,10 @@ class Server
      * @return int
      * @deprecated since 08-08-2019
      */
-    public function setOrderStatus($uid, $status)
+    public function setOrderStatus(int $uid, int $status): int
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
@@ -1118,26 +1125,26 @@ class Server
                     $this->persistenceManager->persistAll();
 
                     return 1;
-                    //===
+                    
 
                 }
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
 
                 return 99;
-                //===
+                
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_order is not installed.');
 
             return 99;
-            //===
+            
         }
 
         return 0;
-        //===
+        
     }
 
 
@@ -1149,10 +1156,10 @@ class Server
      * @return int
      * @deprecated since 08-08-2019
      */
-    public function setOrderDeleted($uid, $deleted)
+    public function setOrderDeleted(int $uid, int $deleted): int
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_order')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_order')) {
             try {
 
                 /** @var \RKW\RkwOrder\Domain\Model\Order $order */
@@ -1168,27 +1175,27 @@ class Server
                     $this->persistenceManager->persistAll();
 
                     return 1;
-                    //===
+                    
 
                 }
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
 
                 return 99;
-                //===
+                
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_order is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_order is not installed.');
 
             return 99;
-            //===
+            
         }
 
 
         return 0;
-        //===
+        
     }
 
 
@@ -1198,10 +1205,10 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function findEventsByTimestamp($timestamp)
+    public function findEventsByTimestamp(int $timestamp): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
 
             try {
 
@@ -1239,18 +1246,18 @@ class Server
                 if ($results) {
                     return FilteredPropertiesUtility::filter($results, $keys);
                 }
-                //===
+                
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_events is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
     /**
@@ -1259,10 +1266,10 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function findEventPlacesByTimestamp($timestamp)
+    public function findEventPlacesByTimestamp(int $timestamp): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
 
             try {
 
@@ -1286,18 +1293,18 @@ class Server
                 if ($results) {
                     return FilteredPropertiesUtility::filter($results, $keys);
                 }
-                //===
+                
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_events is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -1307,10 +1314,10 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function findEventReservationsByTimestamp($timestamp)
+    public function findEventReservationsByTimestamp(int $timestamp): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
 
             try {
 
@@ -1341,18 +1348,18 @@ class Server
                 if ($results) {
                     return FilteredPropertiesUtility::filter($results, $keys);
                 }
-                //===
+                
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_events is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
         return array();
-        //===
+        
     }
 
 
@@ -1362,10 +1369,10 @@ class Server
      * @param int $timestamp
      * @return array
      */
-    public function findEventReservationAddPersonsByTimestamp($timestamp)
+    public function findEventReservationAddPersonsByTimestamp(int $timestamp): array
     {
 
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rkw_events')) {
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
 
             try {
 
@@ -1386,18 +1393,17 @@ class Server
                 if ($results) {
                     return FilteredPropertiesUtility::filter($results, $keys);
                 }
-                //===
+                
 
             } catch (\Exception $e) {
-                $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, $e->getMessage());
+                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
 
         } else {
-            $this->getLogger()->log(\TYPO3\CMS\Core\Log\LogLevel::ERROR, 'Extension rkw_events is not installed.');
+            $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
         return array();
-        //===
     }
 
 
@@ -1408,10 +1414,10 @@ class Server
      *
      * @return \TYPO3\CMS\Core\Log\Logger
      */
-    protected function getLogger()
+    protected function getLogger(): Logger
     {
-        if (!$this->logger instanceof \TYPO3\CMS\Core\Log\Logger) {
-            $this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+        if (!$this->logger instanceof Logger) {
+            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
 
         return $this->logger;
@@ -1425,7 +1431,7 @@ class Server
      * @return array
      * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
-    protected function getSettings($which = ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS)
+    protected function getSettings(string $which = ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS): array
     {
         return Common::getTypoScriptConfiguration('rkwsoap', $which);
     }

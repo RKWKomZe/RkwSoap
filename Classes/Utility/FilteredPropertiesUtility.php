@@ -2,6 +2,10 @@
 
 namespace RKW\RkwSoap\Utility;
 use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
+use Spipu\Html2Pdf\Debug\Debug;
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -30,27 +34,30 @@ class FilteredPropertiesUtility
     /**
      * Builds a multidimensional array from the objects in QueryResultInterface or an array of objects
      *
-     * @param object|array $results The query results
+     * @param mixed $results The query results
      * @param array $keys The field names
      * @return array
      */
     public static function filter($results, $keys)
     {
+        $resultReturnArray = array();
+        if (is_iterable($results)) {
 
-        $result = array();
-        foreach ($results as $objectOrArray) {
-            if ($objectOrArray instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
-                $result[] = self::getPropertiesFromObject($objectOrArray, $keys);
-            } else if (is_array($objectOrArray)) {
-                $result[] = self::getPropertiesFromArray($objectOrArray, $keys);
+            foreach ($results as $key => $objectOrArray) {
+                if ($objectOrArray instanceof AbstractEntity) {
+                    $resultReturnArray[] = self::getPropertiesFromObject($objectOrArray, $keys);
+                } else if (is_array($objectOrArray)) {
+                    $resultReturnArray[] = self::getPropertiesFromArray($objectOrArray, $keys);
+                }
             }
         }
 
-        if ($results instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
-            $result = self::getPropertiesFromObject($results, $keys);
+
+        if ($results instanceof AbstractEntity) {
+            $resultReturnArray = self::getPropertiesFromObject($results, $keys);
         }
 
-        return $result;
+        return $resultReturnArray;
     }
 
 
@@ -86,11 +93,11 @@ class FilteredPropertiesUtility
     /**
      * Returns the relevant values depending on the object given
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object
+     * @param AbstractEntity $object
      * @param array $propertyArray
      * @return array
      */
-    protected static function getPropertiesFromObject(\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object, $propertyArray)
+    protected static function getPropertiesFromObject(AbstractEntity $object, $propertyArray)
     {
 
         $result = [];
@@ -133,7 +140,7 @@ class FilteredPropertiesUtility
             // now that we know the type, we only allow those classes here
             if ($object instanceof $type) {
 
-                if ($object instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+                if ($object instanceof AbstractEntity) {
 
                     if (! empty($subProperties)) {
                         $result[] = self::getPropertiesFromObject($object, $subProperties);
@@ -193,12 +200,12 @@ class FilteredPropertiesUtility
     /**
      * Returns the relevant values depending on the object given
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object
+     * @param AbstractEntity $object
      * @param string $property
      * @param array $subProperties
      * @return mixed
      */
-    protected static function getPropertyFromObject(\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object, $property, $subProperties = [])
+    protected static function getPropertyFromObject(AbstractEntity $object, $property, $subProperties = [])
     {
 
         if (strpos($property, 'ext_') === 0) {
@@ -217,7 +224,7 @@ class FilteredPropertiesUtility
                 }
 
             // is it an object or array?
-            } else if ($object->$getter() instanceof \TYPO3\CMS\Extbase\DomainObject\AbstractEntity) {
+            } else if ($object->$getter() instanceof AbstractEntity) {
 
                 // if we have sub-properties we go and get them as array
                 if (! empty($subProperties)) {
@@ -243,10 +250,10 @@ class FilteredPropertiesUtility
     /**
      * Returns the default property
      *
-     * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object
+     * @param AbstractEntity $object
      * @return mixed
      */
-    protected static function getDefaultPropertyFromObject(\TYPO3\CMS\Extbase\DomainObject\AbstractEntity $object)
+    protected static function getDefaultPropertyFromObject(AbstractEntity $object)
     {
 
         // check for special objects

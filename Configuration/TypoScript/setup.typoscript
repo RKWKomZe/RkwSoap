@@ -57,11 +57,33 @@ plugin.tx_rkwsoap  {
     	storagePid = {$plugin.tx_rkwsoap.persistence.storagePid}
     }
 
+    /*
 	view {
-		templateRootPath = {$plugin.tx_rkwsoap.view.templateRootPath}
-		partialRootPath = {$plugin.tx_rkwsoap.view.partialRootPath}
-		layoutRootPath = {$plugin.tx_rkwsoap.view.layoutRootPath}
+		templateRootPath = {$plugin.tx_rkwsoap.view.templateRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
+		partialRootPath = {$plugin.tx_rkwsoap.view.partialRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
+		layoutRootPath = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
 	}
+	*/
+
+    view {
+        layoutRootPaths {
+            0 = EXT:rkw_soap/Resources/Private/Layouts/
+            1 = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
+        }
+        templateRootPaths {
+            0 = EXT:rkw_soap/Resources/Private/Templates/
+            1 = {$plugin.tx_rkwsoap.view.templateRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
+        }
+        partialRootPaths {
+            0 = EXT:rkw_soap/Resources/Private/Partials/
+            1 = {$plugin.tx_rkwsoap.view.partialRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
+        }
+        widget {
+            TYPO3\CMS\Fluid\ViewHelpers\Widget\AutocompleteViewHelper {
+                templateRootPath = EXT:fe_register/Resources/Private/Templates/
+            }
+        }
+    }
 
 	features {
 		# uncomment the following line to enable the new Property Mapper.
@@ -135,4 +157,7 @@ txRkwSoapSoapPage {
 // Various
 // #########################################################
 module.tx_rkwsoap < plugin.tx_rkwsoap
+
+# MF test. Something does not work with the template path
+plugin.tx_rkwsoap_rkwsoap < plugin.tx_rkwsoap
 

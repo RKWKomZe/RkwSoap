@@ -1,0 +1,85 @@
+<f:section name="Types">
+    <xsd:complexType name="EventList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="Event" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="Event[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Event">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="hidden" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="title" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="subtitle" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="description" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="start" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="end" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="seats" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="costs_reg" type="xsd:float" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="costs_red" type="xsd:float" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="costs_red_condition" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="costs_tax" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="costs_currency" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="reg_required" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="reg_end" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="ext_reg_link" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="online_event" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="place" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="organizer" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="reminder_mail_tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="poll_mail_tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="reservation" type="xsd:string" />
+
+        </xsd:all>
+    </xsd:complexType>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <message name="findEventsByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findEventsByTimestampResponse">
+        <part name="return" type="EventList"/>
+    </message>
+
+</f:section>
+
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <operation name="findEventsByTimestamp">
+        <input message="tns:findEventsByTimestampRequest"/>
+        <output message="tns:findEventsByTimestampResponse"/>
+    </operation>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <operation name="findEventsByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findEventsByTimestamp"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>

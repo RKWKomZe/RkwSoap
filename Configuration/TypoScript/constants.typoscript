@@ -1,11 +1,12 @@
 plugin.tx_rkwsoap {
+    # ! IMPORTANT: The view paths are created dynamically in the setup.typoscript !
 	view {
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template root (FE)
-		templateRootPath = EXT:rkw_soap/Resources/Private/Templates/
+		templateRootPath = EXT:rkw_soap/Resources/Private/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template partials (FE)
-		partialRootPath = EXT:rkw_soap/Resources/Private/Partials/
+		partialRootPath = EXT:rkw_soap/Resources/Private/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template layouts (FE)
-		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/
+		layoutRootPath = EXT:rkw_soap/Resources/Private/
 	}
 	persistence {
 		# cat=plugin.tx_rkwsoap//a; type=string; label=Default storage PID
@@ -28,7 +29,7 @@ plugin.tx_rkwsoap {
             # cat=plugin.tx_rkwsoap//a; type=string; label=List of allowed IPs for SOAP Server (comma-separated)
             allowedRemoteIpList =
 
-            # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentification
+            # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentication
             disableSecurityChecks = 0
 
             # cat=plugin.tx_rkwsoap//a; type=string; label=Version number that is returned via getVersion()

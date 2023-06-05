@@ -13,6 +13,7 @@ use \RKW\RkwShop\Domain\Repository\OrderItemRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -43,6 +44,7 @@ class ServerTest extends FunctionalTestCase
      * @var string[]
      */
     protected $testExtensionsToLoad = [
+        'typo3conf/ext/core_extended',
         'typo3conf/ext/postmaster',
         'typo3conf/ext/rkw_basics',
         'typo3conf/ext/fe_register',
@@ -170,6 +172,7 @@ class ServerTest extends FunctionalTestCase
         $this->importDataSet(__DIR__ . '/ServerTest/Fixtures/Database/Check10.xml');
 
         $result = $this->subject->rkwShopFindAllProducts();
+
         $this::assertCount(3, $result);
 
     }
@@ -779,7 +782,8 @@ class ServerTest extends FunctionalTestCase
         self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
-        $product = $this->productRepository->findByUid(1);
+        $product = $this->productRepository->findByIdentifier(1);
+
         $stock = $product->getStock()->toArray();
 
         self::assertCount(2, $stock);

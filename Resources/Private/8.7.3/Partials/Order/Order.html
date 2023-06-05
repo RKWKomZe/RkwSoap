@@ -1,0 +1,160 @@
+<f:section name="Types">
+    <xsd:complexType name="OrderList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="Order" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="Order[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Order">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="hidden" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="status" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="send_series" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="subscribe" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="gender" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="title" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="first_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="last_name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="company" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="address" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="zip" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="city" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="email" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="amount" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="frontend_user" type="xsd:integer" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="pages" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="publication" type="xsd:int" />
+        </xsd:all>
+    </xsd:complexType>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <!-- DEPRECATED -->
+    <message name="findOrderByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findOrderByTimestampResponse">
+        <part name="return" type="OrderList"/>
+    </message>
+
+    <!-- DEPRECATED -->
+    <message name="findOrdersByTimestampRequest">
+        <part name="timestamp" type="xsd:int"/>
+    </message>
+    <message name="findOrdersByTimestampResponse">
+        <part name="return" type="OrderList"/>
+    </message>
+
+    <!-- DEPRECATED -->
+    <message name="setOrderStatusRequest">
+        <part name="uid" type="xsd:int"/>
+        <part name="status" type="xsd:int"/>
+    </message>
+    <message name="setOrderStatusResponse">
+        <part name="return" type="xsd:int"/>
+    </message>
+
+    <!-- DEPRECATED -->
+    <message name="setOrderDeletedRequest">
+        <part name="uid" type="xsd:int"/>
+        <part name="deleted" type="xsd:int"/>
+    </message>
+    <message name="setOrderDeletedResponse">
+        <part name="return" type="xsd:int"/>
+    </message>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <!-- DEPRECATED -->
+    <operation name="findOrderByTimestamp">
+        <input message="tns:findOrderByTimestampRequest"/>
+        <output message="tns:findOrderByTimestampResponse"/>
+    </operation>
+
+    <!-- DEPRECATED -->
+    <operation name="findOrdersByTimestamp">
+        <input message="tns:findOrdersByTimestampRequest"/>
+        <output message="tns:findOrdersByTimestampResponse"/>
+    </operation>
+
+    <!-- DEPRECATED -->
+    <operation name="setOrderStatus">
+        <input message="tns:setOrderStatusRequest"/>
+        <output message="tns:setOrderStatusResponse"/>
+    </operation>
+
+    <!-- DEPRECATED -->
+    <operation name="setOrderDeleted">
+        <input message="tns:setOrderDeletedRequest"/>
+        <output message="tns:setOrderDeletedResponse"/>
+    </operation>
+</f:section>
+
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <!-- DEPRECATED -->
+    <operation name="findOrderByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findOrderByTimestamp"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+    <operation name="findOrdersByTimestamp">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findOrdersByTimestamp"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+    <operation name="setOrderStatus">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#setOrderStatus"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+    <operation name="setOrderDeleted">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#setOrderDeleted"/>
+        <input>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>

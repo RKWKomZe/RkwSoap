@@ -2,7 +2,9 @@
 
 namespace RKW\RkwSoap\Domain\Repository;
 
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
+use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -36,16 +38,33 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      */
     public function initializeObject()
     {
+        /** @var QuerySettingsInterface $querySettings */
+        $this->defaultQuerySettings = $this->objectManager->get(Typo3QuerySettings::class);
+        // Show comments from all pages
+        $this->defaultQuerySettings->setRespectStoragePage(false);
+        $this->defaultQuerySettings->setIgnoreEnableFields(true);
+        $this->defaultQuerySettings->setIncludeDeleted(true);
+    }
 
-        /** @var $querySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
-        $querySettings = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
 
-        // don't add the pid constraint
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setIncludeDeleted(true);
+    /**
+     * toDo: This override is only a workaround, because the "initializedObject"-configuration does not work with "findByIdentifier"
+     *
+     * @param mixed $identifier The identifier of the object to find
+     * @return object The matching object if found, otherwise NULL
+     */
+    public function findByIdentifier($identifier)
+    {
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(false);
+        $query->getQuerySettings()->setIncludeDeleted(true);
+        $query->getQuerySettings()->setIgnoreEnableFields(true);
 
-        $this->setDefaultQuerySettings($querySettings);
+        $query->matching(
+            $query->equals('uid', $identifier)
+        );
+
+        return $query->execute()->getFirst();
 
     }
 

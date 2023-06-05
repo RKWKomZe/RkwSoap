@@ -1,0 +1,67 @@
+<f:section name="Types">
+    <xsd:complexType name="SeriesList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="Series" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="Series[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Series">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="hidden" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="name" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="shortName" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="description" type="xsd:string" />
+        </xsd:all>
+    </xsd:complexType>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <!-- DEPRECATED -->
+    <message name="findAllSeriesRequest" />
+    <message name="findAllSeriesResponse">
+        <part name="return" type="SeriesList"/>
+    </message>
+
+</f:section>
+
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <!-- DEPRECATED -->
+    <operation name="findAllSeries">
+        <input message="tns:findAllSeriesRequest"/>
+        <output message="tns:findAllSeriesResponse"/>
+    </operation>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <operation name="findAllSeries">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findAllSeries"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>

@@ -1,0 +1,70 @@
+<f:section name="Types">
+    <xsd:complexType name="PublicationList">
+        <xsd:complexContent mixed="false">
+            <xsd:restriction base="soapenc:Array">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="item" type="Publication" />
+                </xsd:sequence>
+                <xsd:attribute wsdl:arrayType="Publication[]" ref="soapenc:arrayType" />
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Publication">
+        <xsd:all>
+            <xsd:element minOccurs="0" maxOccurs="1" name="uid" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="crdate" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="tstamp" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="hidden" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="deleted" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="title" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="subtitle" type="xsd:string" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="stock" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="allowSeries" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="allowSubscription" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="series" type="xsd:int" />
+            <xsd:element minOccurs="0" maxOccurs="1" name="oldPage" type="xsd:int" />
+        </xsd:all>
+    </xsd:complexType>
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Messages">
+
+    <!-- DEPRECATED -->
+    <message name="findAllPublicationsRequest" />
+    <message name="findAllPublicationsResponse">
+        <part name="return" type="PublicationList"/>
+    </message>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="PortTypes">
+
+    <!-- DEPRECATED -->
+    <operation name="findAllPublications">
+        <input message="tns:findAllPublicationsRequest"/>
+        <output message="tns:findAllPublicationsResponse"/>
+    </operation>
+
+</f:section>
+
+<!-- ========================================================================= -->
+
+<f:section name="Bindings">
+
+    <operation name="findAllPublications">
+        <soap:operation soapAction="{url}/rkw/rkwsoap/soap/server/#findAllPublications"/>
+        <input>
+        <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </input>
+
+        <output>
+            <soap:body use="literal" namespace="{url}/rkw/rkwsoap/soap/server"/>
+        </output>
+    </operation>
+
+</f:section>
