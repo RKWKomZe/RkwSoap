@@ -152,26 +152,26 @@ plugin.tx_rkwsoap  {
 
     /*
 	view {
-		templateRootPath = {$plugin.tx_rkwsoap.view.templateRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
-		partialRootPath = {$plugin.tx_rkwsoap.view.partialRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
-		layoutRootPath = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
+		templateRootPath = {$plugin.tx_rkwsoap.view.templateRootPath}
+		partialRootPath = {$plugin.tx_rkwsoap.view.partialRootPath}
+		layoutRootPath = {$plugin.tx_rkwsoap.view.layoutRootPath}
 	}
 	*/
 
     view {
         layoutRootPaths {
-            0 = EXT:rkw_soap/Resources/Private/Layouts/
+            0 = {$plugin.tx_rkwsoap.view.layoutRootPath}
             #1 = {$plugin.tx_rkwsoap.view.layoutRootPath}{$plugin.tx_rkwsoap.settings.soapServer.version}/Layouts/
-            1 = {$plugin.tx_rkwsoap.view.layoutRootPath}
+            1 = {$plugin.tx_rkwsoap.view.layoutRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/
         }
         templateRootPaths {
-            0 = EXT:rkw_soap/Resources/Private/Templates/
-            1 = {$plugin.tx_rkwsoap.view.templateRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/Templates/
+            0 = {$plugin.tx_rkwsoap.view.templateRootPath}
+            1 = {$plugin.tx_rkwsoap.view.templateRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/
             #1 = {$plugin.tx_rkwsoap.view.templateRootPath}
         }
         partialRootPaths {
-            0 = EXT:rkw_soap/Resources/Private/Partials/
-            1 = {$plugin.tx_rkwsoap.view.partialRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/Partials/
+            0 = {$plugin.tx_rkwsoap.view.partialRootPath}
+            1 = {$plugin.tx_rkwsoap.view.partialRootPath}legacy-{$plugin.tx_rkwsoap.settings.soapServer.version}/
         }
     }
 
@@ -183,7 +183,6 @@ plugin.tx_rkwsoap  {
 	settings {
 
 		soapServer {
-
 			username = {$plugin.tx_rkwsoap.settings.soapServer.username}
 			password = {$plugin.tx_rkwsoap.settings.soapServer.password}
 			url = {$plugin.tx_rkwsoap.settings.soapServer.url}
@@ -191,6 +190,209 @@ plugin.tx_rkwsoap  {
             disableSecurityChecks  = {$plugin.tx_rkwsoap.settings.soapServer.disableSecurityChecks}
             version = {$plugin.tx_rkwsoap.settings.soapServer.version}
 		}
+
+        # keys for field mapping using database table name
+        # Array key is the database fieldname. The array value is the return key
+        # Two options for field names: Default; extension specific and "legacy" for backward reasons
+        keys {
+            fe_users {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    disable = disable
+                    deleted = deleted
+                    username = username
+                    usergroup = usergroup
+                    company = company
+                    first_name = first_name
+                    middle_name = middle_name
+                    last_name = last_name
+                    address = address
+                    zip = zip
+                    city = city
+                    telephone = telephone
+                    fax = fax
+                    email = email
+                    www = www
+                }
+                fe_register {
+                    tx_feregister_facebook_url = facebook_url
+                    tx_feregister_twitter_url = twitter_url
+                    tx_feregister_xing_url = xing_url
+                }
+                legacy {
+                    8\7\3 {
+                        default {
+
+                        }
+                        fe_register {
+                            tx_feregister_facebook_url = tx_feregister_facebook_url
+                            tx_feregister_twitter_url = tx_feregister_twitter_url
+                            tx_feregister_xing_url = tx_feregister_xing_url
+                        }
+                    }
+                }
+            }
+            fe_groups {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    hidden = hidden
+                    deleted = deleted
+                    title = title
+                    description = description
+                }
+                fe_register {
+                    tx_feregister_is_service = is_service
+                }
+                legacy {
+                    8\7\3 {
+                        default {
+
+                        }
+                        fe_register {
+                            tx_feregister_is_service = tx_feregister_is_service
+                        }
+                    }
+                }
+            }
+            tx_rkwevents_domain_model_event {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    hidden = hidden
+                    deleted = deleted
+                    title = title
+                    subtitle = subtitle
+                    description = description
+                    start = start
+                    end = end
+                    seats = seats
+                    costs_reg = costs_reg
+                    costs_red = costs_red
+                    costs_red_condition = costs_red_condition
+                    costs_tax = costs_tax
+                    currency = currency
+                    reg_required = reg_required
+                    reg_end = reg_end
+                    ext_reg_link = ext_reg_link
+                    online_event = online_event
+                    place = place
+                    organizer = organizer
+                    reminder_mail_tstamp = reminder_mail_tstamp
+                    poll_mail_tstamp = poll_mail_tstamp
+                    reservation = reservation
+                }
+            }
+            tx_rkwevents_domain_model_eventplace {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    hidden = hidden
+                    deleted = deleted
+                    name = name
+                    short = short
+                    address = address
+                    zip = zip
+                    city = city
+                    country = country
+                }
+            }
+            tx_rkwevents_domain_model_eventreservation {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    deleted = deleted
+                    fe_user = fe_user
+                    salutation = salutation
+                    first_name = first_name
+                    last_name = last_name
+                    company = company
+                    address = address
+                    zip = zip
+                    city = city
+                    phone = phone
+                    fax = fax
+                    email = email
+                    remark = remark
+                    add_person = add_person
+                    event = event
+                }
+            }
+            tx_rkwevents_domain_model_eventreservationaddperson {
+                default {
+                    uid = uid
+                    crdate = crdate
+                    tstamp = tstamp
+                    deleted = deleted
+                    salutation = salutation
+                    first_name = first_name
+                    last_name = last_name
+                    event_reservation = event_reservation
+                }
+            }
+            tx_rkwshop_domain_model_order {
+                default {
+                    uid = uid
+                    pid = pid
+                    crdate = crdate
+                    tstamp = tstamp
+                    hidden = hidden
+                    deleted = deleted
+                    status = status
+                    email = email
+                    frontend_user = frontend_user
+                    remark = remark
+                    shipping_address  {
+                        gender = gender
+                        title = title
+                        first_name = first_name
+                        last_name = last_name
+                        company = company
+                        address = address
+                        zip = zip
+                        city = city
+                    }
+                }
+            }
+            tx_rkwshop_domain_model_orderitem {
+                default {
+                    uid = uid
+                    pid = pid
+                    crdate = crdate
+                    tstamp = tstamp
+                    deleted = deleted
+                    ext_order = ext_order
+                    product = product
+                    amount = amount
+                    is_pre_order = is_pre_order
+                }
+            }
+            tx_rkwshop_domain_model_product {
+                default {
+                    uid = uid
+                    pid = pid
+                    crdate = crdate
+                    tstamp = tstamp
+                    hidden = hidden
+                    deleted = deleted
+                    title = title
+                    subtitle = subtitle
+                    page = page
+                    stock = stock
+                    product_bundle = product_bundle
+                    allow_single_order = allow_single_order
+                    ordered_external = ordered_external
+                    backend_user = backend_user
+                    record_type = record_type
+                }
+            }
+        }
 	}
 }
 

@@ -33,27 +33,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 class OrderItemRepository extends EnabledFieldsAwareAbstractRepository
 {
     /**
-     * toDo: This override is only a workaround, because the "initializedObject"-configuration does not work with the core repository
-     *
-     * @param mixed $identifier The identifier of the object to find
-     * @return OrderItem|null The matching object if found, otherwise NULL
-     */
-    public function findByIdentifier($identifier): ?OrderItem
-    {
-        $query = $this->createQuery();
-
-        $query->matching(
-            $query->equals('uid', $identifier)
-        );
-
-        /** @var OrderItem $returnValue */
-        $returnValue = $query->execute()->getFirst();
-
-        return $returnValue;
-    }
-
-
-    /**
      * Find all order items by order uid
      *
      * @api used by RKW Soap
@@ -66,35 +45,10 @@ class OrderItemRepository extends EnabledFieldsAwareAbstractRepository
         $query = $this->createQuery();
 
         $query->matching(
-            $query->equals('order', intval($orderUid))
+            $query->equals('order', $orderUid)
         );
 
         return $query->execute();
     }
 
-
-
-    /**
-     * Finds an object matching the given identifier.
-     *
-     * toDo: The parent findByUid-function prevents typecast
-     *
-     * @param int $uid The identifier of the object to find
-     * @return OrderItem The matching object if found, otherwise NULL
-     * @api used by RKW Soap
-     */
-    public function findByUid($uid): ?OrderItem
-    {
-        $query = $this->createQuery();
-
-        $query->matching(
-            $query->equals('uid', $uid)
-        );
-
-        $query->setLimit(1);
-
-        /** @var OrderItem $returnValue */
-        $returnValue = $query->execute()->getFirst();
-        return $returnValue;
-    }
 }

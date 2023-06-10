@@ -1,12 +1,11 @@
 plugin.tx_rkwsoap {
-    # ! IMPORTANT: The PARTIAL paths are created dynamically in the setup.typoscript !
 	view {
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template root (FE)
 		templateRootPath = EXT:rkw_soap/Resources/Private/Templates/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template partials (FE)
-		partialRootPath = EXT:rkw_soap/Resources/Private/
+		partialRootPath = EXT:rkw_soap/Resources/Private/Partials/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template layouts (FE)
-		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/
+		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/Layouts/
 	}
 	persistence {
 		# cat=plugin.tx_rkwsoap//a; type=string; label=Default storage PID

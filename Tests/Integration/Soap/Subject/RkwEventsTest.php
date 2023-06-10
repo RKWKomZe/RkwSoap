@@ -1,8 +1,13 @@
 <?php
-namespace RKW\RkwSoap\Tests\Integration\Soap;
+namespace RKW\RkwSoap\Tests\Integration\Soap\Subject;
 
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 
+use RKW\RkwSoap\Domain\Model\EventReservationAddPerson;
+use RKW\RkwSoap\Domain\Repository\EventPlaceRepository;
+use RKW\RkwSoap\Domain\Repository\EventRepository;
+use RKW\RkwSoap\Domain\Repository\EventReservationAddPersonRepository;
+use RKW\RkwSoap\Domain\Repository\EventReservationRepository;
 use \RKW\RkwSoap\Soap\Server;
 use \RKW\RkwSoap\Domain\Repository\FrontendUserRepository;
 
@@ -13,7 +18,6 @@ use \RKW\RkwSoap\Domain\Repository\OrderItemRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use Madj2k\CoreExtended\Utility\FrontendSimulatorUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
@@ -31,7 +35,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 
 /**
- * ServerTest
+ * RkwEventsTest
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
  * @author Maximilian Fäßler <maximilian@faesslerweb.de>
@@ -39,12 +43,13 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ServerTest extends FunctionalTestCase
+class RkwEventsTest extends FunctionalTestCase
 {
+
     /**
      * @const
      */
-    const FIXTURE_PATH = __DIR__ . '/ServerTest/Fixtures';
+    const FIXTURE_PATH = __DIR__ . '/RkwEventsTest/Fixtures';
 
     /**
      * @var string[]
@@ -54,7 +59,7 @@ class ServerTest extends FunctionalTestCase
         'typo3conf/ext/postmaster',
         'typo3conf/ext/rkw_basics',
         'typo3conf/ext/fe_register',
-        'typo3conf/ext/rkw_shop',
+        'typo3conf/ext/rkw_events',
         'typo3conf/ext/rkw_soap',
     ];
 
@@ -65,29 +70,29 @@ class ServerTest extends FunctionalTestCase
 
 
     /**
-     * @var \RKW\RkwSoap\Soap\Server
+     * @var \RKW\RkwSoap\Soap\Subject\RkwEvents
      */
     private $subject = null;
 
     /**
-     * @var \RKW\RkwSoap\Domain\Repository\FrontendUserRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventRepository
      */
-    private $frontendUserRepository;
+    private $eventRepository;
 
     /**
-     * @var \RKW\RkwSoap\Domain\Repository\ProductRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventPlaceRepository
      */
-    private $productRepository;
+    private $eventPlaceRepository;
 
     /**
-     * @var \RKW\RkwSoap\Domain\Repository\OrderRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventReservationRepository
      */
-    private $orderRepository;
+    private $eventReservationRepository;
 
     /**
-     * @var \RKW\RkwSoap\Domain\Repository\OrderItemRepository
+     * @var \RKW\RkwSoap\Domain\Repository\EventReservationAddPersonRepository
      */
-    private $orderItemRepository;
+    private $eventReservationAddPersonRepository;
 
 
     /**
@@ -100,6 +105,8 @@ class ServerTest extends FunctionalTestCase
      */
     private $objectManager;
 
+
+
     /**
      * Setup
      * @throws \Exception
@@ -108,14 +115,14 @@ class ServerTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importDataSet(self::FIXTURE_PATH . '/Database/Global.xml');
+        $this->importDataSet(self::FIXTURE_PATH . '/Fixtures/Database/Global.xml');
         $this->setUpFrontendRootPage(
             1,
             [
                 'EXT:rkw_basics/Configuration/TypoScript/setup.txt',
                 'EXT:postmaster/Configuration/TypoScript/setup.txt',
                 'EXT:fe_register/Configuration/TypoScript/setup.txt',
-                'EXT:rkw_shop/Configuration/TypoScript/setup.txt',
+                'EXT:rkw_events/Configuration/TypoScript/setup.txt',
                 'EXT:rkw_soap/Configuration/TypoScript/setup.txt',
                 self::FIXTURE_PATH . '/Frontend/Configuration/Rootpage.typoscript',
             ]
@@ -126,65 +133,13 @@ class ServerTest extends FunctionalTestCase
         /** @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager */
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-        $this->productRepository = $this->objectManager->get(ProductRepository::class);
-        $this->orderRepository = $this->objectManager->get(OrderRepository::class);
-        $this->orderItemRepository = $this->objectManager->get(OrderItemRepository::class);
-        $this->frontendUserRepository = $this->objectManager->get(FrontendUserRepository::class);
+        $this->eventRepository = $this->objectManager->get(EventRepository::class);
+        $this->eventPlaceRepository = $this->objectManager->get(EventPlaceRepository::class);
+        $this->eventReservationRepository = $this->objectManager->get(EventReservationRepository::class);
+        $this->eventReservationAddPersonRepository = $this->objectManager->get(EventReservationAddPersonRepository::class);
 
         $this->subject = $this->objectManager->get(Server::class);
      }
-
-    //=============================================
-
-    /**
-     * @test
-     * @throws \Exception
-     */
-    public function getVersionReturnsConfiguredVersion ()
-    {
-
-        /**
-         * Scenario:
-         *
-         * Given there is a version number configured
-         * When I fetch the version number
-         * Then the version number is returned
-         */
-
-        $this::assertEquals('0.8.15', $this->subject->getVersion());
-
-    }
-
-
-    /**
-     * @test
-     * @throws \Exception
-     */
-    public function getDifferentVersionReturnsAnotherConfiguredVersion ()
-    {
-
-        /**
-         * Scenario:
-         *
-         * Given there is a different version number configured
-         * When the method is called
-         * Then the different version number is returned
-         */
-        FrontendSimulatorUtility::resetFrontendEnvironment();
-        $this->setUpFrontendRootPage(
-            1,
-            [
-                'EXT:rkw_basics/Configuration/TypoScript/setup.txt',
-                'EXT:postmaster/Configuration/TypoScript/setup.txt',
-                'EXT:rkw_soap/Configuration/TypoScript/setup.txt',
-                self::FIXTURE_PATH . '/Frontend/Configuration/Rootpage873.typoscript',
-            ]
-        );
-        FrontendSimulatorUtility::simulateFrontendEnvironment(1);
-
-        $this::assertNotEquals('9.5', $this->subject->getVersion());
-
-    }
 
 
     /**

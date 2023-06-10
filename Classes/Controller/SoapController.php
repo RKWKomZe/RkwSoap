@@ -74,13 +74,13 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function soapAction(): void
     {
-        /*
+
         // TEST START
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $server = $objectManager->get(Server::class);
-        DebuggerUtility::var_dump($server->findFeUserByUid(1)); exit;
+    //    $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+    //    $server = $objectManager->get(Server::class);
+    //    DebuggerUtility::var_dump($server->rkwShopFindAllProducts()); exit;
         // TEST END
-        */
+
 
         // kill TYPO3 output buffer
         while (ob_end_clean());

@@ -67,4 +67,44 @@ abstract class EnabledFieldsAwareAbstractRepository extends StoragePidAwareAbstr
         return $query->execute();
     }
 
+
+    /**
+     * Finds an object matching the given identifier.
+     *
+     * Alias of "findByIdentifier"
+     *
+     * toDo: The parent findByUid-function prevents typecast
+     *
+     * @param int $uid The identifier of the object to find
+     * @return object|null
+     */
+    public function findByUid($uid):? object
+    {
+        return $this->findByIdentifier($uid);
+    }
+
+
+    /**
+     * Finds an object matching the given identifier.
+     *
+     * Hint: Override needed to make the Repository default query settings usable
+     *
+     * toDo: The parent findByIdentifier-function prevents typecast
+     *
+     * @param int $identifier The identifier of the object to find
+     * @return object|null
+     */
+    public function findByIdentifier($identifier):? object
+    {
+        $query = $this->createQuery();
+
+        $query->matching(
+            $query->equals('uid', $identifier)
+        );
+
+        $query->setLimit(1);
+
+        return $query->execute()->getFirst();
+    }
+
 }

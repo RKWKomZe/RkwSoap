@@ -38,9 +38,9 @@ class FilteredPropertiesUtility
      * @param array $keys The field names
      * @return array
      */
-    public static function filter($results, $keys)
+    public static function filter($results, array $keys): array
     {
-        $resultReturnArray = array();
+        $resultReturnArray = [];
         if (is_iterable($results)) {
 
             foreach ($results as $key => $objectOrArray) {
@@ -51,7 +51,6 @@ class FilteredPropertiesUtility
                 }
             }
         }
-
 
         if ($results instanceof AbstractEntity) {
             $resultReturnArray = self::getPropertiesFromObject($results, $keys);
@@ -68,9 +67,8 @@ class FilteredPropertiesUtility
      * @param array $propertyArray
      * @return array
      */
-    protected static function getPropertiesFromArray($dataArray, $propertyArray)
+    protected static function getPropertiesFromArray(array $dataArray, array $propertyArray): array
     {
-
         $result = [];
         foreach ($propertyArray as $property => $subProperties) {
 
@@ -94,18 +92,18 @@ class FilteredPropertiesUtility
      * Returns the relevant values depending on the object given
      *
      * @param AbstractEntity $object
-     * @param array $propertyArray
+     * @param array          $propertyArray
      * @return array
      */
-    protected static function getPropertiesFromObject(AbstractEntity $object, $propertyArray)
+    protected static function getPropertiesFromObject(AbstractEntity $object, array $propertyArray): array
     {
-
         $result = [];
         foreach ($propertyArray as $property => $subProperties) {
 
             // if there are no sub-properties to fetch
+            // @toDo by MF: Check is the addition "is_string" (we have associative arrays now) is really correct. PhpUnit tests are fine..
             if (
-                (is_numeric($property))
+                (is_numeric($property) || is_string($property))
                 && (! is_array($subProperties))
             ){
                 $property = $subProperties;
@@ -122,10 +120,10 @@ class FilteredPropertiesUtility
      * Returns the properties of the objects of an object storage
      *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $objectStorage
-     * @param array $subProperties
+     * @param array                                        $subProperties
      * @return mixed
      */
-    protected static function getPropertiesFromObjectStorage(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $objectStorage, $subProperties = [])
+    protected static function getPropertiesFromObjectStorage(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $objectStorage, array $subProperties = [])
     {
 
         $result = [];
@@ -169,12 +167,12 @@ class FilteredPropertiesUtility
     /**
      * Returns the relevant values depending on the object given
      *
-     * @param array $dataArray
+     * @param array  $dataArray
      * @param string $property
-     * @param array $subProperties
+     * @param array  $subProperties
      * @return mixed
      */
-    protected static function getPropertyFromArray($dataArray, $property, $subProperties = [])
+    protected static function getPropertyFromArray(array $dataArray, string $property, array $subProperties = [])
     {
 
         if (isset($dataArray[$property])) {
@@ -201,11 +199,11 @@ class FilteredPropertiesUtility
      * Returns the relevant values depending on the object given
      *
      * @param AbstractEntity $object
-     * @param string $property
-     * @param array $subProperties
+     * @param string         $property
+     * @param array          $subProperties
      * @return mixed
      */
-    protected static function getPropertyFromObject(AbstractEntity $object, $property, $subProperties = [])
+    protected static function getPropertyFromObject(AbstractEntity $object, string $property, array $subProperties = [])
     {
 
         if (strpos($property, 'ext_') === 0) {
@@ -277,7 +275,5 @@ class FilteredPropertiesUtility
         // default
         return $object->getUid();
     }
-
-
 
 }

@@ -2,9 +2,7 @@
 
 namespace RKW\RkwSoap\Soap;
 
-use RKW\RkwSoap\Utility\FilteredPropertiesUtility;
 use Madj2k\CoreExtended\Utility\GeneralUtility as Common;
-use Spipu\Html2Pdf\Debug\Debug;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -30,6 +28,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
  * Class Server
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
+ * @author Maximilian Fäßler <maximilian@faesslerweb.de>
  * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -138,25 +137,48 @@ class Server
     protected $logger;
 
 
+    /**
+     * @var \RKW\RkwSoap\Soap\Subject\FeRegister
+     */
+    protected $subjectFeRegister;
+
+
+    /**
+     * @var \RKW\RkwSoap\Soap\Subject\RkwEvents
+     */
+    protected $subjectRkwEvents;
+
+
+    /**
+     * @var \RKW\RkwSoap\Soap\Subject\RkwShop
+     */
+    protected $subjectRkwShop;
+
+
 
     public function __construct()
     {
 
         $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
 
+        // load always for basic feUser functionality
+        $this->subjectFeRegister = $objectManager->get(\RKW\RkwSoap\Soap\Subject\FeRegister::class);
         if (ExtensionManagementUtility::isLoaded('fe_register')) {
             $this->shippingAddressRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\ShippingAddressRepository::class);
         }
 
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
+            $this->subjectRkwShop = $objectManager->get(\RKW\RkwSoap\Soap\Subject\RkwShop::class);
+
             $this->orderRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\OrderRepository::class);
             $this->orderItemRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\OrderItemRepository::class);
             $this->productRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\ProductRepository::class);
             $this->stockRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\StockRepository::class);
-
         }
 
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
+            $this->subjectRkwEvents = $objectManager->get(\RKW\RkwSoap\Soap\Subject\RkwEvents::class);
+
             $this->eventRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventRepository::class);
             $this->eventPlaceRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventPlaceRepository::class);
             $this->eventReservationRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\EventReservationRepository::class);
@@ -220,97 +242,7 @@ class Server
      */
     public function findFeUsersByTimestamp(int $timestamp): array
     {
-
-        try {
-
-            $keys = array(
-                'uid',
-                'crdate',
-                'tstamp',
-                'disable',
-                'deleted',
-                'username',
-                'usergroup',
-                'company',
-                'first_name',
-                'middle_name',
-                'last_name',
-                'address',
-                'zip',
-                'city',
-                'telephone',
-                'fax',
-                'email',
-                'www',
-            );
-
-            if (ExtensionManagementUtility::isLoaded('fe_register')) {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'disable',
-                    'deleted',
-                    'username',
-                    'usergroup',
-                    'company',
-                    'tx_feregister_gender',
-                    'first_name',
-                    'middle_name',
-                    'last_name',
-                    'address',
-                    'zip',
-                    'city',
-                    'telephone',
-                    'fax',
-                    'email',
-                    'www',
-                    'tx_feregister_facebook_url',
-                    'tx_feregister_twitter_url',
-                    'tx_feregister_xing_url',
-
-                );
-            }
-
-            /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-            $results = $this->frontendUserRepository->findByTimestamp($timestamp, false);
-
-            // get basic data from shipping address if nothing is set in account
-            if ($this->shippingAddressRepository) {
-
-                /** @var \Madj2k\FeRegister\Domain\Model\FrontendUser $result */
-                foreach ($results as $result) {
-                    if (
-                        (! $result->getFirstName())
-                        && (! $result->getLastName())
-                    ){
-
-                        /** @var \Madj2k\FeRegister\Domain\Model\ShippingAddress $shippingAddress */
-                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
-                            $result->setTxFeregisterGender($shippingAddress->getGender());
-                            $result->setFirstName($shippingAddress->getFirstName());
-                            $result->setLastName($shippingAddress->getLastName());
-                            $result->setAddress($shippingAddress->getAddress());
-                            $result->setZip($shippingAddress->getZip());
-                            $result->setCity($shippingAddress->getCity());
-                            $result->setCompany($shippingAddress->getCompany());
-                        }
-                    }
-                }
-            }
-
-            if ($results) {
-                return FilteredPropertiesUtility::filter($results, $keys);
-            }
-            
-
-        } catch (\Exception $e) {
-            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-        }
-
-        return array();
-        
+        return $this->subjectFeRegister->findFeUsersByTimestamp($timestamp);
     }
 
 
@@ -322,96 +254,9 @@ class Server
      */
     public function findFeUserByUid(int $uid): array
     {
-
-        try {
-
-            $keys = array(
-                'uid',
-                'crdate',
-                'tstamp',
-                'disable',
-                'deleted',
-                'username',
-                'usergroup',
-                'company',
-                'first_name',
-                'middle_name',
-                'last_name',
-                'address',
-                'zip',
-                'city',
-                'telephone',
-                'fax',
-                'email',
-                'www',
-            );
-
-            if (ExtensionManagementUtility::isLoaded('fe_register')) {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'disable',
-                    'deleted',
-                    'username',
-                    'usergroup',
-                    'company',
-                    'tx_feregister_gender',
-                    'first_name',
-                    'middle_name',
-                    'last_name',
-                    'address',
-                    'zip',
-                    'city',
-                    'telephone',
-                    'fax',
-                    'email',
-                    'www',
-                    'tx_feregister_facebook_url',
-                    'tx_feregister_twitter_url',
-                    'tx_feregister_xing_url',
-
-                );
-            }
-
-            /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
-            $result = $this->frontendUserRepository->findByIdentifier(1);
-
-            if ($result) {
-
-                // get basic data from shipping address if nothing is set in account
-                if ($this->shippingAddressRepository) {
-
-                    /** @var \Madj2k\FeRegister\Domain\Model\FrontendUser $result */
-                    if (
-                        (! $result->getFirstName())
-                        && (! $result->getLastName())
-                    ){
-
-                        /** @var \Madj2k\FeRegister\Domain\Model\ShippingAddress $shippingAddress */
-                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
-                            $result->setTxFeregisterGender($shippingAddress->getGender());
-                            $result->setFirstName($shippingAddress->getFirstName());
-                            $result->setLastName($shippingAddress->getLastName());
-                            $result->setAddress($shippingAddress->getAddress());
-                            $result->setZip($shippingAddress->getZip());
-                            $result->setCity($shippingAddress->getCity());
-                            $result->setCompany($shippingAddress->getCompany());
-                        }
-                    }
-
-                }
-
-                return FilteredPropertiesUtility::filter($result, $keys);
-            }
-
-        } catch (\Exception $e) {
-            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-        }
-
-        return array();
+        return $this->subjectFeRegister->findFeUserByUid($uid);
     }
+
 
     /**
      * Returns all FE-users that have been updated since $timestamp
@@ -426,7 +271,6 @@ class Server
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
-        
     }
 
 
@@ -439,45 +283,7 @@ class Server
      */
     public function findFeUserGroupsByTimestamp(int $timestamp, int $serviceOnly = 0): array
     {
-
-        try {
-
-            $keys = array(
-                'uid',
-                'crdate',
-                'tstamp',
-                'hidden',
-                'deleted',
-                'title',
-                'description',
-            );
-
-            if (ExtensionManagementUtility::isLoaded('fe_register')) {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'title',
-                    'description',
-                    'tx_feregister_is_service',
-                );
-            }
-
-            /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-            $results = $this->frontendUserGroupRepository->findByTimestamp($timestamp, $serviceOnly);
-
-            if ($results) {
-                return FilteredPropertiesUtility::filter($results, $keys);
-            }
-
-        } catch (\Exception $e) {
-            $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-        }
-
-        return array();
+        return $this->subjectFeRegister->findFeUserGroupsByTimestamp($timestamp, $serviceOnly);
     }
 
 
@@ -493,7 +299,7 @@ class Server
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         return $this->findOrdersByTimestamp($timestamp);
-        
+
     }
 
 
@@ -508,7 +314,6 @@ class Server
     {
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
             try {
 
                 /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
@@ -607,12 +412,11 @@ class Server
             } catch (\Exception $e) {
                 $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
             }
-
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
-        return array();
+        return [];
     }
 
 
@@ -624,65 +428,13 @@ class Server
      */
     public function rkwShopFindOrdersByTimestamp(int $timestamp = 0): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'pid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'status',
-
-                    'email',
-                    'frontend_user',
-                    'remark',
-
-                    'shipping_address' => [
-                        'gender',
-                        'title',
-                        'first_name',
-                        'last_name',
-                        'company',
-                        'address',
-                        'zip',
-                        'city',
-                    ],
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderRepository->findByTimestamp($timestamp);
-
-                if ($results) {
-                    $finalResults = FilteredPropertiesUtility::filter($results, $keys);
-
-                    // add shipping address without sub-array
-                    foreach ($finalResults as &$finalResult) {
-                        if (
-                            (isset($finalResult['shipping_address']))
-                            && (is_array($finalResult['shipping_address']))
-                        ) {
-                            $finalResult = array_merge($finalResult, $finalResult['shipping_address']);
-                            unset($finalResult['shipping_address']);
-                        }
-                    }
-
-                    return $finalResults;
-                }
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->findOrdersByTimestamp($timestamp);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
-        return array();
+        return [];
     }
 
 
@@ -696,41 +448,12 @@ class Server
     public function rkwShopFindOrderItemsByOrder(int $orderUid): array
     {
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'pid',
-                    'crdate',
-                    'tstamp',
-                    'deleted',
-
-                    'ext_order',
-                    'product',
-                    'amount',
-                    'is_pre_order',
-
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->orderItemRepository->findByOrderUid($orderUid);
-
-                if ($results) {
-
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->findOrderItemsByOrder($orderUid);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
-        return array();
-        
+        return [];
     }
 
 
@@ -741,46 +464,13 @@ class Server
      */
     public function rkwShopFindAllProducts(): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-            try {
-                $keys = array(
-                    'uid',
-                    'pid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'title',
-                    'subtitle',
-                    'page',
-                    'stock',
-                    'product_bundle',
-                    'allow_single_order',
-                    'ordered_external',
-                    'backend_user',
-                    'record_type',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->productRepository->findAll();
-
-                if ($results) {
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-
-
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->findAllProducts();
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
 
-        return array();
-        
+        return [];
     }
 
 
@@ -793,26 +483,8 @@ class Server
      */
     public function rkwShopSetOrderedExternalForProduct(int $productUid, int $orderedExternal): bool
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                /** @var \RKW\RkwShop\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid($productUid)) {
-                    $product->setOrderedExternal($orderedExternal);
-                    $this->productRepository->update($product);
-                    $this->persistenceManager->persistAll();
-
-                    return true;
-                }
-
-                return false;
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->setOrderedExternalForProduct($productUid, $orderedExternal);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
@@ -829,43 +501,10 @@ class Server
      * @param int $deliveryStart
      * @return bool
      */
-    public function rkwShopAddStockForProduct(
-        int $productUid,
-        int $amount,
-        string $comment,
-        int $deliveryStart = 0
-    ): bool
+    public function rkwShopAddStockForProduct(int $productUid, int $amount, string $comment, int $deliveryStart = 0): bool
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                /** @var \RKW\RkwSoap\Domain\Model\Product $product */
-                if ($product = $this->productRepository->findByUid($productUid)) {
-
-                    /** @var \RKW\RkwSoap\Domain\Model\Stock $stock */
-                    $stock = GeneralUtility::makeInstance(\RKW\RkwSoap\Domain\Model\Stock::class);
-                    $stock->setAmount($amount);
-                    $stock->setComment($comment);
-                    $stock->setDeliveryStart($deliveryStart);
-                    $stock->setIsExternal(true);
-
-                    $this->stockRepository->add($stock);
-
-                    $product->addStock($stock);
-                    $this->productRepository->update($product);
-                    $this->persistenceManager->persistAll();
-
-                    return true;
-                }
-
-                return false;
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->addStockForProduct($productUid, $amount, $comment, $deliveryStart);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
@@ -883,30 +522,8 @@ class Server
      */
     public function rkwShopSetStatusForOrder(int $orderUid, int $status): bool
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                $validValues = [0, 90, 100, 200];
-
-                /** @var \RKW\RkwSoap\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
-                    if (in_array($status, $validValues)) {
-                        $order->setStatus($status);
-                        $this->orderRepository->update($order);
-                        $this->persistenceManager->persistAll();
-
-                        return true;
-                    }
-                }
-
-                return false;
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->setStatusForOrder($orderUid, $status);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
@@ -924,31 +541,8 @@ class Server
      */
     public function rkwShopSetDeletedForOrder(int $orderUid, int $deleted): bool
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                $validValues = [0, 1];
-
-                /** @var \RKW\RkwSoap\Domain\Model\Order $order*/
-                if ($order = $this->orderRepository->findByUid($orderUid)) {
-
-                    if (in_array($deleted, $validValues)) {
-                        $order->setDeleted($deleted);
-                        $this->orderRepository->update($order);
-                        $this->persistenceManager->persistAll();
-
-                        return true;
-                    }
-                }
-
-                return false;
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->setDeletedForOrder($orderUid, $deleted);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
@@ -966,30 +560,8 @@ class Server
      */
     public function rkwShopSetStatusForOrderItem(int $orderItemUid, int $status): bool
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
-
-            try {
-
-                $validValues = [0, 90, 100, 200];
-
-                /** @var \RKW\RkwSoap\Domain\Model\OrderItem $orderItem*/
-                if ($orderItem = $this->orderItemRepository->findByUid($orderItemUid)) {
-                    if (in_array($status, $validValues)) {
-                        $orderItem->setStatus($status);
-                        $this->orderItemRepository->update($orderItem);
-                        $this->persistenceManager->persistAll();
-
-                        return true;
-                    }
-                }
-
-                return false;
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwShop->setStatusForOrderItem($orderItemUid, $status);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_shop is not installed.');
         }
@@ -1007,6 +579,7 @@ class Server
      */
     public function findAllPublications(): array
     {
+
         trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated and will be removed soon', E_USER_DEPRECATED);
         if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
 
@@ -1040,8 +613,8 @@ class Server
             return $finalResults;
         }
 
-        return array();
-        
+        return [];
+
     }
 
 
@@ -1090,7 +663,7 @@ class Server
             return $finalResults;
         }
 
-        return array();
+        return [];
     }
 
 
@@ -1203,58 +776,15 @@ class Server
      */
     public function findEventsByTimestamp(int $timestamp): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'title',
-                    'subtitle',
-                    'description',
-                    'start',
-                    'end',
-                    'seats',
-                    'costs_reg',
-                    'costs_red',
-                    'costs_red_condition',
-                    'costs_tax',
-                    'currency',
-                    'reg_required',
-                    'reg_end',
-                    'ext_reg_link',
-                    'online_event',
-                    'place',
-                    'organizer',
-                    'reminder_mail_tstamp',
-                    'poll_mail_tstamp',
-                    'reservation',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->eventRepository->findByTimestamp($timestamp);
-
-                if ($results) {
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-                
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwEvents->findEventsByTimestamp($timestamp);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
-        return array();
-        
+        return [];
     }
+
 
     /**
      * Returns all existing eventPlaces by timestamp
@@ -1264,43 +794,13 @@ class Server
      */
     public function findEventPlacesByTimestamp(int $timestamp): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'hidden',
-                    'deleted',
-                    'name',
-                    'short',
-                    'address',
-                    'zip',
-                    'city',
-                    'country',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->eventPlaceRepository->findByTimestamp($timestamp);
-
-                if ($results) {
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-                
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwEvents->findEventPlacesByTimestamp($timestamp);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
-        return array();
-        
+        return [];
     }
 
 
@@ -1312,50 +812,13 @@ class Server
      */
     public function findEventReservationsByTimestamp(int $timestamp): array
     {
-
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'deleted',
-                    'fe_user',
-                    'salutation',
-                    'first_name',
-                    'last_name',
-                    'company',
-                    'address',
-                    'zip',
-                    'city',
-                    'phone',
-                    'fax',
-                    'email',
-                    'remark',
-                    'add_person',
-                    'event',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->eventReservationRepository->findByTimestamp($timestamp);
-
-                if ($results) {
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-                
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwEvents->findEventReservationsByTimestamp($timestamp);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
-        return array();
-        
+        return [];
     }
 
 
@@ -1368,37 +831,12 @@ class Server
     public function findEventReservationAddPersonsByTimestamp(int $timestamp): array
     {
         if (ExtensionManagementUtility::isLoaded('rkw_events')) {
-
-            try {
-
-                $keys = array(
-                    'uid',
-                    'crdate',
-                    'tstamp',
-                    'deleted',
-                    'salutation',
-                    'first_name',
-                    'last_name',
-                    'event_reservation',
-                );
-
-                /** @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $results */
-                $results = $this->eventReservationAddPersonRepository->findByTimestamp($timestamp);
-
-                if ($results) {
-                    return FilteredPropertiesUtility::filter($results, $keys);
-                }
-                
-
-            } catch (\Exception $e) {
-                $this->getLogger()->log(LogLevel::ERROR, $e->getMessage());
-            }
-
+            return $this->subjectRkwEvents->findEventReservationAddPersonsByTimestamp($timestamp);
         } else {
             $this->getLogger()->log(LogLevel::ERROR, 'Extension rkw_events is not installed.');
         }
 
-        return array();
+        return [];
     }
 
 

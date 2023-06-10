@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <!-- orders -->
+    <tx_rkwshop_domain_model_order>
+        <uid>1</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item />
+        <tstamp>1</tstamp>
+        <shipping_address>0</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+    <tx_rkwshop_domain_model_order>
+        <uid>2</uid>
+        <pid>1</pid>
+        <email>test@dummy.de</email>
+        <remark>Toller Hinweis!!!</remark>
+        <frontend_user>0</frontend_user>
+        <status>0</status>
+        <order_item>1,2</order_item>
+        <tstamp>1</tstamp>
+        <shipping_address>0</shipping_address>
+    </tx_rkwshop_domain_model_order>
+
+    <!-- order items -->
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>1</uid>
+        <pid>1</pid>
+        <amount>4</amount>
+        <product>0</product>
+        <ext_order>1</ext_order>
+        <tstamp>3</tstamp>
+    </tx_rkwshop_domain_model_orderitem>
+
+    <tx_rkwshop_domain_model_orderitem>
+        <uid>2</uid>
+        <pid>1</pid>
+        <amount>5</amount>
+        <product>0</product>
+        <deleted>1</deleted>
+        <ext_order>1</ext_order>
+        <tstamp>10</tstamp>
+    </tx_rkwshop_domain_model_orderitem>
+
+</dataset>

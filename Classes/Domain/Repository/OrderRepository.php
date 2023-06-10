@@ -31,27 +31,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 class OrderRepository extends EnabledFieldsAwareAbstractRepository
 {
     /**
-     * toDo: This override is only a workaround, because the "initializedObject"-configuration does not work with the core repository
-     *
-     * @param mixed $identifier The identifier of the object to find
-     * @return Order|null The matching object if found, otherwise NULL
-     */
-    public function findByIdentifier($identifier): ?Order
-    {
-        $query = $this->createQuery();
-
-        $query->matching(
-            $query->equals('uid', $identifier)
-        );
-
-        /** @var Order $returnValue */
-        $returnValue = $query->execute()->getFirst();
-
-        return $returnValue;
-    }
-
-
-    /**
      * Find all orders that have been updated recently
      *
      * @param int $timestamp
@@ -71,30 +50,6 @@ class OrderRepository extends EnabledFieldsAwareAbstractRepository
 
         $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
         return $query->execute();
-    }
-
-
-    /**
-     * Finds an object matching the given identifier.
-     *
-     * toDo: The parent findByUid-function prevents typecast
-     *
-     * @param int $uid The identifier of the object to find
-     * @return \RKW\RkwShop\Domain\Model\Order|null
-     */
-    public function findByUid($uid):? Order
-    {
-        $query = $this->createQuery();
-
-        $query->matching(
-            $query->equals('uid', $uid)
-        );
-
-        $query->setLimit(1);
-
-        /** @var Order $returnValue */
-        $returnValue = $query->execute()->getFirst();
-        return $returnValue;
     }
 
 }
