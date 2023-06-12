@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <!-- eventPlace -->
+    <tx_rkwevents_domain_model_eventplace>
+        <uid>1</uid>
+        <pid>1</pid>
+        <name>EventPlace 1</name>
+        <tstamp>5555</tstamp>
+    </tx_rkwevents_domain_model_eventplace>
+
+    <tx_rkwevents_domain_model_eventplace>
+        <uid>2</uid>
+        <pid>1</pid>
+        <name>EventPlace 2</name>
+        <tstamp>5555</tstamp>
+        <hidden>1</hidden>
+    </tx_rkwevents_domain_model_eventplace>
+
+    <tx_rkwevents_domain_model_eventplace>
+        <uid>3</uid>
+        <pid>1</pid>
+        <name>EventPlace 3</name>
+        <tstamp>5555</tstamp>
+        <deleted>1</deleted>
+    </tx_rkwevents_domain_model_eventplace>
+
+</dataset>

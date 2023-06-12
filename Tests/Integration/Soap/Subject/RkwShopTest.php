@@ -15,6 +15,7 @@ use \RKW\RkwSoap\Domain\Repository\ProductRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderItemRepository;
 
+use RKW\RkwSoap\Soap\Subject\RkwShop;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -131,7 +132,7 @@ class RkwShopTest extends FunctionalTestCase
         $this->orderRepository = $this->objectManager->get(OrderRepository::class);
         $this->orderItemRepository = $this->objectManager->get(OrderItemRepository::class);
 
-        $this->subject = $this->objectManager->get(Server::class);
+        $this->subject = $this->objectManager->get(RkwShop::class);
     }
 
 
@@ -153,7 +154,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check10.xml');
 
-        $result = $this->subject->rkwShopFindAllProducts();
+        $result = $this->subject->findAllProducts();
 
         $this::assertCount(3, $result);
 
@@ -176,7 +177,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check20.xml');
 
-        $result = $this->subject->rkwShopFindAllProducts();
+        $result = $this->subject->findAllProducts();
         $this::assertCount(1, $result);
 
     }
@@ -198,7 +199,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check30.xml');
 
-        $result = $this->subject->rkwShopFindAllProducts();
+        $result = $this->subject->findAllProducts();
         $this::assertCount(3, $result);
 
     }
@@ -220,7 +221,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check40.xml');
 
-        $result = $this->subject->rkwShopFindAllProducts();
+        $result = $this->subject->findAllProducts();
 
         $this::assertEquals(275, $result[0]['stock']);
         $this::assertEquals(50, $result[1]['stock']);
@@ -245,7 +246,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check50.xml');
 
-        $result = $this->subject->rkwShopFindAllProducts();
+        $result = $this->subject->findAllProducts();
 
         $this::assertEquals('test1@test.de,test2@test.de,test3@test.de', $result[0]['backend_user']);
         $this::assertEquals('0', $result[1]['backend_user']);
@@ -273,7 +274,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check60.xml');
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $result = $this->subject->findOrdersByTimestamp();
         $this::assertCount(3, $result);
     }
 
@@ -294,7 +295,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check70.xml');
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $result = $this->subject->findOrdersByTimestamp();
         $this::assertCount(1, $result);
     }
 
@@ -317,7 +318,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check80.xml');
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp(100);
+        $result = $this->subject->findOrdersByTimestamp(100);
         $this::assertCount(2, $result);
     }
 
@@ -339,7 +340,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check81.xml');
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $result = $this->subject->findOrdersByTimestamp();
         $this::assertEquals('Emmentaler Allee 15', $result[0]['address']);
     }
 
@@ -367,7 +368,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check90.xml');
 
-        $result = $this->subject->rkwShopFindOrdersByTimestamp();
+        $result = $this->subject->findOrdersByTimestamp();
         self::assertCount(3, $result);
 
         self::assertGreaterThan(0, $result[0]['frontend_user']);
@@ -396,7 +397,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check100.xml');
 
-        $result = $this->subject->rkwShopFindOrderItemsByOrder(1);
+        $result = $this->subject->findOrderItemsByOrder(1);
         $this::assertCount(2, $result);
     }
 
@@ -418,7 +419,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check110.xml');
 
-        $result = $this->subject->rkwShopFindOrderItemsByOrder(1);
+        $result = $this->subject->findOrderItemsByOrder(1);
         $this::assertCount(1, $result);
     }
 
@@ -441,7 +442,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check120.xml');
 
-        $result = $this->subject->rkwShopFindOrderItemsByOrder(1);
+        $result = $this->subject->findOrderItemsByOrder(1);
         $this::assertCount(3, $result);
 
         $this::assertEquals(1, $result[0]['product']);
@@ -470,7 +471,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check121.xml');
 
-        $result = $this->subject->rkwShopFindOrderItemsByOrder(1);
+        $result = $this->subject->findOrderItemsByOrder(1);
         $this::assertCount(1, $result);
 
         $this::assertEquals(1, $result[0]['product']);
@@ -495,7 +496,7 @@ class RkwShopTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check130.xml');
-        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->setOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwSoap\Domain\Model\Product $product */
         $product = $this->productRepository->findByIdentifier(1);
@@ -518,7 +519,7 @@ class RkwShopTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check131.xml');
-        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->setOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwSoap\Domain\Model\Product $product */
         $product = $this->productRepository->findByIdentifier(1);
@@ -544,7 +545,7 @@ class RkwShopTest extends FunctionalTestCase
          * Then the value is stored in the database
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check132.xml');
-        self::assertTrue($this->subject->rkwShopSetOrderedExternalForProduct(1, 999));
+        self::assertTrue($this->subject->setOrderedExternalForProduct(1, 999));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByIdentifier(1);
@@ -570,7 +571,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check140.xml');
 
-        self::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertTrue($this->subject->setStatusForOrder(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByIdentifier(1);
@@ -594,7 +595,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check140.xml');
 
-        self::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 99999));
+        self::assertFalse($this->subject->setStatusForOrder(1, 99999));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByIdentifier(1);
@@ -614,7 +615,7 @@ class RkwShopTest extends FunctionalTestCase
          * When I set a valid status for a non-existing order
          * Then false is returned
          */
-        self::assertFalse($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertFalse($this->subject->setStatusForOrder(1, 100));
 
     }
 
@@ -636,7 +637,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check150.xml');
 
-        self::assertTrue($this->subject->rkwShopSetStatusForOrder(1, 100));
+        self::assertTrue($this->subject->setStatusForOrder(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -662,7 +663,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check160.xml');
 
-        self::assertTrue($this->subject->rkwShopSetDeletedForOrder(1, 1));
+        self::assertTrue($this->subject->setDeletedForOrder(1, 1));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -683,7 +684,7 @@ class RkwShopTest extends FunctionalTestCase
          * When I set a set a non-existing order to deleted
          * Then false is returned
          */
-        self::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 1));
+        self::assertFalse($this->subject->setDeletedForOrder(1, 1));
 
     }
 
@@ -705,7 +706,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check160.xml');
 
-        self::assertFalse($this->subject->rkwShopSetDeletedForOrder(1, 5));
+        self::assertFalse($this->subject->setDeletedForOrder(1, 5));
 
         /** @var \RKW\RkwShop\Domain\Model\Order $order */
         $order = $this->orderRepository->findByUid(1);
@@ -734,7 +735,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check170.xml');
 
-        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->addStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -767,7 +768,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check180.xml');
 
-        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->addStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByIdentifier(1);
@@ -800,7 +801,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check190.xml');
 
-        self::assertTrue($this->subject->rkwShopAddStockForProduct(1, 5, 'Test', 111));
+        self::assertTrue($this->subject->addStockForProduct(1, 5, 'Test', 111));
 
         /** @var \RKW\RkwShop\Domain\Model\Product $product */
         $product = $this->productRepository->findByUid(1);
@@ -835,7 +836,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check200.xml');
 
-        self::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertTrue($this->subject->setStatusForOrderItem(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByUid(1);
@@ -859,7 +860,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check200.xml');
 
-        self::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 99999));
+        self::assertFalse($this->subject->setStatusForOrderItem(1, 99999));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByUid(1);
@@ -879,7 +880,7 @@ class RkwShopTest extends FunctionalTestCase
          * When I set a valid status for a non-existing order item
          * Then false is returned
          */
-        self::assertFalse($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertFalse($this->subject->setStatusForOrderItem(1, 100));
 
     }
 
@@ -901,7 +902,7 @@ class RkwShopTest extends FunctionalTestCase
          */
         $this->importDataSet(self::FIXTURE_PATH . '/Database/Check210.xml');
 
-        self::assertTrue($this->subject->rkwShopSetStatusForOrderItem(1, 100));
+        self::assertTrue($this->subject->setStatusForOrderItem(1, 100));
 
         /** @var \RKW\RkwShop\Domain\Model\OrderItem $orderItem */
         $orderItem = $this->orderItemRepository->findByIdentifier(1);

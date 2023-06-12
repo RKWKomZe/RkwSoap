@@ -10,6 +10,7 @@ use \RKW\RkwSoap\Domain\Repository\ProductRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderItemRepository;
 
+use RKW\RkwSoap\Soap\Subject\FeRegister;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -110,7 +111,7 @@ class FeRegisterTest extends FunctionalTestCase
         $this->orderItemRepository = $this->objectManager->get(OrderItemRepository::class);
         $this->frontendUserRepository = $this->objectManager->get(FrontendUserRepository::class);
 
-        $this->subject = $this->objectManager->get(Server::class);
+        $this->subject = $this->objectManager->get(FeRegister::class);
      }
 
 

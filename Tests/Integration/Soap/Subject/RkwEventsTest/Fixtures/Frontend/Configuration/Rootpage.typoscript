@@ -3,17 +3,21 @@ module.tx_rkwsoap {
         storagePid = 1
 
     }
-
 	settings {
-
 		soapServer {
-
             version = 0.8.15
 		}
 	}
 }
-
 plugin.tx_rkwsoap < module.tx_rkwsoap
+
+
+module.tx_rkwevents {
+    persistence {
+        storagePid = 1
+    }
+}
+plugin.tx_rkwevents < module.tx_rkwevents
 
 
 config {

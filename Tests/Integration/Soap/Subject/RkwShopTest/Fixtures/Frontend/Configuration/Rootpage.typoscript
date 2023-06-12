@@ -1,7 +1,6 @@
 module.tx_rkwsoap {
     persistence {
         storagePid = 1
-
     }
 
 	settings {

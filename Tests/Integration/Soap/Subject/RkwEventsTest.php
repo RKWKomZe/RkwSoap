@@ -15,6 +15,7 @@ use \RKW\RkwSoap\Domain\Repository\ProductRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderRepository;
 use \RKW\RkwSoap\Domain\Repository\OrderItemRepository;
 
+use RKW\RkwSoap\Soap\Subject\RkwEvents;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -59,6 +60,7 @@ class RkwEventsTest extends FunctionalTestCase
         'typo3conf/ext/postmaster',
         'typo3conf/ext/rkw_basics',
         'typo3conf/ext/fe_register',
+        'typo3conf/ext/static_info_tables',
         'typo3conf/ext/rkw_events',
         'typo3conf/ext/rkw_soap',
     ];
@@ -115,7 +117,7 @@ class RkwEventsTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->importDataSet(self::FIXTURE_PATH . '/Fixtures/Database/Global.xml');
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Global.xml');
         $this->setUpFrontendRootPage(
             1,
             [
@@ -138,9 +140,302 @@ class RkwEventsTest extends FunctionalTestCase
         $this->eventReservationRepository = $this->objectManager->get(EventReservationRepository::class);
         $this->eventReservationAddPersonRepository = $this->objectManager->get(EventReservationAddPersonRepository::class);
 
-        $this->subject = $this->objectManager->get(Server::class);
-     }
+        $this->subject = $this->objectManager->get(RkwEvents::class);
+    }
 
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventsByTimestampIgnoresEnableFields ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three events
+         * Given that are all events have a greater timestamp
+         * Given that one event is deleted
+         * Given that one event is hidden
+         * When the method is called
+         * Then all three events are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check10.xml');
+
+        $result = $this->subject->findEventsByTimestamp(10);
+
+        $this::assertCount(3, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventsByTimestampWithVariousTimestamps ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three events
+         * Given that one event timestamp is greater
+         * Given that one event timestamp is equal
+         * Given that one event timestamp is less
+         * When the method is called
+         * Then two of three events are returned (the greater and the equal one)
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check20.xml');
+
+        $result = $this->subject->findEventsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventsByTimestampWithVariousStoragePids ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three events
+         * Given that are all events have a greater timestamp
+         * Given that two events have PID 1
+         * Given that one event have PID 2
+         * When the method is called
+         * Then two of three events are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check30.xml');
+
+        $result = $this->subject->findEventsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventPlacesByTimestampIgnoresEnableFields ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventPlaces
+         * Given that are all eventPlaces have a greater timestamp
+         * Given that one eventPlace is deleted
+         * Given that one eventPlace is hidden
+         * When the method is called
+         * Then all three eventPlaces are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check100.xml');
+
+        $result = $this->subject->findEventPlacesByTimestamp(10);
+
+        $this::assertCount(3, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventPlacesByTimestampWithVariousTimestamps ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventPlaces
+         * Given that one eventPlace timestamp is greater
+         * Given that one eventPlace timestamp is equal
+         * Given that one eventPlace timestamp is less
+         * When the method is called
+         * Then two of three eventPlaces are returned (the greater and the equal one)
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check110.xml');
+
+        $result = $this->subject->findEventPlacesByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventPlacesByTimestampWithVariousStoragePids ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventPlaces
+         * Given that are all eventPlaces have a greater timestamp
+         * Given that two eventPlaces have PID 1
+         * Given that one eventPlace have PID 2
+         * When the method is called
+         * Then two of three eventPlaces are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check120.xml');
+
+        $result = $this->subject->findEventPlacesByTimestamp(120);
+
+        $this::assertCount(2, $result);
+    }
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationsByTimestampIgnoresEnableFields ()
+    {
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservations
+         * Given that are all eventReservations have a greater timestamp
+         * Given that two eventReservations are deleted
+         * When the method is called
+         * Then all three eventReservations are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check200.xml');
+
+        $result = $this->subject->findEventReservationsByTimestamp(10);
+
+        $this::assertCount(3, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationsByTimestampWithVariousTimestamps ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservations
+         * Given that one eventReservation timestamp is greater
+         * Given that one eventReservation timestamp is equal
+         * Given that one eventReservation timestamp is less
+         * When the method is called
+         * Then two of three eventReservations are returned (the greater and the equal one)
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check210.xml');
+
+        $result = $this->subject->findEventReservationsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationsByTimestampWithVariousStoragePids ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservations
+         * Given that are all eventReservations have a greater timestamp
+         * Given that two eventReservations have PID 1
+         * Given that one eventReservation have PID 2
+         * When the method is called
+         * Then two of three eventReservations are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check220.xml');
+
+        $result = $this->subject->findEventReservationsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationAddPersonsByTimestampIgnoresEnableFields ()
+    {
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservationAddPersons
+         * Given that are all eventReservationAddPersons have a greater timestamp
+         * Given that two eventReservationAddPersons are deleted
+         * When the method is called
+         * Then all three eventReservationAddPersons are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check300.xml');
+
+        $result = $this->subject->findEventReservationAddPersonsByTimestamp(10);
+
+        $this::assertCount(3, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationAddPersonsByTimestampWithVariousTimestamps ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservationAddPersons
+         * Given that one eventReservationAddPerson timestamp is greater
+         * Given that one eventReservationAddPerson timestamp is equal
+         * Given that one eventReservationAddPerson timestamp is less
+         * When the method is called
+         * Then two of three eventReservationAddPersons are returned (the greater and the equal one)
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check310.xml');
+
+        $result = $this->subject->findEventReservationAddPersonsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
+
+
+    /**
+     * @test
+     * @throws \Exception
+     */
+    public function findEventReservationAddPersonsByTimestampWithVariousStoragePids ()
+    {
+
+        /**
+         * Scenario:
+         *
+         * Given there are three eventReservationAddPersons
+         * Given that are all eventReservationAddPersons have a greater timestamp
+         * Given that two eventReservationAddPersons have PID 1
+         * Given that one eventReservationAddPerson have PID 2
+         * When the method is called
+         * Then two of three eventReservationAddPersons are returned
+         */
+        $this->importDataSet(self::FIXTURE_PATH . '/Database/Check320.xml');
+
+        $result = $this->subject->findEventReservationAddPersonsByTimestamp(10);
+
+        $this::assertCount(2, $result);
+    }
 
     /**
      * TearDown
@@ -149,11 +444,6 @@ class RkwEventsTest extends FunctionalTestCase
     {
         parent::tearDown();
     }
-
-
-
-
-
 
 
 

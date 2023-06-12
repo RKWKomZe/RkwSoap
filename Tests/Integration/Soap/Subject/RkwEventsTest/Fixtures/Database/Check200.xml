@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+
+    <!-- eventReservations -->
+    <tx_rkwevents_domain_model_eventreservation>
+        <uid>1</uid>
+        <pid>1</pid>
+        <remark>EventReservation 1</remark>
+        <tstamp>5555</tstamp>
+    </tx_rkwevents_domain_model_eventreservation>
+
+    <tx_rkwevents_domain_model_eventreservation>
+        <uid>2</uid>
+        <pid>1</pid>
+        <remark>EventReservation 2</remark>
+        <tstamp>5555</tstamp>
+        <deleted>1</deleted>
+    </tx_rkwevents_domain_model_eventreservation>
+
+    <tx_rkwevents_domain_model_eventreservation>
+        <uid>3</uid>
+        <pid>1</pid>
+        <remark>EventReservation 3</remark>
+        <tstamp>5555</tstamp>
+        <deleted>1</deleted>
+    </tx_rkwevents_domain_model_eventreservation>
+
+</dataset>
