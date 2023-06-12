@@ -109,7 +109,7 @@ class FilteredPropertiesUtility
                 $property = $subProperties;
                 unset($subProperties);
             }
-            $result[$property] = self::getPropertyFromObject($object, $property, $subProperties);
+            $result[$property] = self::getPropertyFromObject($object, $property, $subProperties ?? []);
         }
 
         return $result;

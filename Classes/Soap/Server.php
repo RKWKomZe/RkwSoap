@@ -158,7 +158,6 @@ class Server
 
     public function __construct()
     {
-
         $objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
 
         // load always for basic feUser functionality
@@ -868,9 +867,6 @@ class Server
     {
         return Common::getTypoScriptConfiguration('rkwsoap', $which);
     }
-
-
-
 
 }
 
