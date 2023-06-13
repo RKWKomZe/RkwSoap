@@ -155,6 +155,12 @@ class Server
     protected $subjectRkwShop;
 
 
+    /**
+     * @var string
+     */
+    protected string $storagePids = '';
+
+
 
     public function __construct()
     {
@@ -191,7 +197,6 @@ class Server
         $this->frontendUserRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserRepository::class);
         $this->frontendUserGroupRepository = $objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository::class);
         $this->persistenceManager = $objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
-
     }
 
 
@@ -213,6 +218,39 @@ class Server
         }
 
         return $version;
+    }
+
+
+    /**
+     * Returns current storagePids
+     *
+     * @return string
+     */
+    public function getStoragePids(): string
+    {
+        return $this->storagePids;
+    }
+
+
+    /**
+     * Set current storagePids
+     *
+     * @param string $storagePids
+     * @return void
+     */
+    public function setStoragePids(string $storagePids): void
+    {
+        //$this->storagePids = $storagePids;
+
+        $this->subjectFeRegister->setStoragePids($storagePids);
+
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
+            $this->subjectRkwEvents->setStoragePids($storagePids);
+        }
+
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
+            $this->subjectRkwShop->setStoragePids($storagePids);
+        }
     }
 
 

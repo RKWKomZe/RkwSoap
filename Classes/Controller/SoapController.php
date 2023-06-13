@@ -74,14 +74,6 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
      */
     public function soapAction(): void
     {
-
-        // TEST START
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $server = $objectManager->get(Server::class);
-        DebuggerUtility::var_dump($server->findEventsByTimestamp(10)); exit;
-        // TEST END
-
-
         // kill TYPO3 output buffer
         while (ob_end_clean());
 
@@ -139,6 +131,11 @@ class SoapController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 
                 $server = new \SoapServer(null, $options);
                 $server->setClass('RKW\RkwSoap\Soap\Server');
+
+                // By MF: In relation of the pageIdentifier getter & setter:
+                // https://stackoverflow.com/questions/33076844/how-to-set-member-variables-on-php-soap-class
+                $server->setPersistence(SOAP_PERSISTENCE_SESSION);
+
                 $server->handle();
 
                 $this->getLogger()->log(

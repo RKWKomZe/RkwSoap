@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
@@ -83,10 +84,12 @@ class RkwShop extends AbstractSubject
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
 
-
+    /**
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     */
     public function __construct()
     {
         parent::__construct();
@@ -101,6 +104,23 @@ class RkwShop extends AbstractSubject
         }
 
         $this->persistenceManager = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
+    }
+
+
+    /**
+     * setStoragePidsToRepositories
+     *
+     * @return void
+     * @throws InvalidConfigurationTypeException
+     */
+    public function setStoragePidsToRepositories(): void
+    {
+        if (ExtensionManagementUtility::isLoaded('rkw_shop')) {
+            $this->orderRepository->setStoragePids($this->getStoragePids());
+            $this->orderItemRepository->setStoragePids($this->getStoragePids());
+            $this->productRepository->setStoragePids($this->getStoragePids());
+            $this->stockRepository->setStoragePids($this->getStoragePids());
+        }
     }
 
 

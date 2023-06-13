@@ -61,6 +61,16 @@ abstract class AbstractSubject
      */
     protected array $soapKeyArray;
 
+    /**
+     * @var string
+     */
+    protected string $storagePids = '';
+
+    /**
+     * @var \TYPO3\CMS\Core\Log\Logger
+     */
+    protected Logger $logger;
+
 
     /**
      * @throws InvalidConfigurationTypeException
@@ -69,7 +79,7 @@ abstract class AbstractSubject
     {
         $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
-        $this->persistenceManager =  $this->objectManager->get(PersistenceManager::class);
+        $this->persistenceManager = $this->objectManager->get(PersistenceManager::class);
 
         $this->settings = $this->getSettings();
     }
@@ -385,6 +395,44 @@ abstract class AbstractSubject
     }
 
 
+    /**
+     * Returns current storagePids
+     *
+     * @return string
+     */
+    public function getStoragePids(): string
+    {
+        return $this->storagePids;
+    }
+
+
+    /**
+     * Set current storagePids
+     *
+     * @param string $storagePids
+     * @return void
+     */
+    public function setStoragePids(string $storagePids): void
+    {
+        $this->storagePids = $storagePids;
+        if (intval($this->getStoragePids()) > 0) {
+            $this->setStoragePidsToRepositories();
+        }
+    }
+
+
+    /**
+     * setStoragePidsToRepositories
+     * -> Use this function in extending classes to set the given PID(s) to one or more repositories
+     * toDo: Other idea: Instead set PIDs so certain repositories, maybe set global to the Extbase repo for ALL repositories?
+     *
+     * @return void
+     */
+    public function setStoragePidsToRepositories(): void
+    {
+        // override and fill this inside your class
+        // Example: $this->feUserRepository->setStoragePids($this->getStoragePids());
+    }
 
 
     /**

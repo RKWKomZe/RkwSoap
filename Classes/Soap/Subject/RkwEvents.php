@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
@@ -79,7 +80,7 @@ class RkwEvents extends AbstractSubject
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
 
 
@@ -97,8 +98,25 @@ class RkwEvents extends AbstractSubject
         }
 
         $this->persistenceManager = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
-
     }
+
+
+    /**
+     * setStoragePidsToRepositories
+     *
+     * @return void
+     * @throws InvalidConfigurationTypeException
+     */
+    public function setStoragePidsToRepositories(): void
+    {
+        if (ExtensionManagementUtility::isLoaded('rkw_events')) {
+            $this->eventRepository->setStoragePids($this->getStoragePids());
+            $this->eventPlaceRepository->setStoragePids($this->getStoragePids());
+            $this->eventReservationRepository->setStoragePids($this->getStoragePids());
+            $this->eventReservationAddPersonRepository->setStoragePids($this->getStoragePids());
+        }
+    }
+
 
     /**
      * Returns all existing events by timestamp

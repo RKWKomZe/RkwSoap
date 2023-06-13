@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /*
@@ -68,10 +69,12 @@ class FeRegister extends AbstractSubject
     /**
      * @var \TYPO3\CMS\Core\Log\Logger
      */
-    protected $logger;
+    protected Logger $logger;
 
 
-
+    /**
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     */
     public function __construct()
     {
         parent::__construct();
@@ -85,6 +88,23 @@ class FeRegister extends AbstractSubject
         $this->frontendUserRepository = $this->objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserRepository::class);
         $this->frontendUserGroupRepository = $this->objectManager->get(\RKW\RkwSoap\Domain\Repository\FrontendUserGroupRepository::class);
     }
+
+
+    /**
+     * setStoragePidsToRepositories
+     *
+     * @return void
+     * @throws InvalidConfigurationTypeException
+     */
+    public function setStoragePidsToRepositories(): void
+    {
+        if (ExtensionManagementUtility::isLoaded('fe_register')) {
+            $this->shippingAddressRepository->setStoragePids($this->getStoragePids());
+        }
+        $this->frontendUserRepository->setStoragePids($this->getStoragePids());
+        $this->frontendUserGroupRepository->setStoragePids($this->getStoragePids());
+    }
+
 
     /**
      * Returns all FE-users that have been updated since $timestamp
@@ -109,7 +129,7 @@ class FeRegister extends AbstractSubject
                     ){
 
                         /** @var \Madj2k\FeRegister\Domain\Model\ShippingAddress $shippingAddress */
-                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser ($result->getUid())) {
+                        if ($shippingAddress = $this->shippingAddressRepository->findOneByFrontendUser($result->getUid())) {
                             $result->setTxFeregisterGender($shippingAddress->getGender());
                             $result->setFirstName($shippingAddress->getFirstName());
                             $result->setLastName($shippingAddress->getLastName());
@@ -142,7 +162,6 @@ class FeRegister extends AbstractSubject
      */
     public function findFeUserByUid(int $uid): array
     {
-
         try {
 
             /** @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $result */
@@ -170,7 +189,6 @@ class FeRegister extends AbstractSubject
                             $result->setCompany($shippingAddress->getCompany());
                         }
                     }
-
                 }
 
                 return FilteredPropertiesUtility::filter($result, $this->soapKeyArray['fe_users']);
