@@ -1,0 +1,22 @@
+module.tx_rkwsoap {
+    persistence {
+        storagePid = 1
+
+    }
+}
+plugin.tx_rkwsoap < module.tx_rkwsoap
+
+# RKW EVENTS
+module.tx_rkwevents  {
+    persistence {
+        storagePid = 1
+    }
+}
+plugin.tx_rkwevents < module.tx_rkwevents
+
+
+page = PAGE
+page {
+    10 = TEXT
+    10.value = Hallo Welt!
+}

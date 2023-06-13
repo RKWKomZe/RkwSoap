@@ -5,7 +5,7 @@ plugin.tx_rkwsoap {
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template partials (FE)
 		partialRootPath = EXT:rkw_soap/Resources/Private/Partials/
 		# cat=plugin.tx_rkwsoap/file; type=string; label=Path to template layouts (FE)
-		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/
+		layoutRootPath = EXT:rkw_soap/Resources/Private/Layouts/Layouts/
 	}
 	persistence {
 		# cat=plugin.tx_rkwsoap//a; type=string; label=Default storage PID
@@ -28,11 +28,11 @@ plugin.tx_rkwsoap {
             # cat=plugin.tx_rkwsoap//a; type=string; label=List of allowed IPs for SOAP Server (comma-separated)
             allowedRemoteIpList =
 
-            # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentification
+            # cat=plugin.tx_rkwsoap//a; type=boolean; label=Disables client authentication
             disableSecurityChecks = 0
 
             # cat=plugin.tx_rkwsoap//a; type=string; label=Version number that is returned via getVersion()
-            version = 8.7.3
+            version = 9.5
         }
 
 	}

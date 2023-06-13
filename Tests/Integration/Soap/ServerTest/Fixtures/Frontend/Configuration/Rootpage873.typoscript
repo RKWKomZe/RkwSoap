@@ -1,0 +1,14 @@
+module.tx_rkwsoap {
+	settings {
+		soapServer {
+            version = 8.7.3
+		}
+	}
+}
+plugin.tx_rkwsoap < module.tx_rkwsoap
+
+page = PAGE
+page {
+    10 = TEXT
+    10.value = Hallo Welt!
+}

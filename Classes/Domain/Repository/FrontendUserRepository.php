@@ -2,7 +2,10 @@
 
 namespace RKW\RkwSoap\Domain\Repository;
 
+use RKW\RkwSoap\Domain\Model\FrontendUser;
+use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 /*
  * This file is part of the TYPO3 CMS project.
@@ -21,48 +24,48 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
  * Class FrontendUserRepository
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
+ * @author Maximilian Fäßler <maximilian@faesslerweb.de>
  * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class FrontendUserRepository extends EnabledFieldsAwareAbstractRepository
 {
 
-
     /**
-     * initializeObject
+     * toDo: This override is only a workaround, because the "initializedObject"-configuration does not work with the core repository
      *
-     * @return void
+     * @param mixed $identifier The identifier of the object to find
+     * @return FrontendUser|null The matching object if found, otherwise NULL
      */
-    public function initializeObject()
+    public function findByIdentifier($identifier): ?FrontendUser
     {
+        $query = $this->createQuery();
 
-        /** @var $querySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
-        $querySettings = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
+        $query->matching(
+            $query->equals('uid', $identifier)
+        );
 
-        // don't add the pid constraint
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setIncludeDeleted(true);
+        /** @var FrontendUser $returnValue */
+        $returnValue = $query->execute()->getFirst();
 
-        $this->setDefaultQuerySettings($querySettings);
-
+        return $returnValue;
     }
 
 
     /**
      * Find all users that have been updated recently
      *
-     * @param int $timestamp
-     * @param bool    $excludeEmptyName
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
-     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
+     * @param int  $timestamp
+     * @param bool $excludeEmptyName
+     * @return QueryResultInterface
+     * @throws InvalidQueryException
      */
-    public function findByTimestamp($timestamp, $excludeEmptyName = true)
+    public function findByTimestamp(int $timestamp, bool $excludeEmptyName = true): QueryResultInterface
     {
         $query = $this->createQuery();
         $constrains = array(
-            $query->greaterThanOrEqual('tstamp', intval($timestamp)),
+            $query->greaterThanOrEqual('tstamp', $timestamp),
         );
 
         // exclude feUsers without first- and last-name
@@ -86,7 +89,6 @@ class FrontendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->setOrderings(array('tstamp' => QueryInterface::ORDER_ASCENDING));
 
         return $query->execute();
-        //===
     }
 
 }

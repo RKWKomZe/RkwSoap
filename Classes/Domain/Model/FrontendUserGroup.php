@@ -14,87 +14,95 @@ namespace RKW\RkwSoap\Domain\Model;
  * The TYPO3 project - inspiring people to share!
  */
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 /**
  * Class FrontendUserGroup
  *
  * @author Steffen Kroggel <developer@steffenkroggel.de>
+ * @author Maximilian Fäßler <maximilian@faesslerweb.de>
  * @copyright RKW Kompetenzzentrum
  * @package RKW_RkwSoap
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
-{
-
-    /**
-     * @var int
-     */
-    protected int $crdate = 0;
-
-
-    /**
-     * @var int
-     */
-    protected int $tstamp = 0;
-
-
-    /**
-     * @var bool
-     */
-    protected bool $hidden = false;
-
-
-    /**
-     * @var bool
-     */
-    protected bool $deleted = false;
-
-
-    /**
-     * Returns the crdate value
-     *
-     * @return int
-     * @api
-     */
-    public function getCrdate(): int
+if (ExtensionManagementUtility::isLoaded('fe_register')) {
+    class FrontendUserGroup extends \Madj2k\FeRegister\Domain\Model\FrontendUserGroup
     {
-        return $this->crdate;
+
     }
-
-
-    /**
-     * Returns the tstamp value
-     *
-     * @return int
-     * @api
-     */
-    public function getTstamp(): int
+} else {
+    class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
     {
-        return $this->tstamp;
+
+        /**
+         * @var int
+         */
+        protected int $crdate = 0;
+
+
+        /**
+         * @var int
+         */
+        protected int $tstamp = 0;
+
+
+        /**
+         * @var bool
+         */
+        protected bool $hidden = false;
+
+
+        /**
+         * @var bool
+         */
+        protected bool $deleted = false;
+
+
+        /**
+         * Returns the crdate value
+         *
+         * @return int
+         * @api
+         */
+        public function getCrdate(): int
+        {
+            return $this->crdate;
+        }
+
+
+        /**
+         * Returns the tstamp value
+         *
+         * @return int
+         * @api
+         */
+        public function getTstamp(): int
+        {
+            return $this->tstamp;
+        }
+
+
+        /**
+         * Returns the hidden value
+         *
+         * @return bool
+         * @api
+         */
+        public function getHidden(): bool
+        {
+            return $this->hidden;
+        }
+
+
+        /**
+         * Returns the deleted value
+         *
+         * @return bool
+         * @api
+         */
+        public function getDeleted(): bool
+        {
+            return $this->deleted;
+        }
     }
-
-
-    /**
-     * Returns the hidden value
-     *
-     * @return bool
-     * @api
-     */
-    public function getHidden(): bool
-    {
-        return $this->hidden;
-    }
-
-
-    /**
-     * Returns the deleted value
-     *
-     * @return bool
-     * @api
-     */
-    public function getDeleted(): bool
-    {
-        return $this->deleted;
-    }
-
-
 }
