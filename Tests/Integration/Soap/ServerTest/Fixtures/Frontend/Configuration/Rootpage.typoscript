@@ -1,4 +1,8 @@
 module.tx_rkwsoap {
+    persistence {
+        storagePid = 1
+
+    }
 
 	settings {
 
@@ -8,6 +12,32 @@ module.tx_rkwsoap {
 		}
 	}
 }
+
+plugin.tx_rkwsoap < module.tx_rkwsoap
+
+# FE-REGISTER
+# Following is needed to get the shippingAddress (FOR OLD SOAP TEST)
+module.tx_feregister  {
+
+    persistence {
+        // cat=plugin.tx_feregister_feregister//a; type=string; label=Default storage PID
+        storagePid = 1
+    }
+}
+plugin.tx_feregister < module.tx_feregister
+
+# RKW SHOP
+module.tx_rkwshop {
+    persistence {
+        permanentProperties {
+            RKW\RkwSoap\Domain\Model\OrderItem = product, order
+            RKW\RkwSoap\Domain\Model\Order = frontendUser,shippingAddress
+            RKW\RkwSoap\Domain\Model\Product = productBundle
+            RKW\RkwSoap\Domain\Model\ShippingAddress = frontendUser
+        }
+    }
+}
+plugin.tx_rkwshop < module.tx_rkwshop
 
 
 config {
