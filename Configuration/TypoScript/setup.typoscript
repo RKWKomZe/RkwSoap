@@ -227,9 +227,9 @@ plugin.tx_rkwsoap  {
 
                         }
                         fe_register {
-                            tx_feregister_facebook_url = tx_feregister_facebook_url
-                            tx_feregister_twitter_url = tx_feregister_twitter_url
-                            tx_feregister_xing_url = tx_feregister_xing_url
+                            tx_rkwregistration_facebook_url = tx_rkwregistration_facebook_url
+                            tx_rkwregistration_twitter_url = tx_rkwregistration_twitter_url
+                            tx_rkwregistration_xing_url = tx_rkwregistration_xing_url
                         }
                     }
                 }
@@ -253,7 +253,7 @@ plugin.tx_rkwsoap  {
 
                         }
                         fe_register {
-                            tx_feregister_is_service = tx_feregister_is_service
+                            tx_rkwregistration_is_service = tx_rkwregistration_is_service
                         }
                     }
                 }
