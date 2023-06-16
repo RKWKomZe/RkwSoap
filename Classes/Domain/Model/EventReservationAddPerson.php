@@ -26,5 +26,54 @@ namespace RKW\RkwSoap\Domain\Model;
 class EventReservationAddPerson extends \RKW\RkwEvents\Domain\Model\EventReservationAddPerson
 {
 
+    /**
+     * @var int
+     */
+    protected $crdate = 0;
 
+
+    /**
+     * @var int
+     */
+    protected $tstamp = 0;
+
+    /**
+     * @var bool
+     */
+    protected $deleted = false;
+
+
+    /**
+     * Returns the crdate value
+     *
+     * @return int
+     * @api
+     */
+    public function getCrdate(): int
+    {
+        return $this->crdate;
+    }
+
+
+    /**
+     * Returns the tstamp value
+     *
+     * @return int
+     * @api
+     */
+    public function getTstamp(): int
+    {
+        return $this->tstamp;
+    }
+
+    /**
+     * Returns the deleted value
+     *
+     * @return bool
+     * @api
+     */
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
 }

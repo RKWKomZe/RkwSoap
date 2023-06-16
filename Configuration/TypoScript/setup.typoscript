@@ -5,23 +5,32 @@ config.tx_extbase{
 	persistence {
 		classes {
 
-            RKW\RkwSoap\Domain\Model\EventPlace {
-                mapping {
-                    tableName = tx_rkwevents_domain_model_eventplace
-                }
-            }
-
-
             RKW\RkwSoap\Domain\Model\Event {
                 mapping {
                     tableName = tx_rkwevents_domain_model_event
+
+                    # mapping to properties of class
+                    columns {
+                        tstamp.mapOnProperty = tstamp
+                        crdate.mapOnProperty = crdate
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
 
-            RKW\RkwSoap\Domain\Model\EventReservationAddPerson {
+            RKW\RkwSoap\Domain\Model\EventPlace {
                 mapping {
-                    tableName = tx_rkwevents_domain_model_eventreservationaddperson
+                    tableName = tx_rkwevents_domain_model_eventplace
+
+                    # mapping to properties of class
+                    columns {
+                        tstamp.mapOnProperty = tstamp
+                        crdate.mapOnProperty = crdate
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
@@ -29,6 +38,27 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\EventReservation {
                 mapping {
                     tableName = tx_rkwevents_domain_model_eventreservation
+
+                    # mapping to properties of class
+                    columns {
+                        tstamp.mapOnProperty = tstamp
+                        crdate.mapOnProperty = crdate
+                        deleted.mapOnProperty = deleted
+                    }
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\EventReservationAddPerson {
+                mapping {
+                    tableName = tx_rkwevents_domain_model_eventreservationaddperson
+
+                    # mapping to properties of class
+                    columns {
+                        tstamp.mapOnProperty = tstamp
+                        crdate.mapOnProperty = crdate
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
@@ -72,26 +102,10 @@ config.tx_extbase{
 			}
 
 
-            RKW\RkwSoap\Domain\Model\OrderItem {
-                mapping {
-                    tableName = tx_rkwshop_domain_model_orderitem
-
-                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
-                    columns {
-                        ext_order.mapOnProperty = order
-                        crdate.mapOnProperty = crdate
-                        tstamp.mapOnProperty = tstamp
-                        deleted.mapOnProperty = deleted
-                    }
-                }
-            }
-
-
             RKW\RkwSoap\Domain\Model\Order {
                 mapping {
                     tableName = tx_rkwshop_domain_model_order
 
-                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
                     columns {
                         crdate.mapOnProperty = crdate
                         tstamp.mapOnProperty = tstamp
@@ -102,11 +116,38 @@ config.tx_extbase{
             }
 
 
+            RKW\RkwSoap\Domain\Model\OrderItem {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_orderitem
+
+                    columns {
+                        ext_order.mapOnProperty = order
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        deleted.mapOnProperty = deleted
+                    }
+                }
+            }
+
+
             RKW\RkwSoap\Domain\Model\Product {
                 mapping {
                     tableName = tx_rkwshop_domain_model_product
 
-                    // from /rkw_shop/Configuration/TypoScript/setup.typoscript
+                    columns {
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
+                }
+            }
+
+
+            RKW\RkwSoap\Domain\Model\Stock {
+                mapping {
+                    tableName = tx_rkwshop_domain_model_stock
+
                     columns {
                         crdate.mapOnProperty = crdate
                         tstamp.mapOnProperty = tstamp
@@ -120,6 +161,13 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\Series {
                 mapping {
                     tableName = tx_rkwbasics_domain_model_series
+
+                    columns {
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
@@ -127,15 +175,16 @@ config.tx_extbase{
             RKW\RkwSoap\Domain\Model\ShippingAddress {
                 mapping {
                     tableName = tx_feregister_domain_model_shippingaddress
+
+                    columns {
+                        crdate.mapOnProperty = crdate
+                        tstamp.mapOnProperty = tstamp
+                        hidden.mapOnProperty = hidden
+                        deleted.mapOnProperty = deleted
+                    }
                 }
             }
 
-
-            RKW\RkwSoap\Domain\Model\Stock {
-                mapping {
-                    tableName = tx_rkwshop_domain_model_stock
-                }
-            }
 
 		}
 	}
