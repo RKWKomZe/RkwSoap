@@ -25,6 +25,75 @@ namespace RKW\RkwSoap\Domain\Model;
  */
 class Stock extends \RKW\RkwShop\Domain\Model\Stock
 {
+    /**
+     * @var int
+     */
+    protected int $crdate = 0;
 
+
+    /**
+     * @var int
+     */
+    protected int $tstamp = 0;
+
+
+    /**
+     * @var bool
+     */
+    protected bool $hidden = false;
+
+
+    /**
+     * @var bool
+     */
+    protected bool $deleted = false;
+
+
+    /**
+     * Returns the crdate value
+     *
+     * @return int
+     * @api
+     */
+    public function getCrdate(): int
+    {
+        return $this->crdate;
+    }
+
+
+    /**
+     * Returns the tstamp value
+     *
+     * @return int
+     * @api
+     */
+    public function getTstamp(): int
+    {
+        return $this->tstamp;
+    }
+
+
+    /**
+     * Returns the hidden value
+     *
+     * @return bool
+     * @api
+     */
+    public function getHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+
+    /**
+     * Returns the deleted value
+     *
+     * @return bool
+     * @api
+     */
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
 
 }
