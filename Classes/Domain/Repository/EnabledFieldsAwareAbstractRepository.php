@@ -45,6 +45,9 @@ abstract class EnabledFieldsAwareAbstractRepository extends StoragePidAwareAbstr
 
         $this->defaultQuerySettings->setIgnoreEnableFields(true);
         $this->defaultQuerySettings->setIncludeDeleted(true);
+
+        // @toDo: THIS IN ONLY A FIX FOR THE OLD 8.7 VERSION! THIS LINE SHOULD ONLY BE ACTIVE IF THE VERSION IS LESS THAN 9!
+        $this->defaultQuerySettings->setRespectStoragePage(false);
     }
 
 
